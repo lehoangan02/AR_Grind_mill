@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 93c88cb6178cd624e9ccc17d1f409ec1
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Shader/BDCS.shader
+  uploadId: 9780

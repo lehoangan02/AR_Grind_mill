@@ -1,0 +1,279 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.lehoangan.ar_5"
+4    android:installLocation="preferExternal"
+5    android:versionCode="1"
+6    android:versionName="0.1.0" >
+7
+8    <uses-sdk
+9        android:minSdkVersion="26"
+10        android:targetSdkVersion="35" />
+11
+12    <supports-screens
+12-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:3-163
+13        android:anyDensity="true"
+13-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:135-160
+14        android:largeScreens="true"
+14-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:78-105
+15        android:normalScreens="true"
+15-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:49-77
+16        android:smallScreens="true"
+16-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:21-48
+17        android:xlargeScreens="true" />
+17-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:4:106-134
+18
+19    <uses-permission android:name="android.permission.INTERNET" />
+19-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-67
+19-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-64
+20    <uses-permission android:name="android.permission.VIBRATE" />
+20-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:5-66
+20-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:22-63
+21
+22    <uses-feature android:glEsVersion="0x00030000" />
+22-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:5-54
+22-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:19-51
+23    <uses-feature
+23-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:5-14:36
+24        android:name="android.hardware.touchscreen"
+24-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:9-52
+25        android:required="false" />
+25-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:9-33
+26    <uses-feature
+26-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:5-17:36
+27        android:name="android.hardware.touchscreen.multitouch"
+27-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:9-63
+28        android:required="false" />
+28-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:9-33
+29    <uses-feature
+29-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:5-20:36
+30        android:name="android.hardware.touchscreen.multitouch.distinct"
+30-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:19:9-72
+31        android:required="false" />
+31-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:9-33
+32
+33    <uses-permission android:name="android.permission.CAMERA" />
+33-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:5-65
+33-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:22-62
+34
+35    <uses-feature
+35-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:5-26:35
+36        android:name="android.hardware.camera.ar"
+36-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:9-50
+37        android:required="true" />
+37-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:9-32
+38    <uses-feature
+38-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:5-29:35
+39        android:name="com.google.ar.core.depth"
+39-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:9-48
+40        android:required="true" />
+40-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:29:9-32
+41
+42    <queries>
+42-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:20:5-27:15
+43        <package android:name="com.google.ar.core" />
+43-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:21:9-54
+43-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:21:18-51
+44        <package android:name="com.android.vending" />
+44-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:22:9-55
+44-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:22:18-52
+45
+46        <intent>
+46-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:24:9-26:18
+47            <action android:name="com.google.android.play.core.install.BIND_INSTALL_SERVICE" />
+47-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:25:13-96
+47-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:25:21-93
+48        </intent>
+49    </queries>
+50
+51    <permission
+51-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:22:5-24:47
+52        android:name="com.lehoangan.ar_5.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+52-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:23:9-81
+53        android:protectionLevel="signature" />
+53-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:24:9-44
+54
+55    <uses-permission android:name="com.lehoangan.ar_5.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+55-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:26:5-97
+55-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
+56
+57    <application
+57-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:3:3-83
+58        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+58-->[androidx.core:core:1.9.0] /Users/lehoangan/.gradle/caches/transforms-3/c919e84cf21a5073ea88f45ff1a29b85/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
+59        android:debuggable="true"
+60        android:enableOnBackInvokedCallback="false"
+60-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:32:9-52
+61        android:extractNativeLibs="true"
+62        android:icon="@mipmap/app_icon"
+62-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:3:16-47
+63        android:label="@string/app_name" >
+63-->/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/launcher/src/main/AndroidManifest.xml:3:48-80
+64        <meta-data
+64-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:34:9-36:33
+65            android:name="unity.splash-mode"
+65-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:35:13-45
+66            android:value="0" />
+66-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:13-30
+67        <meta-data
+67-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:9-39:36
+68            android:name="unity.splash-enable"
+68-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:13-47
+69            android:value="True" />
+69-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:39:13-33
+70        <meta-data
+70-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:40:9-42:36
+71            android:name="unity.launch-fullscreen"
+71-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:41:13-51
+72            android:value="True" />
+72-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:42:13-33
+73        <meta-data
+73-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:43:9-45:36
+74            android:name="unity.render-outside-safearea"
+74-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:44:13-57
+75            android:value="True" />
+75-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:45:13-33
+76        <meta-data
+76-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:46:9-48:50
+77            android:name="notch.config"
+77-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:47:13-40
+78            android:value="portrait|landscape" />
+78-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:48:13-47
+79        <meta-data
+79-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:49:9-51:36
+80            android:name="unity.auto-report-fully-drawn"
+80-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:50:13-57
+81            android:value="true" />
+81-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:51:13-33
+82        <meta-data
+82-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:52:9-54:36
+83            android:name="unity.auto-set-game-state"
+83-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:53:13-53
+84            android:value="true" />
+84-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:54:13-33
+85        <meta-data
+85-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:55:9-57:36
+86            android:name="unity.strip-engine-code"
+86-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:56:13-51
+87            android:value="true" />
+87-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:57:13-33
+88
+89        <activity
+89-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:59:9-90:20
+90            android:name="com.unity3d.player.UnityPlayerGameActivity"
+90-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:60:13-70
+91            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"
+91-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:61:13-194
+92            android:enabled="true"
+92-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:62:13-35
+93            android:exported="true"
+93-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:63:13-36
+94            android:hardwareAccelerated="false"
+94-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:64:13-48
+95            android:launchMode="singleTask"
+95-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:65:13-44
+96            android:resizeableActivity="true"
+96-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:66:13-46
+97            android:screenOrientation="fullUser"
+97-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:67:13-49
+98            android:theme="@style/BaseUnityGameActivityTheme" >
+98-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:68:13-62
+99            <intent-filter>
+99-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:69:13-73:29
+100                <category android:name="android.intent.category.LAUNCHER" />
+100-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:70:17-77
+100-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:70:27-74
+101
+102                <action android:name="android.intent.action.MAIN" />
+102-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:72:17-69
+102-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:72:25-66
+103            </intent-filter>
+104
+105            <meta-data
+105-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:75:13-77:40
+106                android:name="unityplayer.UnityActivity"
+106-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:76:17-57
+107                android:value="true" />
+107-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:77:17-37
+108            <meta-data
+108-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:78:13-80:40
+109                android:name="android.app.lib_name"
+109-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:79:17-52
+110                android:value="game" />
+110-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:80:17-37
+111            <meta-data
+111-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:81:13-83:71
+112                android:name="WindowManagerPreference:FreeformWindowSize"
+112-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:82:17-74
+113                android:value="@string/FreeformWindowSize_maximize" />
+113-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:83:17-68
+114            <meta-data
+114-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:84:13-86:79
+115                android:name="WindowManagerPreference:FreeformWindowOrientation"
+115-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:85:17-81
+116                android:value="@string/FreeformWindowOrientation_landscape" />
+116-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:86:17-76
+117            <meta-data
+117-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:87:13-89:40
+118                android:name="notch_support"
+118-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:88:17-45
+119                android:value="true" />
+119-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:89:17-37
+120        </activity>
+121
+122        <meta-data
+122-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:92:9-94:36
+123            android:name="unityplayer.SkipPermissionsDialog"
+123-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:93:13-61
+124            android:value="true" />
+124-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:94:13-33
+125        <meta-data
+125-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:95:9-97:40
+126            android:name="com.google.ar.core"
+126-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:96:13-46
+127            android:value="required" /> <!-- The minimal version code of ARCore APK required for an app using this SDK. -->
+127-->[:unityLibrary] /Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:97:13-37
+128        <meta-data
+128-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:32:9-34:41
+129            android:name="com.google.ar.core.min_apk_version"
+129-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:33:13-62
+130            android:value="240220000" /> <!-- This activity is critical for installing ARCore when it is not already present. -->
+130-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:34:13-38
+131        <activity
+131-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:36:9-42:80
+132            android:name="com.google.ar.core.InstallActivity"
+132-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:37:13-62
+133            android:configChanges="keyboardHidden|orientation|screenSize"
+133-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:38:13-74
+134            android:excludeFromRecents="true"
+134-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:39:13-46
+135            android:exported="false"
+135-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:40:13-37
+136            android:launchMode="singleTop"
+136-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:41:13-43
+137            android:theme="@android:style/Theme.Material.Light.Dialog.Alert" />
+137-->[:arcore_client:] /Users/lehoangan/.gradle/caches/transforms-3/8613db0cad9624e75f3743c7cfc05935/transformed/jetified-arcore_client/AndroidManifest.xml:42:13-77
+138
+139        <provider
+139-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+140            android:name="androidx.startup.InitializationProvider"
+140-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+141            android:authorities="com.lehoangan.ar_5.androidx-startup"
+141-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+142            android:exported="false" >
+142-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+143            <meta-data
+143-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+144                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+144-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+145                android:value="androidx.startup" />
+145-->[androidx.emoji2:emoji2:1.2.0] /Users/lehoangan/.gradle/caches/transforms-3/e60bf0ab8a1217670124be7e52d524ab/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+146            <meta-data
+146-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/lehoangan/.gradle/caches/transforms-3/ca632e50827689b4d45330738d8735e2/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+147                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+147-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/lehoangan/.gradle/caches/transforms-3/ca632e50827689b4d45330738d8735e2/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+148                android:value="androidx.startup" />
+148-->[androidx.lifecycle:lifecycle-process:2.4.1] /Users/lehoangan/.gradle/caches/transforms-3/ca632e50827689b4d45330738d8735e2/transformed/jetified-lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+149        </provider>
+150    </application>
+151
+152</manifest>

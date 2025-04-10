@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9920f2db87b9beb47a0bf446f2423acc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Materials/DSN_MachineGun_07.mat
+  uploadId: 9780

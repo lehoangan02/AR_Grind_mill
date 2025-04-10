@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 072b979ab73390a4b8ecd57277e6788d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Anims/MachineGun_reload.anim
+  uploadId: 9780

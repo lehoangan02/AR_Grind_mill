@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b9666236f41956740802d76701f74cf2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Materials/Toon_MachineGun_08.mat
+  uploadId: 9780

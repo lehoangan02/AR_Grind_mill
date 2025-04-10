@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 531a2e03ef68aa649ac2a8db837147d0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Prefabs/MachineGun_01.prefab
+  uploadId: 9780

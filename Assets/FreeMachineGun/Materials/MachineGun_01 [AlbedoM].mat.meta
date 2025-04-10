@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ec9f5a0217320ed49baf30d24d1e85e3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Materials/MachineGun_01 [AlbedoM].mat
+  uploadId: 9780

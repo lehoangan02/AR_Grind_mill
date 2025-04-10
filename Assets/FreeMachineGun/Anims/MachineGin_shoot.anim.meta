@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 366a27f88e688074ea34dae2294e7c8d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Anims/MachineGin_shoot.anim
+  uploadId: 9780

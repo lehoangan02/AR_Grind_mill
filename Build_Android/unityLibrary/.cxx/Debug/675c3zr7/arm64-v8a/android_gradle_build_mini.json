@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/src/main/cpp/CMakeLists.txt",
+    "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Volumes/Baracuda/apps/AndroidStudio/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/.cxx/Debug/675c3zr7/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Volumes/Baracuda/apps/AndroidStudio/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/.cxx/Debug/675c3zr7/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "game::@d02bb112ea9f9c2ed29f": {
+      "artifactName": "game",
+      "abi": "arm64-v8a",
+      "output": "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/cxx/Debug/675c3zr7/obj/arm64-v8a/libgame.so",
+      "runtimeFiles": []
+    }
+  }
+}

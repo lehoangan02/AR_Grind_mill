@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.lehoangan.ar_5.launcher-mergeDebugResources-20:/values-v31/values-v31.xml",
+            "map": [
+                {
+                    "source": "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/build/intermediates/packaged_res/debug/packageDebugResources/values-v31/values-v31.xml",
+                    "from": {
+                        "startLines": "2,9",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,617",
+                        "endLines": "8,15",
+                        "endColumns": "10,10",
+                        "endOffsets": "612,1176"
+                    }
+                }
+            ]
+        }
+    ]
+}

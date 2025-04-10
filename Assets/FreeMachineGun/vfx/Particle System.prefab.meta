@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5bea734cb8cd3624c996772bde32d0de
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/vfx/Particle System.prefab
+  uploadId: 9780

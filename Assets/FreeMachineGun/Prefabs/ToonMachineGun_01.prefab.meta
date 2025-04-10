@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 14c19e537fa950648b8e98166493f5ff
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/Prefabs/ToonMachineGun_01.prefab
+  uploadId: 9780

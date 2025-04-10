@@ -1,0 +1,4 @@
+/Volumes/Baracuda/apps/AndroidStudio/cmake/3.22.1/bin/ninja \
+  -C \
+  "/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/.cxx/Debug/675c3zr7/arm64-v8a" \
+  game

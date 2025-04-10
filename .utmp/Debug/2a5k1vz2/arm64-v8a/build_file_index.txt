@@ -1,0 +1,2 @@
+/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/CMakeLists.txt
+/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt

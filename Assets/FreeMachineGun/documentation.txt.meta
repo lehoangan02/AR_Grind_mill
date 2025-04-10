@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c7286a1c0e03f16498a3ee97574abf6c
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20611
+  packageName: Machine Guns
+  packageVersion: 1.0
+  assetPath: Assets/FreeMachineGun/documentation.txt
+  uploadId: 9780
