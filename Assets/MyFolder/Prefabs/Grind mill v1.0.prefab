@@ -434,6 +434,7 @@ Transform:
   - {fileID: 5395503830034950422}
   - {fileID: 2792700437320209204}
   - {fileID: 4756144427924230476}
+  - {fileID: 8728827895664031462}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!135 &7005724254204773803
@@ -474,7 +475,9 @@ MonoBehaviour:
   PlayerInRange: 0
   handleGroup: {fileID: 3287137051752407968}
   riceGrindProgressBar: {fileID: 0}
-  AlternateInteractButton: {fileID: 0}
+  alternateInteractButton: {fileID: 0}
+  leftThumbButton: {fileID: 0}
+  isPlayerInHandleRange: 0
 --- !u!1 &3957738850544069664
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,6 +842,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &5742790768379118315
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8728827895664031462}
+  m_Layer: 0
+  m_Name: Handle activation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8728827895664031462
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5742790768379118315}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2555882801242117175}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6043300519572242650
 GameObject:
   m_ObjectHideFlags: 0

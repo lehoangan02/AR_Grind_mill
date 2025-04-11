@@ -18,6 +18,7 @@ public class SelectionController : MonoBehaviour
     private bool PlayerPointedAtObject = false;
     [SerializeField] private Button InteractButton;
     private InteractableObject CurrentInteractableObject;
+    [SerializeField] private GrindingActivation grindingActvation;
     void Awake()
     {
         if (instance != null && instance != this)
@@ -47,34 +48,6 @@ public class SelectionController : MonoBehaviour
     {
         Vector3 ScreenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
         Ray ScreenRay = Camera.main.ScreenPointToRay(ScreenCenter);
-        // RaycastHit[] hits = Physics.RaycastAll(ScreenRay);
-        // bool InteractableObjectFound = false;
-        // foreach (RaycastHit hit in hits)
-        // {
-        //     Transform SelectedTransform = hit.transform;
-        //     if (SelectedTransform.GetComponent<InteractableObject>() != null
-        //      && SelectedTransform.GetComponent<InteractableObject>().IsPlayerInRange() && !InteractableObjectFound)
-        //     {
-        //         // Debug.Log(hit.transform.name);
-        //         InteractableObjectName_UI.SetActive(true);
-        //         InteractableObjectNameText.text = SelectedTransform.GetComponent<InteractableObject>().getItemName();
-        //         InteractableObjectFound = true;
-        //         PlayerPointedAtObject = true;
-        //         InteractButton.interactable = true;
-        //         CurrentInteractableObject = SelectedTransform.GetComponent<InteractableObject>();
-        //     }
-        // }
-        // if (!InteractableObjectFound)
-        // {
-        //     InteractableObjectName_UI.SetActive(false);
-        //     PlayerPointedAtObject = false;
-        //     InteractButton.interactable = false;
-        //     if (CurrentInteractableObject != null)
-        //     {
-        //         CurrentInteractableObject = null;
-        //     }
-        // }
-
         bool hitFound = Physics.Raycast(ScreenRay, out RaycastHit hit);
         if (hitFound)
         {
@@ -92,7 +65,8 @@ public class SelectionController : MonoBehaviour
             {
                 InteractableObjectName_UI.SetActive(false);
                 PlayerPointedAtObject = false;
-                InteractButton.interactable = false;
+                if (!grindingActvation.IsPlayerInRange())
+                    InteractButton.interactable = false;
                 if (CurrentInteractableObject != null)
                 {
                     CurrentInteractableObject = null;
@@ -103,7 +77,8 @@ public class SelectionController : MonoBehaviour
         {
             InteractableObjectName_UI.SetActive(false);
             PlayerPointedAtObject = false;
-            InteractButton.interactable = false;
+            if (!grindingActvation.IsPlayerInRange())
+                    InteractButton.interactable = false;
             if (CurrentInteractableObject != null)
             {
                 CurrentInteractableObject = null;
@@ -122,6 +97,10 @@ public class SelectionController : MonoBehaviour
             // Debug.Log("Interact button pressed");
         }
         return Result;
+    }
+    public bool IsInteractButtonHeld()
+    {
+        return InteractButton.GetComponent<ButtonPressController>().IsButtonHeld();
     }
     public InteractableObject GetCurrentPointedInteractableObject()
     {

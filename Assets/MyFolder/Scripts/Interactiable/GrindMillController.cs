@@ -10,7 +10,10 @@ public class GrindMillController : InteractableObject
     [SerializeField]
     private GameObject riceGrindProgressBar;
     [SerializeField]
-    private Button AlternateInteractButton;
+    private Button alternateInteractButton;
+    [SerializeField]
+    private Button leftThumbButton;
+    public bool isPlayerInHandleRange;
     void Awake()
     {
         ItemName = "Grind mill";
@@ -23,29 +26,30 @@ public class GrindMillController : InteractableObject
         {
             Debug.LogError("HandlebarInput_v2 component not found on handleGroup.");
         }
+        alternateInteractButton.gameObject.SetActive(false);
     }
-
     protected override void Update()
     {
-        if (SelectionController.instance.IsPlayerPointedAtObject() && SelectionController.instance.IsInteractButtonPressed())
+        if (SelectionController.instance.IsPlayerPointedAtObject() &&
+        SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill")
         {
-            if (this == SelectionController.instance.GetCurrentPointedInteractableObject())
+            InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
+            if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
             {
-                handlebarInputController.enabled = !handlebarInputController.enabled;
-                isSelected = !isSelected;
-                riceGrindProgressBar.SetActive(isSelected);
-                // Debug.Log("HandlebarInput_v2 component toggled: " + handlebarInputController.enabled);
+                alternateInteractButton.gameObject.SetActive(true);
             }
             else
             {
-                handlebarInputController.enabled = false;
-                isSelected = false;
-                riceGrindProgressBar.SetActive(false);
+                alternateInteractButton.gameObject.SetActive(false);
             }
         }
-        else if (SelectionController.instance.IsPlayerPointedAtObject() &&
+        else
+        {
+            alternateInteractButton.gameObject.SetActive(false);
+        }
+        if (SelectionController.instance.IsPlayerPointedAtObject() &&
         SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill" &&
-        AlternateInteractButton.gameObject.GetComponent<ButtonPressController>().isButtonPressed())
+        alternateInteractButton.gameObject.GetComponent<ButtonPressController>().isButtonPressed())
         {
             InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
             if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
@@ -61,6 +65,19 @@ public class GrindMillController : InteractableObject
                     gameObject.GetComponentInChildren<RiceLevelController>().ResetRiceLevel();
                 }
             }
+        }
+        if (SelectionController.instance.IsInteractButtonHeld() && 
+        leftThumbButton.GetComponent<ButtonPressController>().IsButtonHeld())
+        {
+            handlebarInputController.enabled = true;
+            isSelected = true;
+            riceGrindProgressBar.SetActive(true);
+        }
+        else
+        {
+            handlebarInputController.enabled = false;
+            isSelected = false;
+            riceGrindProgressBar.SetActive(false);
         }
     }
 }

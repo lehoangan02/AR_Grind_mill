@@ -3,11 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneUtility : MonoBehaviour
 {
-    public void goToScene(string Name)
+    public void GoToScene(string Name)
     {
         SceneManager.LoadScene(Name);
     }
-    public void quit()
+    public void Quit()
     {
         Application.Quit();
         Debug.Log("App is quitting");

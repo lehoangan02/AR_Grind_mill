@@ -31,4 +31,8 @@ public class ButtonPressController : MonoBehaviour, IPointerDownHandler, IPointe
     {
         return IsButtonPressed && PressFrame == Time.frameCount;
     }
+    public bool IsButtonHeld()
+    {
+        return IsButtonPressed;
+    }
 }
