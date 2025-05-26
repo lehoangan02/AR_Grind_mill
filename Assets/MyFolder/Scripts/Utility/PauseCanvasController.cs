@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
+// using UnityEngine.XR.ARFoundation;
 
 public class PauseCanvasController : MonoBehaviour
 {
-    [SerializeField] ARSession m_Session;
+    // [SerializeField] ARSession m_Session;
 
     void Start()
     {
@@ -20,7 +20,7 @@ public class PauseCanvasController : MonoBehaviour
         // enable pause menu UI
         this.gameObject.SetActive(true);
         // disable AR session
-        m_Session.enabled = false;
+        // m_Session.enabled = false;
     }
     public void ResumeGame()
     {
@@ -28,7 +28,7 @@ public class PauseCanvasController : MonoBehaviour
         // disable pause menu UI
         this.gameObject.SetActive(false);
         // reset AR session
-        m_Session.enabled = true;
+        // m_Session.enabled = true;
     }
     public void QuitGame()
     {

@@ -9,6 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Grind mill v1.0 Scene.unity
     guid: 819e02fe26d764503bc341a77c4cf0a4
   m_configObjects:
+    Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 94d3ebe4afcb84f08a357c3367337ab1, type: 2}
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 07de038afbf0e460abf677de89e58ecf, type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: f05907927f18345479a6db02ec09f6fd, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}

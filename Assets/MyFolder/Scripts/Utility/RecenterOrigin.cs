@@ -29,11 +29,12 @@ public class RecenterOrigin : MonoBehaviour
             m_Origin.MoveCameraToWorldLocation(HeadPosition);
             m_Origin.MatchOriginUpCameraForward(m_Target.up, m_Target.forward);
             m_Session.transform.position = m_Target.position;
-            
+
             m_Origin.transform.rotation = Quaternion.LookRotation(m_Target.forward, m_Target.up);
             m_Session.transform.rotation = Quaternion.identity;
 
         }
+        Debug.Log("Recentered Origin");
     }
 
     // Update is called once per frame

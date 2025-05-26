@@ -33,6 +33,14 @@ public class GrindMillController : InteractableObject
         if (SelectionController.instance.IsPlayerPointedAtObject() &&
         SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill")
         {
+            if (InventoryController.instance == null)
+            {
+                Debug.LogError("InventoryController.instance is null");
+            }
+            else if (InventoryController.instance.inventorySlots == null)
+            {
+                Debug.LogError("inventorySlots is null");
+            }
             InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
             if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
             {
