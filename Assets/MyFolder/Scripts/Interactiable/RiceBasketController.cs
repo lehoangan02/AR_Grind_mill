@@ -22,7 +22,34 @@ public class RiceBasketController : InteractableObject
     }
     protected override void Update()
     {
-        if (SelectionController.instance.IsPlayerPointedAtObject() && SelectionController.instance.IsInteractButtonPressed())
+        // if (SelectionController.instance.IsPlayerPointedAtObject() && SelectionController.instance.IsInteractButtonPressed())
+        // {
+        //     if (this == SelectionController.instance.GetCurrentPointedInteractableObject())
+        //     {
+        //         if (!InventoryController.instance.IsFull())
+        //         {
+        //             int inventoryIndex = InventoryController.instance.AddItem(InventoryController.instance.itemDataList[(int)ItemType.RiceBasket]);
+        //             // Debug.Log("RiceBasketController: Added item to inventory: " + ItemName);
+        //             Destroy(gameObject);
+        //             ItemData itemData = InventoryController.instance.GetItemData(inventoryIndex);
+        //             RiceBasketItemData riceBasketItemData = itemData as RiceBasketItemData;
+        //             if (riceBasketItemData != null)
+        //             {
+        //                 // Successfully cast, use riceBasketItemData
+        //             }
+        //             else
+        //             {
+        //                 Debug.LogError("Failed to cast ItemData to RiceBasketItemData.");
+        //             }
+        //             riceBasketItemData.SetFull(isFull);
+        //         }
+        //         else
+        //         {
+        //             Debug.Log("Inventory is full. Cannot add item.");
+        //         }
+        //     }
+        // }
+        if (SelectionController.instance.IsPlayerPointedAtObject() && VRController.instance.IsRightTriggerPressed())
         {
             if (this == SelectionController.instance.GetCurrentPointedInteractableObject())
             {
@@ -32,7 +59,7 @@ public class RiceBasketController : InteractableObject
                     // Debug.Log("RiceBasketController: Added item to inventory: " + ItemName);
                     Destroy(gameObject);
                     ItemData itemData = InventoryController.instance.GetItemData(inventoryIndex);
-                    RiceBasketItemData riceBasketItemData =  itemData as RiceBasketItemData;
+                    RiceBasketItemData riceBasketItemData = itemData as RiceBasketItemData;
                     if (riceBasketItemData != null)
                     {
                         // Successfully cast, use riceBasketItemData
@@ -41,6 +68,10 @@ public class RiceBasketController : InteractableObject
                     {
                         Debug.LogError("Failed to cast ItemData to RiceBasketItemData.");
                     }
+                    Sprite filledSprite = riceBasketItemData.GetSprite(isFull);
+                    InventorySlot currentSlot = InventoryController.instance.inventorySlots[inventoryIndex];
+                    InventoryItem itemInSlot = currentSlot.GetComponentInChildren<InventoryItem>();
+                    itemInSlot.SetSprite(filledSprite);
                     riceBasketItemData.SetFull(isFull);
                 }
                 else

@@ -7,7 +7,7 @@ public class GrindingActivation : MonoBehaviour
     private bool isPlayerInHandleRange;
     [SerializeField] private Collider TriggerCollider;
     [SerializeField] private Button interactButton;
-    [SerializeField] private Button leftThumbButton;
+    // [SerializeField] private Button leftThumbButton;
     void Start()
     {
         grindMill = transform.parent.gameObject;
@@ -33,12 +33,12 @@ public class GrindingActivation : MonoBehaviour
     {
         isPlayerInHandleRange = true;
         interactButton.interactable = true;
-        leftThumbButton.gameObject.SetActive(true);
+        // leftThumbButton.gameObject.SetActive(true);
     }
     void OnTriggerExit(Collider other)
     {
         isPlayerInHandleRange = false;
-        leftThumbButton.gameObject.SetActive(false);
+        // leftThumbButton.gameObject.SetActive(false);
     }
     public bool IsPlayerInRange()
     {

@@ -5,9 +5,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.InputSystem.XR;
+
 
 public class InventoryController : MonoBehaviour
 {
+    public InputActionReference leftBButtonAction;
     public static InventoryController instance { get; private set; }
     private void Awake()
     {
@@ -19,12 +22,41 @@ public class InventoryController : MonoBehaviour
         {
             instance = this;
         }
+        leftBButtonAction.action.Enable();
+        leftBButtonAction.action.performed += OnLeftBButtonPressed;
+        InputSystem.onDeviceChange += OnDeviceChange;
     }
+
+    private void OnLeftBButtonPressed(InputAction.CallbackContext context)
+    {
+        RemoveItem();
+    }
+
+    private void OnDestroy()
+    {
+        leftBButtonAction.action.Disable();
+        leftBButtonAction.action.performed -= OnLeftBButtonPressed;
+        InputSystem.onDeviceChange -= OnDeviceChange;
+    }
+
+    private void OnDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        switch (change)
+        {
+            case InputDeviceChange.Disconnected:
+                leftBButtonAction.action.Disable();
+                break;
+            case InputDeviceChange.Reconnected:
+                leftBButtonAction.action.Enable();
+                break;
+        }
+    }
+
     public InventorySlot[] inventorySlots;
     [SerializeField]
     private GameObject inventoryItemPrefab;
     int selectedSlotIndex = -1;
-    
+
     public void SelectSlot(int index)
     {
         if (selectedSlotIndex != -1)
@@ -45,14 +77,15 @@ public class InventoryController : MonoBehaviour
     void Update()
     {
         HandleSlotSelection();
-        ToggleDropButton();
+        // ToggleDropButton();
+        VRControllerDropItem();
     }
     void HandleSlotSelection()
     {
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             SelectSlot(0);
-        }   
+        }
         else if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             SelectSlot(1);
@@ -117,6 +150,11 @@ public class InventoryController : MonoBehaviour
     {
         GameObject newItem = Instantiate(inventoryItemPrefab, slot.transform);
         InventoryItem inventoryItem = newItem.GetComponent<InventoryItem>();
+        if (inventoryItem == null)
+        {
+            Debug.LogError("InventoryItem component not found on the prefab.");
+            return;
+        }
         inventoryItem.InitialiseItem(itemData);
     }
     public ItemData[] itemDataList;
@@ -146,6 +184,11 @@ public class InventoryController : MonoBehaviour
         }
         else
         {
+            if (!inventorySlots[selectedSlotIndex].IsFull()) 
+            {
+                Debug.Log("Slot is empty, cannot remove item.");
+                return;
+            }
             Destroy(inventoryItem.gameObject);
             Debug.Log("Removed item from slot " + slotIndex);
             if (spawnInEnviroment)
@@ -187,5 +230,16 @@ public class InventoryController : MonoBehaviour
             // DropButton.GetComponentInChildren<TextMeshProUGUI>().text = "";
             DropButton.gameObject.SetActive(false);
         }
+    }
+    public void VRControllerDropItem()
+    {
+        // check if the A button is pressed on the right controller
+        if (selectedSlotIndex == -1)
+        {
+            Debug.Log("No slot selected");
+            return;
+        }
+        bool isRightAPressed = VRController.instance.IsRightButtonAPressed();
+        // RemoveItem();
     }
 }

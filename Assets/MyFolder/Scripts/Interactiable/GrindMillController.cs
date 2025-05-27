@@ -1,19 +1,23 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.InputSystem;
 
 public class GrindMillController : InteractableObject
 {
     
     [SerializeField] Transform handleGroup;
-    private HandlebarInput_v2 handlebarInputController;
+    private HandlebarInput_v3 handlebarInputController;
     private bool isSelected = false;
     [SerializeField]
     private GameObject riceGrindProgressBar;
     [SerializeField]
     private Button alternateInteractButton;
     [SerializeField]
-    private Button leftThumbButton;
+    // private Button leftThumbButton;
     public bool isPlayerInHandleRange;
+     [SerializeField]
+    private TextMeshProUGUI textMeshProUGUI;
     void Awake()
     {
         ItemName = "Grind mill";
@@ -21,7 +25,7 @@ public class GrindMillController : InteractableObject
     void Start()
     {
         isSelected = false;
-        handlebarInputController = handleGroup.GetComponent<HandlebarInput_v2>();
+        handlebarInputController = handleGroup.GetComponent<HandlebarInput_v3>();
         if (handlebarInputController == null)
         {
             Debug.LogError("HandlebarInput_v2 component not found on handleGroup.");
@@ -33,6 +37,14 @@ public class GrindMillController : InteractableObject
         if (SelectionController.instance.IsPlayerPointedAtObject() &&
         SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill")
         {
+            if (InventoryController.instance == null)
+            {
+                Debug.LogError("InventoryController.instance is null");
+            }
+            else if (InventoryController.instance.inventorySlots == null)
+            {
+                Debug.LogError("inventorySlots is null");
+            }
             InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
             if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
             {
@@ -47,9 +59,28 @@ public class GrindMillController : InteractableObject
         {
             alternateInteractButton.gameObject.SetActive(false);
         }
+        // if (SelectionController.instance.IsPlayerPointedAtObject() &&
+        // SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill" &&
+        // alternateInteractButton.gameObject.GetComponent<ButtonPressController>().isButtonPressed())
+        // {
+        //     InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
+        //     if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
+        //     {
+        //         ItemData itemData = selectedSlot.GetComponentInChildren<InventoryItem>().itemData;
+        //         RiceBasketItemData riceBasketItemData = itemData as RiceBasketItemData;
+        //         if (riceBasketItemData.IsFull())
+        //         {
+        //             riceBasketItemData.SetFull(false);
+        //             Sprite emptySprite = riceBasketItemData.GetSprite(false);
+        //             selectedSlot.GetComponentInChildren<InventoryItem>().SetSprite(emptySprite);
+        //             // Debug.Log("Set rice basket to empty!");
+        //             gameObject.GetComponentInChildren<RiceLevelController>().ResetRiceLevel();
+        //         }
+        //     }
+        // }
         if (SelectionController.instance.IsPlayerPointedAtObject() &&
         SelectionController.instance.GetCurrentPointedInteractableObject().ItemName == "Grind mill" &&
-        alternateInteractButton.gameObject.GetComponent<ButtonPressController>().isButtonPressed())
+        VRController.instance.IsRightGripPressed())
         {
             InventorySlot selectedSlot = InventoryController.instance.inventorySlots[InventoryController.instance.GetSelectedSlotIndex()];
             if (selectedSlot.IsFull() && selectedSlot.GetComponentInChildren<InventoryItem>().itemData.type == ItemType.RiceBasket)
@@ -66,18 +97,50 @@ public class GrindMillController : InteractableObject
                 }
             }
         }
-        if (SelectionController.instance.IsInteractButtonHeld() && 
-        leftThumbButton.GetComponent<ButtonPressController>().IsButtonHeld())
+        // if (SelectionController.instance.IsInteractButtonHeld() && 
+        // leftThumbButton.GetComponent<ButtonPressController>().IsButtonHeld())
+        // {
+        //     handlebarInputController.enabled = true;
+        //     isSelected = true;
+        //     riceGrindProgressBar.SetActive(true);
+        // }
+        // else
+        // {
+        //     handlebarInputController.enabled = false;
+        //     isSelected = false;
+        //     riceGrindProgressBar.SetActive(false);
+        // }
+        // if (VRController.instance.IsRightTriggerPressed() &&
+        // VRController.instance.IsLeftTriggerPressed())
+        // // press A
+        // // if (Keyboard.current.zKey.isPressed)
+        // {
+        //     handlebarInputController.enabled = true;
+        //     isSelected = true;
+        //     riceGrindProgressBar.SetActive(true);
+        //     textMeshProUGUI.text = "Ready to grind rice!";
+        // }
+        // else
+        // {
+        //     handlebarInputController.enabled = false;
+        //     isSelected = false;
+        //     riceGrindProgressBar.SetActive(false);
+        //     textMeshProUGUI.text = "Not ready to grind rice!";
+        // }
+        
+        if (Keyboard.current.zKey.isPressed)
         {
             handlebarInputController.enabled = true;
             isSelected = true;
             riceGrindProgressBar.SetActive(true);
+            textMeshProUGUI.text = "Ready to grind rice!";
         }
         else
         {
             handlebarInputController.enabled = false;
             isSelected = false;
             riceGrindProgressBar.SetActive(false);
+            textMeshProUGUI.text = "Not ready to grind rice!";
         }
     }
 }

@@ -4,8 +4,7 @@ using UnityEngine;
 public class RiceBasketItemData : ItemData
 {
     private bool isFull = false;
-    [SerializeField]
-    private Sprite filledSprite;
+    public Sprite filledSprite;
     public bool IsFull()
     {
         return isFull;

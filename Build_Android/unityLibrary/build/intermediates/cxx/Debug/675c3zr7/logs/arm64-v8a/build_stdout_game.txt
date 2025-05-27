@@ -1,2 +1,0 @@
-ninja: Entering directory `/Users/lehoangan/Pictures/Documents NOSYNC/Unity/AR_5/Build_Android/unityLibrary/.cxx/Debug/675c3zr7/arm64-v8a'
-ninja: no work to do.

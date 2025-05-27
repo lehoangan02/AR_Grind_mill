@@ -11,7 +11,7 @@ public class WatermelonSliceController : InteractableObject
     // Update is called once per frame
     protected override void Update()
     {
-        if (SelectionController.instance.IsPlayerPointedAtObject() && SelectionController.instance.IsInteractButtonPressed())
+        if (SelectionController.instance.IsPlayerPointedAtObject() && VRController.instance.IsRightTriggerPressed())
         {
             if (this == SelectionController.instance.GetCurrentPointedInteractableObject())
             {

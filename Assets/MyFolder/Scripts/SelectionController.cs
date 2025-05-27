@@ -46,9 +46,11 @@ public class SelectionController : MonoBehaviour
     }
     void ViewInteractableObject()
     {
-        Vector3 ScreenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
-        Ray ScreenRay = Camera.main.ScreenPointToRay(ScreenCenter);
-        bool hitFound = Physics.Raycast(ScreenRay, out RaycastHit hit);
+        // Raycast to find the object in front of the camera but shift the midpoint of the raycast downwards
+        // Vector3 ScreenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f)); old code
+        Transform rightControllerTransform = VRController.instance.GetRightControllerTransform();
+        Ray ray = new Ray(rightControllerTransform.position, rightControllerTransform.forward);
+        bool hitFound = Physics.Raycast(ray, out RaycastHit hit, 10f);
         if (hitFound)
         {
             Transform SelectedTransform = hit.transform;
@@ -57,6 +59,18 @@ public class SelectionController : MonoBehaviour
             {
                 InteractableObjectName_UI.SetActive(true);
                 InteractableObjectNameText.text = SelectedTransform.GetComponent<InteractableObject>().getItemName();
+                // Place the UI slightly in front of the hit point, facing the player
+                Vector3 offset = hit.normal * 0.1f; // Adjust 0.1f to control distance from surface
+                Vector3 uiPosition = hit.point + offset;
+
+                // Face the UI towards the player (or camera)
+                Vector3 directionToPlayer = Camera.main.transform.position - uiPosition;
+                Quaternion uiRotation = Quaternion.LookRotation(-directionToPlayer);
+
+                // Apply the position and rotation
+                InteractableObjectName_UI.transform.position = uiPosition;
+                InteractableObjectName_UI.transform.rotation = uiRotation;
+
                 PlayerPointedAtObject = true;
                 InteractButton.interactable = true;
                 CurrentInteractableObject = SelectedTransform.GetComponent<InteractableObject>();
@@ -78,7 +92,7 @@ public class SelectionController : MonoBehaviour
             InteractableObjectName_UI.SetActive(false);
             PlayerPointedAtObject = false;
             if (!grindingActvation.IsPlayerInRange())
-                    InteractButton.interactable = false;
+                InteractButton.interactable = false;
             if (CurrentInteractableObject != null)
             {
                 CurrentInteractableObject = null;

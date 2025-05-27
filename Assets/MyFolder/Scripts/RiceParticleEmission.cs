@@ -4,13 +4,17 @@ public class RiceParticleEmission : MonoBehaviour
 {
     [SerializeField]
     private ParticleSystem riceParticleSystem;
-    private ParticleSystem.EmissionModule riceEmissionModule;
     private Rigidbody rb;
     public const float maxEmissionRate = 30f; // Maximum emission rate for the rice particles
     public bool isEnabled = false;
     void Start()
     {
-        riceEmissionModule = riceParticleSystem.emission;
+        if (riceParticleSystem == null)
+        {
+            Debug.LogError("riceParticleSystem not assigned!");
+            enabled = false;
+            return;
+        }
         rb = GetComponent<Rigidbody>();
         isEnabled = false;
     }
@@ -26,6 +30,7 @@ public class RiceParticleEmission : MonoBehaviour
         angularVelocityY = Mathf.Abs(angularVelocityY);
         angularVelocityY = Mathf.Min(angularVelocityY, maxAngularVelocity);
         float emissionRate = maxEmissionRate * (angularVelocityY / maxAngularVelocity);
+        var riceEmissionModule = riceParticleSystem.emission;
         riceEmissionModule.rateOverTime = emissionRate;
     }
     public void SetEmissionRate(float rate)
@@ -34,11 +39,13 @@ public class RiceParticleEmission : MonoBehaviour
         {
             rate = 0;
         }
+        var riceEmissionModule = riceParticleSystem.emission;
         riceEmissionModule.rateOverTime = rate;
     }
     public void DisableEmission()
     {
         isEnabled = false;
+        var riceEmissionModule = riceParticleSystem.emission;
         riceEmissionModule.rateOverTime = 0; // Stop the emission
         Debug.Log("Emission disabled");
     }

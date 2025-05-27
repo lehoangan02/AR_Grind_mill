@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "AR_5.sln"
+    "dotnet.defaultSolution": "AR_5 copy.sln"
 }

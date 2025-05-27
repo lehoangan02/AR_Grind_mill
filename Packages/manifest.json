@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.benoitfreslon.vibration": "https://github.com/BenoitFreslon/Vibration.git",
-    "com.google.ar.core.arfoundation.extensions": "https://github.com/google-ar/arcore-unity-extensions.git#arf6",
     "com.ulaph.mobile-haptics-for-unity": "https://github.com/ulaph/MobileHapticsForUnity.git?path=Assets/MobileHapticsForUnity",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.5",
@@ -16,8 +15,10 @@
     "com.unity.timeline": "1.8.7",
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.5",
-    "com.unity.xr.arcore": "6.0.5",
-    "com.unity.xr.arkit": "6.0.5",
+    "com.unity.xr.hands": "1.5.1",
+    "com.unity.xr.interaction.toolkit": "3.0.8",
+    "com.unity.xr.oculus": "4.4.0",
+    "com.unity.xr.openxr": "1.13.2",
     "xyz.candycoded.hapticfeedback": "https://github.com/CandyCoded/HapticFeedback.git#v1.0.3",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.ai": "1.0.0",

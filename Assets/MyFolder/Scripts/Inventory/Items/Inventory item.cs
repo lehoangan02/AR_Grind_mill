@@ -19,7 +19,7 @@ public class InventoryItem : MonoBehaviour
             return;
         }
     }
-    public void InitialiseItem(ItemData newItem)
+    public virtual void InitialiseItem(ItemData newItem)
     {
         itemData = newItem;
         image.sprite = newItem.image;
