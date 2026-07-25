@@ -55,7 +55,7 @@
                     "name": "Secondary Button",
                     "type": "Button",
                     "id": "970b4191-957d-4a7f-ba64-e0e701950d99",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -64,7 +64,7 @@
                     "name": "Menu",
                     "type": "Button",
                     "id": "ccb35b49-777b-460f-bca8-3168c41cc779",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -82,7 +82,7 @@
                     "name": "Secondary 2D Axis Click",
                     "type": "Button",
                     "id": "b3a541b3-564a-4213-8a9a-a4417b3de5cf",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -345,6 +345,17 @@
                 },
                 {
                     "name": "",
+                    "id": "e2f47eee-3a03-4860-93d0-b8061f0f5919",
+                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Secondary Button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "45511393-aa9b-4031-8e31-4eec53ab2d3f",
                     "path": "<Keyboard>/m",
                     "interactions": "",
@@ -434,7 +445,7 @@
                 {
                     "name": "",
                     "id": "6841c8cc-4840-4825-84b8-4bfbb846b358",
-                    "path": "<XRController>{RightHand}/primaryButton",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
