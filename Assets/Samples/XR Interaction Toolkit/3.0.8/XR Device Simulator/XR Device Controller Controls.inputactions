@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "XR Device Controller Controls",
     "maps": [
         {
@@ -433,7 +434,7 @@
                 {
                     "name": "",
                     "id": "6841c8cc-4840-4825-84b8-4bfbb846b358",
-                    "path": "<XRController>{RightHand}/{PrimaryAction}",
+                    "path": "<XRController>{RightHand}/primaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
