@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class RiceContainerController : InteractableObject
 {
-    [SerializeField]
     void Start()
     {
     }
