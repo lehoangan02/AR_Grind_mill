@@ -2,10 +2,8 @@
   <Project Path="Unity.Timeline.csproj" />
   <Project Path="Vibration.csproj" />
   <Project Path="Unity.RenderPipelines.GPUDriven.Runtime.csproj" />
-  <Project Path="Unity.InputSystem.csproj" />
   <Project Path="Unity.PlasticSCM.Editor.csproj" />
   <Project Path="Unity.ShaderGraph.Editor.csproj" />
-  <Project Path="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj" />
   <Project Path="Unity.RenderPipelines.Core.Runtime.csproj" />
   <Project Path="Unity.Mathematics.csproj" />
   <Project Path="Unity.Cinemachine.Editor.csproj" />
@@ -15,11 +13,11 @@
   <Project Path="Unity.RenderPipelines.Core.Editor.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.2D.Runtime.csproj" />
   <Project Path="Unity.Collections.csproj" />
-  <Project Path="Unity.RenderPipelines.Universal.Editor.csproj" />
   <Project Path="Unity.VisualScripting.Core.Editor.csproj" />
+  <Project Path="Unity.RenderPipelines.Universal.Editor.csproj" />
   <Project Path="Unity.PerformanceTesting.Editor.csproj" />
-  <Project Path="UnityEngine.TestRunner.csproj" />
   <Project Path="Unity.Splines.csproj" />
+  <Project Path="UnityEngine.TestRunner.csproj" />
   <Project Path="Unity.XR.OpenXR.csproj" />
   <Project Path="Unity.Burst.csproj" />
   <Project Path="Unity.XR.Oculus.csproj" />
@@ -27,8 +25,9 @@
   <Project Path="Unity.XR.Interaction.Toolkit.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.XR.Oculus.Editor.csproj" />
-  <Project Path="PPv2URPConverters.csproj" />
+  <Project Path="Unity.InputSystem.csproj" />
   <Project Path="Unity.XR.Interaction.Toolkit.Editor.csproj" />
+  <Project Path="PPv2URPConverters.csproj" />
   <Project Path="Unity.XR.CoreUtils.csproj" />
   <Project Path="Unity.Searcher.Editor.csproj" />
   <Project Path="Unity.XR.Hands.csproj" />
@@ -43,8 +42,8 @@
   <Project Path="Unity.VisualScripting.Flow.csproj" />
   <Project Path="Unity.Splines.Editor.csproj" />
   <Project Path="Unity.PerformanceTesting.csproj" />
-  <Project Path="Unity.TextMeshPro.csproj" />
   <Project Path="Unity.XR.Hands.Samples.VisualizerSample.csproj" />
+  <Project Path="Unity.TextMeshPro.csproj" />
   <Project Path="Unity.TextMeshPro.Editor.csproj" />
   <Project Path="Unity.Burst.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
@@ -55,6 +54,7 @@
   <Project Path="UnityEditor.UI.csproj" />
   <Project Path="Unity.RenderPipelines.Universal.2D.Editor.Overrides.csproj" />
   <Project Path="Unity.XR.Hands.Analytics.Editor.csproj" />
+  <Project Path="Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj" />
   <Project Path="Unity.2D.Sprite.Editor.csproj" />
   <Project Path="Unity.XR.CoreUtils.Editor.csproj" />
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
