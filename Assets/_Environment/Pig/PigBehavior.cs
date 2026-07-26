@@ -20,24 +20,33 @@ public class PigBehavior : MonoBehaviour
 
     [Header("Cài đặt Di chuyển")]
     public float moveSpeed = 2f;
-    private float currentTurnSpeed;
+    [Tooltip("Tốc độ xoay mặt về hướng điểm đến")]
+    public float turnSpeed = 5f;
+    [Tooltip("Nếu model đi lùi hoặc đi ngang, hãy đổi số này (VD: 180, 90, -90) để chỉnh lại mặt")]
+    public float modelYRotationOffset = 0f; 
+
+    private Vector3 targetWalkPosition;
+
+    [Header("Hiệu ứng Di chuyển (Wobble)")]
+    public float wobbleSpeed = 15f; 
+    public float wobbleAngle = 7f;
 
     [Header("Thời gian chuyển trạng thái")]
     public float minStateTime = 3f;
     public float maxStateTime = 7f;
     private float stateTimer = 0f;
 
-    // Biến lưu trữ góc xoay ban đầu
+    [Header("Cài đặt Giới hạn Chuồng (Pigsty Bounds)")]
+    public Transform pigstyCenter; 
+    public Vector2 pigstySize = new Vector2(10f, 10f); 
+
     private float defaultZRotation;
     private float targetZRotation;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        
-        // Ghi nhớ góc xoay Z ban đầu của model trên Scene
         defaultZRotation = transform.eulerAngles.z;
-        
         PickNewState();
     }
 
@@ -56,11 +65,7 @@ public class PigBehavior : MonoBehaviour
         if (oinkTimer <= 0f)
         {
             PlayRandomSound();
-
-            if (currentState == PigState.ContinuousOinking)
-                oinkTimer = continuousOinkInterval;
-            else
-                oinkTimer = normalOinkInterval;
+            oinkTimer = (currentState == PigState.ContinuousOinking) ? continuousOinkInterval : normalOinkInterval;
         }
     }
 
@@ -81,11 +86,37 @@ public class PigBehavior : MonoBehaviour
 
         if (currentState == PigState.Moving)
         {
-            // Xoay (Rotation) dựa trên góc Y hiện tại
-            transform.Rotate(Vector3.up, currentTurnSpeed * Time.deltaTime);
+            MoveTowardsTarget();
+        }
+    }
+
+    private void MoveTowardsTarget()
+    {
+        // Tính toán hướng đi (từ vị trí hiện tại đến điểm đích)
+        Vector3 moveDir = (targetWalkPosition - transform.position).normalized;
+        // Loại bỏ trục Y để lợn không bị chúi đầu xuống đất hoặc ngóc lên trời
+        moveDir.y = 0; 
+
+        if (moveDir != Vector3.zero)
+        {
+            // 1. Xoay từ từ mặt con lợn về hướng điểm đến (kết hợp với bù trừ góc model)
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir) * Quaternion.Euler(0, modelYRotationOffset, 0);
             
-            // Tịnh tiến (Position) dựa trên vị trí và hướng mặt hiện tại
-            transform.position += transform.forward * moveSpeed * Time.deltaTime;
+            // Lấy góc Y hiện tại và Lerp mượt mà
+            float currentY = transform.eulerAngles.y;
+            float newY = Mathf.LerpAngle(currentY, targetRotation.eulerAngles.y, Time.deltaTime * turnSpeed);
+            
+            transform.eulerAngles = new Vector3(transform.eulerAngles.x, newY, transform.eulerAngles.z);
+
+            // 2. Di chuyển tịnh tiến theo vector hướng đi (thay vì dựa vào transform.forward dễ bị ngược)
+            transform.position += moveDir * moveSpeed * Time.deltaTime;
+
+            // Kiểm tra xem đã đến gần đích chưa, nếu đến rồi thì đứng lại hoặc chọn trạng thái khác sớm
+            if (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), 
+                                 new Vector3(targetWalkPosition.x, 0, targetWalkPosition.z)) < 0.2f)
+            {
+                PickNewState(); // Đổi trạng thái khi đã đến nơi
+            }
         }
     }
 
@@ -96,29 +127,70 @@ public class PigBehavior : MonoBehaviour
 
         if (currentState == PigState.Moving)
         {
-            currentTurnSpeed = Random.Range(-60f, 60f);
+            FindNewDestination();
         }
         else if (currentState == PigState.Oinking)
         {
             oinkTimer = 0f; 
         }
 
-        // Cập nhật target rotation dựa trên góc ban đầu, không set cứng
         if (currentState == PigState.LyingDown)
-            targetZRotation = defaultZRotation + 90f; // Nằm xuống: cộng thêm 90 độ
+            targetZRotation = defaultZRotation + 70f; 
         else
-            targetZRotation = defaultZRotation;       // Đứng dậy: trả về góc ban đầu
+            targetZRotation = defaultZRotation;       
+    }
+
+    private void FindNewDestination()
+    {
+        // Tìm một điểm ngẫu nhiên thực tế nằm bên trong ranh giới chuồng
+        if (pigstyCenter != null)
+        {
+            float randomX = Random.Range(pigstyCenter.position.x - (pigstySize.x / 2f), pigstyCenter.position.x + (pigstySize.x / 2f));
+            float randomZ = Random.Range(pigstyCenter.position.z - (pigstySize.y / 2f), pigstyCenter.position.z + (pigstySize.y / 2f));
+            
+            targetWalkPosition = new Vector3(randomX, transform.position.y, randomZ);
+        }
+        else
+        {
+            // Dự phòng nếu quên gắn pigstyCenter
+            Vector3 randomDirection = Random.insideUnitSphere * 3f;
+            randomDirection.y = 0;
+            targetWalkPosition = transform.position + randomDirection;
+        }
     }
 
     private void HandlePosture()
     {
-        // Lấy Rotation hiện tại của model
         Vector3 currentEuler = transform.eulerAngles;
+        float finalTargetZ = targetZRotation;
+
+        if (currentState == PigState.Moving)
+        {
+            float wobble = Mathf.Sin(Time.time * wobbleSpeed) * wobbleAngle;
+            finalTargetZ += wobble;
+        }
+
+        float lerpSpeed = (currentState == PigState.Moving) ? 15f : 3f;
+        float newZ = Mathf.LerpAngle(currentEuler.z, finalTargetZ, Time.deltaTime * lerpSpeed);
         
-        // Chỉ Lerp từ từ trục Z (hoặc trục X tùy theo model của bạn)
-        float newZ = Mathf.LerpAngle(currentEuler.z, targetZRotation, Time.deltaTime * 3f);
-        
-        // Gắn lại vị trí xoay mới mà không làm ảnh hưởng trục X và Y hiện hành
         transform.eulerAngles = new Vector3(currentEuler.x, currentEuler.y, newZ);
+    }
+    
+    private void OnDrawGizmosSelected()
+    {
+        if (pigstyCenter != null)
+        {
+            Gizmos.color = Color.green;
+            Vector3 size = new Vector3(pigstySize.x, 2f, pigstySize.y);
+            Gizmos.DrawWireCube(pigstyCenter.position, size);
+        }
+        
+        // Vẽ thêm 1 đường thẳng chỉ hướng lợn đang muốn đi tới (màu đỏ)
+        if (Application.isPlaying && currentState == PigState.Moving)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, targetWalkPosition);
+            Gizmos.DrawWireSphere(targetWalkPosition, 0.3f);
+        }
     }
 }
