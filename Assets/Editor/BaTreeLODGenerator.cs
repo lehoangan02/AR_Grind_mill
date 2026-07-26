@@ -19,6 +19,8 @@ public class BaTreeLODGenerator
 
             // Create a brand new clean root
             GameObject newRoot = new GameObject("BaTree" + i);
+            newRoot.transform.position = Vector3.zero;
+            newRoot.transform.rotation = Quaternion.identity;
             
             // Copy custom components from the OLD ROOT ONLY (e.g. BananaTreeWind, Colliders)
             foreach (Component comp in oldInstance.GetComponents<Component>())
@@ -34,23 +36,28 @@ public class BaTreeLODGenerator
             GameObject lod0 = Object.Instantiate(oldInstance);
             lod0.name = "LOD0";
             lod0.transform.SetParent(newRoot.transform, false);
-            lod0.transform.localPosition = Vector3.zero;
             CleanRoot(lod0);
+            
+            // Calculate the actual visual offset of the FBX geometry
+            Vector3 visualOffset = GetVisualCenterXZ(lod0);
+
+            // Apply the offset fix to LOD0
+            lod0.transform.localPosition = -visualOffset;
 
             // LOD1
             GameObject lod1 = Object.Instantiate(oldInstance);
             lod1.name = "LOD1";
             lod1.transform.SetParent(newRoot.transform, false);
-            lod1.transform.localPosition = Vector3.zero;
             CleanRoot(lod1);
+            lod1.transform.localPosition = -visualOffset;
             SimplifyAllMeshes(lod1, 0.5f, i, "LOD1");
 
             // LOD2
             GameObject lod2 = Object.Instantiate(oldInstance);
             lod2.name = "LOD2";
             lod2.transform.SetParent(newRoot.transform, false);
-            lod2.transform.localPosition = Vector3.zero;
             CleanRoot(lod2);
+            lod2.transform.localPosition = -visualOffset;
             SimplifyAllMeshes(lod2, 0.2f, i, "LOD2");
 
             // Setup LODGroup
@@ -70,7 +77,34 @@ public class BaTreeLODGenerator
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("Successfully generated full-hierarchy LODs for BaTree1, 2, and 3!");
+        Debug.Log("Successfully generated centered LODs for BaTree1, 2, and 3!");
+    }
+
+    private static Vector3 GetVisualCenterXZ(GameObject obj)
+    {
+        Bounds totalBounds = new Bounds();
+        bool hasBounds = false;
+        
+        foreach (Renderer r in obj.GetComponentsInChildren<Renderer>())
+        {
+            if (!hasBounds)
+            {
+                totalBounds = r.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                totalBounds.Encapsulate(r.bounds);
+            }
+        }
+        
+        if (hasBounds)
+        {
+            // We only want to correct the X and Z shift. 
+            // The Y (height) should remain grounded at 0, so we return 0 for Y.
+            return new Vector3(totalBounds.center.x, 0, totalBounds.center.z);
+        }
+        return Vector3.zero;
     }
 
     private static void CleanRoot(GameObject obj)
