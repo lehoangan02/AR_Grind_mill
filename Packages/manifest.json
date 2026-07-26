@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.whinarn.unitymeshsimplifier": "https://github.com/Whinarn/UnityMeshSimplifier.git",
     "com.benoitfreslon.vibration": "https://github.com/BenoitFreslon/Vibration.git",
     "com.ulaph.mobile-haptics-for-unity": "https://github.com/ulaph/MobileHapticsForUnity.git?path=Assets/MobileHapticsForUnity",
     "com.unity.2d.sprite": "1.0.0",
