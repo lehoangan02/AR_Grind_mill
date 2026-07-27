@@ -92,4 +92,4 @@ MonoBehaviour:
   waterHeight: 0.2
   waterRadius: 0.3
   alwaysKeepHorizontal: 1
-  waterMaterial: {fileID: 2100000, guid: 141d9d6ca43b6c843965491604c6deff, type: 2}
+  waterMaterial: {fileID: 2100000, guid: b87641fb5e7f44794ad85816811cff52, type: 2}

@@ -111,6 +111,7 @@ MonoBehaviour:
   stopDistance: 1
   audioSource: {fileID: 5818008727829702730}
   chirpSound: {fileID: 8300000, guid: f70bf39c448848f40af990f16732b3b8, type: 3}
+  animator: {fileID: 3204470371202188397}
   walkSpeed: 1.2
 --- !u!82 &5818008727829702730
 AudioSource:

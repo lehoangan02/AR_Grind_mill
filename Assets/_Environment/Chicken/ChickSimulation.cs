@@ -17,9 +17,11 @@ public class ChickSimulation : MonoBehaviour
     [Tooltip("Khoảng cách gà con dừng lại khi đã đuổi kịp mẹ")]
     public float stopDistance = 1f;
 
-    [Header("Audio")]
+    [Header("Audio & Animation")]
     public AudioSource audioSource;
-    public AudioClip chirpSound; // Tiếng chiếp chiếp
+    public AudioClip chirpSound;
+    [Tooltip("Kéo Animator của gà con vào đây")]
+    public Animator animator; // Thêm biến Animator
 
     [Header("Movement Settings")]
     public float walkSpeed = 1.2f; 
@@ -29,6 +31,7 @@ public class ChickSimulation : MonoBehaviour
     void Start()
     {
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        if (animator == null) animator = GetComponent<Animator>(); // Tự động lấy Animator nếu quên kéo vào
         
         ChangeState(ChickState.Idle);
     }
@@ -38,21 +41,19 @@ public class ChickSimulation : MonoBehaviour
         CheckMotherDistance();
         HandleStateTimer();
         UpdateMovement();
+        UpdateAnimator(); // Gọi hàm cập nhật Animation
     }
 
-    // Liên tục kiểm tra xem có bị tụt lại phía sau không
     void CheckMotherDistance()
     {
         if (motherHen == null) return;
 
         float dist = Vector3.Distance(transform.position, motherHen.position);
         
-        // Bị lạc -> Chạy đuổi theo mẹ
         if (dist > followDistance && currentState != ChickState.FollowingMother)
         {
             ChangeState(ChickState.FollowingMother);
         }
-        // Đã đuổi kịp mẹ -> Chuyển sang đứng chơi hoặc đi dạo
         else if (dist <= stopDistance && currentState == ChickState.FollowingMother)
         {
             ChangeState(ChickState.Idle);
@@ -61,7 +62,6 @@ public class ChickSimulation : MonoBehaviour
 
     void HandleStateTimer()
     {
-        // Không tự đổi trạng thái lăng nhăng nếu đang mải chạy theo mẹ
         if (currentState == ChickState.FollowingMother) return;
 
         stateTimer -= Time.deltaTime;
@@ -70,7 +70,6 @@ public class ChickSimulation : MonoBehaviour
 
     void ChooseRandomState()
     {
-        // 50% đi dạo, 50% đứng yên
         float rand = Random.value;
         if (rand < 0.5f) ChangeState(ChickState.Walking);
         else ChangeState(ChickState.Idle);
@@ -79,16 +78,13 @@ public class ChickSimulation : MonoBehaviour
     void ChangeState(ChickState newState)
     {
         currentState = newState;
-        // Gà con đổi trạng thái nhanh hơn lăng xăng hơn gà lớn
         stateTimer = Random.Range(1.5f, 3f); 
 
-        // Thỉnh thoảng kêu chiếp chiếp khi đang đứng yên
         if (newState == ChickState.Idle && chirpSound != null && Random.value > 0.3f)
         {
-            audioSource.pitch = Random.Range(1.0f, 1.5f); // Chỉnh pitch để tiếng kêu đa dạng hơn
+            audioSource.pitch = Random.Range(1.0f, 1.5f); 
             audioSource.PlayOneShot(chirpSound);
         }
-        // Nếu chuyển sang đi dạo, xoay mặt ngẫu nhiên
         else if (newState == ChickState.Walking)
         {
             transform.Rotate(0, Random.Range(-120f, 120f), 0);
@@ -99,7 +95,7 @@ public class ChickSimulation : MonoBehaviour
     {
         if (currentState == ChickState.FollowingMother)
         {
-            // 1. Xoay mặt về phía mẹ (lọc bỏ trục Y để gà không bị ngóc đầu lên trời)
+            // 1. Xoay mặt về phía mẹ (bỏ trục Y)
             Vector3 dirToMother = (motherHen.position - transform.position).normalized;
             dirToMother.y = 0;
             
@@ -109,13 +105,24 @@ public class ChickSimulation : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 8f);
             }
             
-            // 2. Chạy nhanh theo mẹ (tốc độ nhân 1.5)
-            transform.Translate(Vector3.forward * (walkSpeed * 1.5f) * Time.deltaTime);
+            // 2. Chạy nhanh theo mẹ: Dùng transform.forward để luôn di chuyển theo hướng mũi tên Z của mặt
+            transform.position += transform.forward * (walkSpeed * 1.5f) * Time.deltaTime;
         }
         else if (currentState == ChickState.Walking)
         {
-            // Đi dạo bình thường
-            transform.Translate(Vector3.forward * walkSpeed * Time.deltaTime);
+            // Đi dạo: Dùng transform.forward để không bị đi ngang
+            transform.position += transform.forward * walkSpeed * Time.deltaTime;
+        }
+    }
+
+    // Hàm mới xử lý Animator
+    void UpdateAnimator()
+    {
+        if (animator != null)
+        {
+            // Nếu không phải trạng thái Idle, tức là đang di chuyển (Walking hoặc FollowingMother) -> Set True
+            bool isMoving = (currentState != ChickState.Idle);
+            animator.SetBool("IsWalking", isMoving);
         }
     }
 }

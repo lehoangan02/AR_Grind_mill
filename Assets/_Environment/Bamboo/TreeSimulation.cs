@@ -8,7 +8,7 @@ public class TreeSimulation : MonoBehaviour
     [Tooltip("Lượng scale tăng lên sau mỗi khoảng thời gian tick (Vd: 0.01)")]
     public float growSpeed = 0.01f; 
     [Tooltip("Thời gian chờ giữa các lần tăng trưởng (giây). Vd: 0.5 là nửa giây nhích 1 lần")]
-    public float growTickRate = 0.5f;
+    public float growTickRate = 10f;
     [Tooltip("Giới hạn chiều cao tối đa trục Y để cây không mọc vô tận")]
     public float maxYScale = 5f; 
 
