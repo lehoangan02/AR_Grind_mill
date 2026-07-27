@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: bd22ffa437d87084e8fa09beddcac6e2
+guid: cec5b3d41664d90489c3aeda63c3bc60
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -7,38 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Eye_Black
-    second: {fileID: 2100000, guid: 6e365d85be04efe4abcbe14a0a2f346b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Eye_White
-    second: {fileID: 2100000, guid: 74ad9152c2736464d891fe990b21c434, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Hooves
-    second: {fileID: 2100000, guid: 10c28c83713e8674d9b96d96730f08fb, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Horns
-    second: {fileID: 2100000, guid: 2d6d4854af1d2a847a8e43b0da7cc7d1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Main
-    second: {fileID: 2100000, guid: 4193caf307933b44ab00411df6dbfd3f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Main_Light
-    second: {fileID: 2100000, guid: d1cea0008340b3141885e5b932bb1d8c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Muzzle
-    second: {fileID: 2100000, guid: 08ea64329cfd5ca42be228e94aed96e5, type: 2}
+      name: SimplygonCastMaterial
+    second: {fileID: 2100000, guid: 585739a38bb92ed4da9eeb7c982f02bb, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -49,7 +19,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 0
+    removeConstantScaleCurves: 1
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -66,40 +36,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: AnimalArmature|Eating
-      takeName: AnimalArmature|Eating
-      internalID: 5845618705403835542
+      name: koifish|Action
+      takeName: koifish|Action
+      internalID: 3741832734763888848
       firstFrame: 0
-      lastFrame: 144
-      wrapMode: 0
-      orientationOffsetY: 0
-      level: 0
-      cycleOffset: 0
-      loop: 0
-      hasAdditiveReferencePose: 0
-      loopTime: 1
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
-      heightFromFeet: 0
-      mirror: 0
-      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
-      curves: []
-      events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
-      additiveReferencePoseFrame: 0
-    - serializedVersion: 16
-      name: AnimalArmature|Idle
-      takeName: AnimalArmature|Idle
-      internalID: -5105944257485555118
-      firstFrame: 0
-      lastFrame: 80
+      lastFrame: 149
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -126,7 +67,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 100
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -184,7 +125,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 100
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
