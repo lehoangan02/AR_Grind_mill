@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5027925778770610932}
+  - component: {fileID: 252333673131991933}
   m_Layer: 0
   m_Name: RicePlant
   m_TagString: Untagged
@@ -577,3 +578,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!205 &252333673131991933
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534822220121486976}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.01
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 3503527803300806933}
+    - renderer: {fileID: 8332721772432929431}
+    - renderer: {fileID: 6806203090002857808}
+    - renderer: {fileID: 8442626691312950291}
+    - renderer: {fileID: 7587661574210665629}
+    - renderer: {fileID: 1504308958396956632}
+  m_Enabled: 1
