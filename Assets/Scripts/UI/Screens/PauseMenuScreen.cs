@@ -23,8 +23,6 @@ public class PauseMenuScreen : UIScreen
             Debug.LogError($"[PauseMenuScreen] resumeButton is not assigned");
         }
 
-        // NOTE: Uncomment when SettingsScreen.cs exists (Wave 4)
-#if false
         if (settingsButton != null)
         {
             settingsButton.onClick.AddListener(() =>
@@ -36,7 +34,6 @@ public class PauseMenuScreen : UIScreen
         {
             Debug.LogError($"[PauseMenuScreen] settingsButton is not assigned");
         }
-#endif
 
         if (quitButton != null)
         {
