@@ -33,12 +33,6 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("[UIManager] UIScreenAnimator component not found on this GameObject");
         }
-
-        UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor xrRayInteractor = FindFirstObjectByType<UnityEngine.XR.Interaction.Toolkit.Interactors.XRRayInteractor>();
-        if (xrRayInteractor == null)
-        {
-            Debug.LogError("[UIManager] No XRRayInteractor found in scene. XR UI interaction will not work.");
-        }
     }
 
     private void OnDestroy()
