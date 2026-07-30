@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6502999088651388064}
   - component: {fileID: 691700898153241960}
   - component: {fileID: 8500687282606128208}
+  - component: {fileID: -7210097733524678343}
   - component: {fileID: 6110059886171219053}
   m_Layer: 5
   m_Name: UIScreenCanvas
@@ -84,6 +85,18 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
+--- !u!225 &-7210097733524678343
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4775730236578289051}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &6110059886171219053
 MonoBehaviour:
   m_ObjectHideFlags: 0

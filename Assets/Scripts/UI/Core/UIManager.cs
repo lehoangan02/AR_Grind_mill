@@ -8,12 +8,12 @@ public class UIManager : MonoBehaviour
     public static UIManager instance { get; private set; }
 
     [SerializeField] private GameObject[] screenPrefabs;
+    [SerializeField] private Transform uiAnchor;
     [SerializeField] public AudioSource uiAudioSource;
     [SerializeField] private float zDepthSpacing = 0.01f;
 
     private List<UIScreen> screenStack = new List<UIScreen>();
     private UIScreenAnimator animator;
-    private UIScreen hudScreen;
 
     private void Awake()
     {
@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
             previous.OnPause();
         }
 
-        GameObject instance = Instantiate(prefab, transform);
+        GameObject instance = Instantiate(prefab, uiAnchor != null ? uiAnchor : transform);
         instance.name = prefab.name;
 
         T newScreen = instance.GetComponent<T>();
@@ -168,72 +168,6 @@ public class UIManager : MonoBehaviour
                 return true;
         }
         return false;
-    }
-
-    public void OpenHUD<THud>() where THud : UIScreen
-    {
-        if (hudScreen != null)
-        {
-            Debug.LogWarning("[UIManager] OpenHUD blocked — HUD is already open");
-            return;
-        }
-
-        GameObject prefab = FindPrefabByType<THud>();
-        if (prefab == null)
-        {
-            Debug.LogError($"[UIManager] No HUD prefab found with component {typeof(THud).Name}");
-            return;
-        }
-
-        GameObject instance = Instantiate(prefab, transform);
-        instance.name = prefab.name;
-        instance.transform.localPosition = Vector3.zero;
-
-        hudScreen = instance.GetComponent<THud>();
-        if (hudScreen == null)
-        {
-            Debug.LogError($"[UIManager] HUD prefab {prefab.name} has no {typeof(THud).Name} component");
-            Destroy(instance);
-            return;
-        }
-
-        hudScreen.OnOpen();
-
-        Debug.Log($"[UIManager] HUD opened: {typeof(THud).Name} at z=0");
-    }
-
-    public void PauseHUD()
-    {
-        if (hudScreen == null)
-        {
-            Debug.LogWarning("[UIManager] PauseHUD — no HUD to pause");
-            return;
-        }
-
-        CanvasGroup cg = hudScreen.GetComponent<CanvasGroup>();
-        if (cg != null)
-        {
-            cg.alpha = 0.5f;
-            cg.interactable = false;
-        }
-        Debug.Log("[UIManager] HUD paused");
-    }
-
-    public void ResumeHUD()
-    {
-        if (hudScreen == null)
-        {
-            Debug.LogWarning("[UIManager] ResumeHUD — no HUD to resume");
-            return;
-        }
-
-        CanvasGroup cg = hudScreen.GetComponent<CanvasGroup>();
-        if (cg != null)
-        {
-            cg.alpha = 1f;
-            cg.interactable = true;
-        }
-        Debug.Log("[UIManager] HUD resumed");
     }
 
     private GameObject FindPrefabByType<T>() where T : UIScreen

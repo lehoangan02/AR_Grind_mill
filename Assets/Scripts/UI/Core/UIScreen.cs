@@ -2,7 +2,6 @@ using UnityEngine;
 
 public abstract class UIScreen : MonoBehaviour
 {
-    [SerializeField] protected GameObject screenRoot;
     [SerializeField] protected CanvasGroup canvasGroup;
 
     public virtual void OnOpen(UIScreenData data = null)
@@ -15,13 +14,7 @@ public abstract class UIScreen : MonoBehaviour
             canvasGroup.interactable = true;
             canvasGroup.blocksRaycasts = true;
         }
-
-        if (screenRoot != null)
-        {
-            screenRoot.SetActive(true);
-        }
     }
-
     public virtual void OnClose()
     {
         Debug.Log($"[{GetType().Name}] OnClose");
@@ -32,13 +25,7 @@ public abstract class UIScreen : MonoBehaviour
             canvasGroup.interactable = false;
             canvasGroup.blocksRaycasts = false;
         }
-
-        if (screenRoot != null)
-        {
-            screenRoot.SetActive(false);
-        }
     }
-
     public virtual void OnPause()
     {
         Debug.Log($"[{GetType().Name}] OnPause");

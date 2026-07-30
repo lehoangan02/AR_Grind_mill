@@ -785,7 +785,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8500687282606128208, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -826,8 +826,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbb226a29c141b382a2e66a1b611ba26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuScreen
-  screenRoot: {fileID: 0}
-  canvasGroup: {fileID: 0}
+  canvasGroup: {fileID: 7174531941304299576}
   startButton: {fileID: 2759206989840254067}
   quitButton: {fileID: 9126847425094571102}
   gameplaySceneName: Grind mill v1.0 Scene
+--- !u!225 &7174531941304299576 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: -7210097733524678343, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
+  m_PrefabInstance: {fileID: 8674382059294910721}
+  m_PrefabAsset: {fileID: 0}
