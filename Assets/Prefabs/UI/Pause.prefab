@@ -1059,7 +1059,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8500687282606128208, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1103,8 +1103,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 671dfa9538c69105093e34d7ad589574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuScreen
-  canvasGroup: {fileID: 0}
-  resumeButton: {fileID: 0}
-  settingsButton: {fileID: 0}
-  quitButton: {fileID: 0}
+  canvasGroup: {fileID: 4746029585418507660}
+  resumeButton: {fileID: 6800833201306977195}
+  settingsButton: {fileID: 8410637815148231908}
+  quitButton: {fileID: 4180309720443469162}
   mainMenuSceneName: 
+--- !u!225 &4746029585418507660 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: -7210097733524678343, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
+  m_PrefabInstance: {fileID: 6498094533617962165}
+  m_PrefabAsset: {fileID: 0}
