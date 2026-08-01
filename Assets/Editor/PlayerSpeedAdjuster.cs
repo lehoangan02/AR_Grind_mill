@@ -22,11 +22,11 @@ public class PlayerSpeedAdjuster : EditorWindow
         
         if (useMultiplier)
         {
-            speedMultiplier = EditorGUILayout.FloatField("Multiplier (e.g. 2 for double)", speedMultiplier);
+            speedMultiplier = EditorGUILayout.Slider("Multiplier (e.g. 2 for double)", speedMultiplier, 0.1f, 10f);
         }
         else
         {
-            newSpeedValue = EditorGUILayout.FloatField("Set Exact Speed To", newSpeedValue);
+            newSpeedValue = EditorGUILayout.Slider("Set Exact Speed To", newSpeedValue, 0.1f, 20f);
         }
 
         if (GUILayout.Button("Apply Speed to Player(s)"))

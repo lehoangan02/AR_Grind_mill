@@ -28,7 +28,6 @@ public class BuffaloRider : MonoBehaviour
     private bool isRiding = false;
     private GameObject playerRig;
     private Transform originalPlayerParent;
-    private TextMeshPro floatingText;
 
     void Start()
     {
