@@ -16,14 +16,36 @@ public class VRController : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
-        inputSystemReference.action.Enable();
-        inputSystemReference.action.performed += Toggle;
+        
+        if (inputSystemReference != null && inputSystemReference.action != null)
+        {
+            inputSystemReference.action.Enable();
+            inputSystemReference.action.performed += Toggle;
+        }
         InputSystem.onDeviceChange += OnDeviceChange;
+
+        // Initialize InputActions here instead of Start to prevent NullReferenceExceptions
+        // if other scripts call these methods before this script's Start() runs.
+        rightTriggerAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{RightHand}/trigger");
+        rightTriggerAction.Enable();
+        leftTriggerAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{LeftHand}/trigger");
+        leftTriggerAction.Enable();
+        rightGripAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{RightHand}/grip");
+        rightGripAction.Enable();
+        leftGripAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{LeftHand}/grip");
+        leftGripAction.Enable();
+        rightActions = new InputAction(type: InputActionType.Button, binding: "<XRController>{LeftHand}/PrimaryAction");
+        rightActions.Enable();
+        rightBctions = new InputAction(type: InputActionType.Button, binding: "<XRController>{RightHand}/buttonNorth");
+        rightBctions.Enable();
     }
     void OnDestroy()
     {
-        inputSystemReference.action.Disable();
-        inputSystemReference.action.performed -= Toggle;
+        if (inputSystemReference != null && inputSystemReference.action != null)
+        {
+            inputSystemReference.action.Disable();
+            inputSystemReference.action.performed -= Toggle;
+        }
         InputSystem.onDeviceChange -= OnDeviceChange;
     }
     private InputAction rightTriggerAction;
@@ -37,18 +59,6 @@ public class VRController : MonoBehaviour
     public InputActionReference inputSystemReference;
     void Start()
     {
-        rightTriggerAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{RightHand}/trigger");
-        rightTriggerAction.Enable();
-        leftTriggerAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{LeftHand}/trigger");
-        leftTriggerAction.Enable();
-        rightGripAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{RightHand}/grip");
-        rightGripAction.Enable();
-        leftGripAction = new InputAction(type: InputActionType.Value, binding: "<XRController>{LeftHand}/grip");
-        leftGripAction.Enable();
-        rightActions = new InputAction(type: InputActionType.Button, binding: "<XRController>{LeftHand}/PrimaryAction");
-        rightActions.Enable();
-        rightBctions = new InputAction(type: InputActionType.Button, binding: "<XRController>{RightHand}/buttonNorth");
-        rightBctions.Enable();
     }
     void Update()
     {
