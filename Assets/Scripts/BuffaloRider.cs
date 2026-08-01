@@ -34,17 +34,6 @@ public class BuffaloRider : MonoBehaviour
     {
         interactable = GetComponent<XRSimpleInteractable>();
 
-        // 1. Create the "Water Buffalo" text dynamically so it appears like an item
-        GameObject textObj = new GameObject("WaterBuffaloText");
-        textObj.transform.SetParent(transform);
-        textObj.transform.localPosition = new Vector3(0, 2.5f, 0); // Position slightly above the buffalo
-        
-        floatingText = textObj.AddComponent<TextMeshPro>();
-        floatingText.text = "Water Buffalo";
-        floatingText.fontSize = 5;
-        floatingText.alignment = TextAlignmentOptions.Center;
-        floatingText.gameObject.SetActive(false);
-
         // 2. Try to find the XR Origin (Player)
         var origin = FindObjectOfType<Unity.XR.CoreUtils.XROrigin>();
         if (origin != null)
@@ -80,31 +69,14 @@ public class BuffaloRider : MonoBehaviour
         }
         else
         {
-            // 3. Show text when hovered
+            // 3. Mount if BOTH hands are hovering and BOTH triggers are pressed
             bool isHovered = interactable.interactorsHovering.Count > 0;
-            
-            if (isHovered)
+            if (isHovered && interactable.interactorsHovering.Count >= 2)
             {
-                floatingText.gameObject.SetActive(true);
-                // Make text face the camera
-                if (Camera.main != null)
+                if (CheckBothTriggersPressed())
                 {
-                    floatingText.transform.LookAt(Camera.main.transform);
-                    floatingText.transform.Rotate(0, 180, 0);
+                    Mount();
                 }
-
-                // 4. Mount if BOTH hands are hovering and BOTH triggers are pressed
-                if (interactable.interactorsHovering.Count >= 2)
-                {
-                    if (CheckBothTriggersPressed())
-                    {
-                        Mount();
-                    }
-                }
-            }
-            else
-            {
-                floatingText.gameObject.SetActive(false);
             }
         }
     }
@@ -120,7 +92,6 @@ public class BuffaloRider : MonoBehaviour
         if (playerRig == null) return;
         
         isRiding = true;
-        floatingText.gameObject.SetActive(false);
         originalPlayerParent = playerRig.transform.parent;
         
         // Parent the player to the buffalo (or ride point)
