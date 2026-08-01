@@ -76,3 +76,7 @@ Assets/MyFolder/Audio/CỐI XAY LÚA BẰNG TRE HỒI SINH 2020 tái hiện cu�
 Build_Android/unityLibrary/build/il2cpp_arm64-v8a_Release/il2cpp_cache/d8kz/libil2cpp.so
 Build_Android/unityLibrary/src/main/jniLibs/arm64-v8a/libil2cpp.dbg.so
 BuildToRunAndroid/
+
+.omo/
+!.omo/rules/
+!.omo/rules/**

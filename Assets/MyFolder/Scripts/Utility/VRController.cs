@@ -20,7 +20,7 @@ public class VRController : MonoBehaviour
         inputSystemReference.action.performed += Toggle;
         InputSystem.onDeviceChange += OnDeviceChange;
     }
-    void Oestroy()
+    void OnDestroy()
     {
         inputSystemReference.action.Disable();
         inputSystemReference.action.performed -= Toggle;
