@@ -11,6 +11,28 @@ public class InteractableObject : MonoBehaviour
             ItemName = "Name not set";
             Debug.LogError("Item name is not set. Please set the item name in the inspector.");
         }
+        if (TriggerCollider == null)
+        {
+            Collider[] colliders = GetComponents<Collider>();
+            foreach (var col in colliders)
+            {
+                if (col.isTrigger)
+                {
+                    TriggerCollider = col;
+                    break;
+                }
+            }
+            
+            // If still null, just use any collider
+            if (TriggerCollider == null)
+                TriggerCollider = GetComponent<Collider>();
+                
+            if (TriggerCollider == null)
+            {
+                Debug.LogError("No Collider found on " + gameObject.name + " for InteractableObject.");
+                return;
+            }
+        }
         Collider[] hits = Physics.OverlapBox(TriggerCollider.bounds.center, TriggerCollider.bounds.extents, transform.rotation);
         PlayerInRange = false;
         foreach (Collider hit in hits)

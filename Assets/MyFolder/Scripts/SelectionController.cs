@@ -46,34 +46,55 @@ public class SelectionController : MonoBehaviour
     }
     void ViewInteractableObject()
     {
-        // Raycast to find the object in front of the camera but shift the midpoint of the raycast downwards
-        // Vector3 ScreenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f)); old code
         Transform rightControllerTransform = VRController.instance.GetRightControllerTransform();
         Ray ray = new Ray(rightControllerTransform.position, rightControllerTransform.forward);
-        bool hitFound = Physics.Raycast(ray, out RaycastHit hit, 10f);
-        if (hitFound)
+        
+        // Use RaycastAll to prevent the ray from being blocked by the Player's own collider or invisible trigger planes
+        RaycastHit[] hits = Physics.RaycastAll(ray, 10f);
+        
+        InteractableObject foundInteractable = null;
+        RaycastHit validHit = new RaycastHit();
+        
+        // Sort hits by distance to find the closest valid one
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
         {
-            Transform SelectedTransform = hit.transform;
-            if (SelectedTransform.GetComponent<InteractableObject>() != null
-             && SelectedTransform.GetComponent<InteractableObject>().IsPlayerInRange())
+            // Ignore the player itself
+            if (hit.transform.CompareTag("Player") || hit.transform.root.CompareTag("Player"))
+                continue;
+
+            InteractableObject interactable = hit.transform.GetComponentInParent<InteractableObject>();
+            if (interactable != null)
             {
-                InteractableObjectName_UI.SetActive(true);
-                InteractableObjectNameText.text = SelectedTransform.GetComponent<InteractableObject>().getItemName();
-                // Place the UI slightly in front of the hit point, facing the player
-                Vector3 offset = hit.normal * 0.1f; // Adjust 0.1f to control distance from surface
-                Vector3 uiPosition = hit.point + offset;
+                foundInteractable = interactable;
+                validHit = hit;
+                break;
+            }
+        }
+
+        if (foundInteractable != null && foundInteractable.IsPlayerInRange())
+        {
+            InteractableObjectName_UI.SetActive(true);
+            InteractableObjectNameText.text = foundInteractable.getItemName();
+            // Place the UI slightly in front of the hit point, facing the player
+            Vector3 offset = validHit.normal * 0.1f; // Adjust 0.1f to control distance from surface
+            Vector3 uiPosition = validHit.point + offset;
 
                 // Face the UI towards the player (or camera)
-                Vector3 directionToPlayer = Camera.main.transform.position - uiPosition;
-                Quaternion uiRotation = Quaternion.LookRotation(-directionToPlayer);
+                if (Camera.main != null)
+                {
+                    Vector3 directionToPlayer = Camera.main.transform.position - uiPosition;
+                    Quaternion uiRotation = Quaternion.LookRotation(-directionToPlayer);
+                    InteractableObjectName_UI.transform.rotation = uiRotation;
+                }
 
                 // Apply the position and rotation
                 InteractableObjectName_UI.transform.position = uiPosition;
-                InteractableObjectName_UI.transform.rotation = uiRotation;
 
                 PlayerPointedAtObject = true;
                 InteractButton.interactable = true;
-                CurrentInteractableObject = SelectedTransform.GetComponent<InteractableObject>();
+                CurrentInteractableObject = foundInteractable;
             }
             else
             {
@@ -86,18 +107,6 @@ public class SelectionController : MonoBehaviour
                     CurrentInteractableObject = null;
                 }
             }
-        }
-        else
-        {
-            InteractableObjectName_UI.SetActive(false);
-            PlayerPointedAtObject = false;
-            if (!grindingActvation.IsPlayerInRange())
-                InteractButton.interactable = false;
-            if (CurrentInteractableObject != null)
-            {
-                CurrentInteractableObject = null;
-            }
-        }
     }
     public bool IsPlayerPointedAtObject()
     {

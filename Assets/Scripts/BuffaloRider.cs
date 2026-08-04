@@ -29,6 +29,38 @@ public class BuffaloRider : MonoBehaviour
     private GameObject playerRig;
     private Transform originalPlayerParent;
 
+    void Awake()
+    {
+        // 1. Auto-configure InteractableObject so the user doesn't have to manually set it up
+        InteractableObject io = GetComponent<InteractableObject>();
+        if (io == null)
+        {
+            io = gameObject.AddComponent<InteractableObject>();
+            io.ItemName = "Water Buffalo";
+        }
+
+        // 2. Ensure there is a trigger collider for the InteractableObject to detect the player
+        Collider[] colliders = GetComponents<Collider>();
+        bool hasTrigger = false;
+        foreach (var col in colliders)
+        {
+            if (col.isTrigger) hasTrigger = true;
+        }
+
+        if (!hasTrigger)
+        {
+            // Add a trigger box collider matching the main physical collider
+            BoxCollider mainCol = GetComponent<BoxCollider>();
+            BoxCollider triggerCol = gameObject.AddComponent<BoxCollider>();
+            triggerCol.isTrigger = true;
+            if (mainCol != null)
+            {
+                triggerCol.center = mainCol.center;
+                triggerCol.size = mainCol.size * 1.2f; // slightly larger to easily detect the player
+            }
+        }
+    }
+
     void Start()
     {
         interactable = GetComponent<XRSimpleInteractable>();
