@@ -678,10 +678,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pause
       objectReference: {fileID: 0}
+    - target: {fileID: 3446762825976901861, guid: 7d07afd598a88e04c937e4c823dc487d, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6031644544595579357, guid: 7d07afd598a88e04c937e4c823dc487d, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1598355376}
+    - target: {fileID: 8489957792823672363, guid: 7d07afd598a88e04c937e4c823dc487d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8489957792823672363, guid: 7d07afd598a88e04c937e4c823dc487d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.8707504
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
