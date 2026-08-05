@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33946948356413984}
   - component: {fileID: 23738215718669960}
   - component: {fileID: 136989556097122434}
+  - component: {fileID: 3145272669421013140}
   m_Layer: 0
   m_Name: Lemon Tree 1
   m_TagString: Untagged
@@ -115,3 +116,22 @@ CapsuleCollider:
   m_Height: 0.88580996
   m_Direction: 1
   m_Center: {x: 0.035368696, y: 0.3, z: 0.017949313}
+--- !u!205 &3145272669421013140
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139572726157748}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.03536868, y: 0.44290498, z: 0.017949313}
+  m_Size: 0.88580996
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 23738215718669960}
+  m_Enabled: 1
