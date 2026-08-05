@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3356794}
   - component: {fileID: 13671232}
   - component: {fileID: 2334524}
+  - component: {fileID: 8593385629576230218}
   m_Layer: 0
   m_Name: Coconut_Palm_Tree12_AFS
   m_TagString: Untagged
@@ -114,3 +115,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!205 &8593385629576230218
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 189310}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 2.3153157, y: 8.471662, z: 4.9665484}
+  m_Size: 17.943323
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 2334524}
+  m_Enabled: 1
