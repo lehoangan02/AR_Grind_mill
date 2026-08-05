@@ -1,30 +1,20 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using UnityEngine.Events;
 
+[RequireComponent(typeof(Toggle), typeof(Animator))]
 public class UIToggle : MonoBehaviour
 {
-    [SerializeField] TMP_Text label;
+    private Toggle toggle;
+    private Animator animator;
+    
+    public Toggle.ToggleEvent onValueChanged => toggle.onValueChanged;
 
-    public UnityEvent<bool> onValueChanged = new UnityEvent<bool>();
-
-    void Awake()
+    private void Awake()
     {
-        var toggle = GetComponent<Toggle>();
-        if (toggle != null)
-        {
-            toggle.onValueChanged.AddListener(HandleValueChanged);
-        }
-    }
+        toggle = GetComponent<Toggle>();
+        animator = GetComponent<Animator>();
 
-    void HandleValueChanged(bool isOn)
-    {
-        if (label != null)
-        {
-            label.color = isOn ? Color.white : new Color(0.5f, 0.5f, 0.5f, 1f);
-        }
-
-        onValueChanged.Invoke(isOn);
+        animator.SetBool("IsOn", toggle.isOn);
+        toggle.onValueChanged.AddListener(value => animator.SetBool("IsOn", value));
     }
 }

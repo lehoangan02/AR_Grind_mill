@@ -1,31 +1,28 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Events;
 
+[RequireComponent(typeof(Slider))]
 public class UISlider : MonoBehaviour
 {
-    [SerializeField] private TMP_Text label;
     [SerializeField] private TMP_Text valueText;
     [SerializeField] private string valueFormat = "F0";
 
-    public UnityEvent<float> onValueChanged = new UnityEvent<float>();
+    private Slider slider;
+
+    public Slider.SliderEvent onValueChanged => slider.onValueChanged;
 
     private void Awake()
     {
-        Slider slider = GetComponent<Slider>();
-        if (slider != null)
-        {
-            slider.onValueChanged.AddListener(HandleValueChanged);
-        }
+        slider = GetComponent<Slider>();
+
+        UpdateValueText(slider.value);
+        slider.onValueChanged.AddListener(UpdateValueText);
     }
 
-    private void HandleValueChanged(float value)
+    private void UpdateValueText(float value)
     {
         if (valueText != null)
-        {
             valueText.text = value.ToString(valueFormat);
-        }
-        onValueChanged.Invoke(value);
     }
 }
