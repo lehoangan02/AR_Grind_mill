@@ -36,29 +36,36 @@ public class BuffaloRider : MonoBehaviour
         if (io == null)
         {
             io = gameObject.AddComponent<InteractableObject>();
-            io.ItemName = "Water Buffalo";
         }
+        io.ItemName = "Water Buffalo";
 
-        // 2. Ensure there is a trigger collider for the InteractableObject to detect the player
+        // 2. Ensure there is a trigger sphere collider with a large radius (matching Basket/GrindMill)
+        // so InteractableObject detects player in range when pointing at the buffalo from a distance
         Collider[] colliders = GetComponents<Collider>();
-        bool hasTrigger = false;
+        SphereCollider triggerSphere = null;
         foreach (var col in colliders)
         {
-            if (col.isTrigger) hasTrigger = true;
-        }
-
-        if (!hasTrigger)
-        {
-            // Add a trigger box collider matching the main physical collider
-            BoxCollider mainCol = GetComponent<BoxCollider>();
-            BoxCollider triggerCol = gameObject.AddComponent<BoxCollider>();
-            triggerCol.isTrigger = true;
-            if (mainCol != null)
+            if (col.isTrigger)
             {
-                triggerCol.center = mainCol.center;
-                triggerCol.size = mainCol.size * 1.2f; // slightly larger to easily detect the player
+                if (col is SphereCollider sphere)
+                {
+                    triggerSphere = sphere;
+                }
+                else
+                {
+                    // Remove small box trigger if added previously
+                    Destroy(col);
+                }
             }
         }
+
+        if (triggerSphere == null)
+        {
+            triggerSphere = gameObject.AddComponent<SphereCollider>();
+            triggerSphere.isTrigger = true;
+        }
+        triggerSphere.radius = 15f;
+        triggerSphere.center = Vector3.zero;
     }
 
     void Start()
