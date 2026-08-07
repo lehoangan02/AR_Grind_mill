@@ -13,7 +13,7 @@ public class BuffaloRider : MonoBehaviour
     public float moveSpeed = 3f;
     [Tooltip("Turning speed of the buffalo.")]
     public float turnSpeed = 60f;
-    [Tooltip("Optional: Assign an empty GameObject located on the buffalo's back.")]
+    [Tooltip("Optional: Assign an empty GameObject located on the plough or behind the buffalo.")]
     public Transform ridePoint; 
     
     [Header("Input References")]
@@ -25,14 +25,19 @@ public class BuffaloRider : MonoBehaviour
     public InputActionReference moveAction;
 
     private XRSimpleInteractable interactable;
+    private InteractableObject io;
     private bool isRiding = false;
     private GameObject playerRig;
     private Transform originalPlayerParent;
 
+    private InputAction fallbackMoveAction;
+    private InputAction internalRightTriggerAction;
+    private bool prevRightTriggerState = false;
+
     void Awake()
     {
         // 1. Auto-configure InteractableObject so the user doesn't have to manually set it up
-        InteractableObject io = GetComponent<InteractableObject>();
+        io = GetComponent<InteractableObject>();
         if (io == null)
         {
             io = gameObject.AddComponent<InteractableObject>();
@@ -53,7 +58,6 @@ public class BuffaloRider : MonoBehaviour
                 }
                 else
                 {
-                    // Remove small box trigger if added previously
                     Destroy(col);
                 }
             }
@@ -66,13 +70,45 @@ public class BuffaloRider : MonoBehaviour
         }
         triggerSphere.radius = 15f;
         triggerSphere.center = Vector3.zero;
+
+        // 3. Fallback input actions for right trigger click and left thumbstick/keyboard movement
+        internalRightTriggerAction = new InputAction(type: InputActionType.Button, binding: "<XRController>{RightHand}/trigger");
+        internalRightTriggerAction.AddBinding("<Mouse>/leftButton");
+        internalRightTriggerAction.Enable();
+
+        fallbackMoveAction = new InputAction(type: InputActionType.Value);
+        fallbackMoveAction.AddCompositeBinding("2DVector")
+            .With("Up", "<Keyboard>/w")
+            .With("Down", "<Keyboard>/s")
+            .With("Left", "<Keyboard>/a")
+            .With("Right", "<Keyboard>/d")
+            .With("Up", "<Keyboard>/upArrow")
+            .With("Down", "<Keyboard>/downArrow")
+            .With("Left", "<Keyboard>/leftArrow")
+            .With("Right", "<Keyboard>/rightArrow");
+        fallbackMoveAction.AddBinding("<XRController>{LeftHand}/primary2DAxis");
+        fallbackMoveAction.Enable();
+    }
+
+    void OnDestroy()
+    {
+        if (internalRightTriggerAction != null)
+        {
+            internalRightTriggerAction.Disable();
+            internalRightTriggerAction.Dispose();
+        }
+        if (fallbackMoveAction != null)
+        {
+            fallbackMoveAction.Disable();
+            fallbackMoveAction.Dispose();
+        }
     }
 
     void Start()
     {
         interactable = GetComponent<XRSimpleInteractable>();
 
-        // 2. Try to find the XR Origin (Player)
+        // Try to find the XR Origin (Player)
         var origin = FindObjectOfType<Unity.XR.CoreUtils.XROrigin>();
         if (origin != null)
         {
@@ -80,49 +116,81 @@ public class BuffaloRider : MonoBehaviour
         }
         else
         {
-            // Fallback for older Unity XR or different setups
             Camera mainCam = Camera.main;
             if (mainCam != null && mainCam.transform.parent != null)
             {
                 playerRig = mainCam.transform.parent.gameObject;
+            }
+            else if (mainCam != null)
+            {
+                playerRig = mainCam.gameObject;
             }
         }
     }
 
     void Update()
     {
+        bool rightTriggerClicked = IsRightTriggerJustPressed();
+
         if (isRiding)
         {
             HandleRidingMovement();
             
-            // Dismount if both triggers are pressed again
-            if (CheckBothTriggersPressed())
+            // Clicking Right Trigger again dismounts
+            if (rightTriggerClicked)
             {
-                // Ensure we only dismount if the buttons were just pressed to avoid instant remount
-                if (leftTriggerAction.action.WasPressedThisFrame() && rightTriggerAction.action.WasPressedThisFrame())
-                {
-                    Dismount();
-                }
+                Dismount();
             }
         }
         else
         {
-            // 3. Mount if BOTH hands are hovering and BOTH triggers are pressed
-            bool isHovered = interactable.interactorsHovering.Count > 0;
-            if (isHovered && interactable.interactorsHovering.Count >= 2)
+            // Point at buffalo with right controller raycast and click right trigger to ride
+            bool isPointedAtBuffalo = false;
+
+            if (SelectionController.instance != null && SelectionController.instance.IsPlayerPointedAtObject())
             {
-                if (CheckBothTriggersPressed())
+                InteractableObject currentObj = SelectionController.instance.GetCurrentPointedInteractableObject();
+                if (currentObj != null && (currentObj == io || currentObj.gameObject == gameObject))
                 {
-                    Mount();
+                    isPointedAtBuffalo = true;
                 }
+            }
+
+            if (interactable != null && interactable.isHovered)
+            {
+                isPointedAtBuffalo = true;
+            }
+
+            if (isPointedAtBuffalo && rightTriggerClicked)
+            {
+                Mount();
             }
         }
     }
 
-    private bool CheckBothTriggersPressed()
+    private bool IsRightTriggerJustPressed()
     {
-        if (leftTriggerAction == null || rightTriggerAction == null) return false;
-        return leftTriggerAction.action.IsPressed() && rightTriggerAction.action.IsPressed();
+        bool isPressedNow = false;
+
+        if (VRController.instance != null)
+        {
+            isPressedNow = isPressedNow || VRController.instance.IsRightTriggerPressed();
+        }
+
+        if (rightTriggerAction != null && rightTriggerAction.action != null)
+        {
+            isPressedNow = isPressedNow || rightTriggerAction.action.IsPressed();
+        }
+
+        if (internalRightTriggerAction != null)
+        {
+            isPressedNow = isPressedNow || internalRightTriggerAction.IsPressed();
+        }
+
+        bool justPressed = isPressedNow && !prevRightTriggerState;
+        prevRightTriggerState = isPressedNow;
+
+        return justPressed;
     }
 
     private void Mount()
@@ -132,12 +200,35 @@ public class BuffaloRider : MonoBehaviour
         isRiding = true;
         originalPlayerParent = playerRig.transform.parent;
         
-        // Parent the player to the buffalo (or ride point)
-        playerRig.transform.SetParent(ridePoint != null ? ridePoint : transform);
-        playerRig.transform.localPosition = Vector3.zero;
-        
-        // Optionally match rotation
-        playerRig.transform.localRotation = Quaternion.identity;
+        // Find ride point or plough transform
+        Transform targetRideTransform = ridePoint;
+        if (targetRideTransform == null)
+        {
+            Transform ploughChild = transform.Find("plough");
+            if (ploughChild == null) ploughChild = transform.Find("Plough");
+            if (ploughChild == null) ploughChild = transform.Find("ridePoint");
+            if (ploughChild == null) ploughChild = transform.Find("RidePoint");
+
+            if (ploughChild != null)
+            {
+                targetRideTransform = ploughChild;
+            }
+        }
+
+        if (targetRideTransform != null)
+        {
+            playerRig.transform.SetParent(targetRideTransform);
+            // Position slightly behind the plough handles facing forward
+            playerRig.transform.localPosition = new Vector3(0f, 0.1f, -0.3f);
+            playerRig.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            // Default ploughing position: Standing behind the buffalo at plough position (-2.0m on Z)
+            playerRig.transform.SetParent(transform);
+            playerRig.transform.localPosition = new Vector3(0f, 0.2f, -2.0f);
+            playerRig.transform.localRotation = Quaternion.identity;
+        }
     }
 
     private void Dismount()
@@ -145,7 +236,6 @@ public class BuffaloRider : MonoBehaviour
         isRiding = false;
         if (playerRig != null)
         {
-            // Unparent and move slightly to the side to avoid dismounting inside the buffalo
             playerRig.transform.SetParent(originalPlayerParent);
             playerRig.transform.position = transform.position + transform.right * 2f; 
         }
@@ -153,14 +243,25 @@ public class BuffaloRider : MonoBehaviour
 
     private void HandleRidingMovement()
     {
-        if (moveAction == null) return;
-        
-        Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
-        
-        // Move forward/back
-        transform.Translate(Vector3.forward * moveInput.y * moveSpeed * Time.deltaTime);
-        
-        // Turn left/right
-        transform.Rotate(Vector3.up * moveInput.x * turnSpeed * Time.deltaTime);
+        Vector2 moveInput = Vector2.zero;
+
+        if (moveAction != null && moveAction.action != null)
+        {
+            moveInput = moveAction.action.ReadValue<Vector2>();
+        }
+
+        if (moveInput == Vector2.zero && fallbackMoveAction != null)
+        {
+            moveInput = fallbackMoveAction.ReadValue<Vector2>();
+        }
+
+        if (moveInput != Vector2.zero)
+        {
+            // Move forward/back
+            transform.Translate(Vector3.forward * moveInput.y * moveSpeed * Time.deltaTime);
+            
+            // Turn left/right
+            transform.Rotate(Vector3.up * moveInput.x * turnSpeed * Time.deltaTime);
+        }
     }
 }
