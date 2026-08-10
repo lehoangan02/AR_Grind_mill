@@ -165,8 +165,20 @@ namespace Khoa.Farming
             Debug.Log("Đã bón phân! Cây sẽ lớn nhanh hơn.");
         }
 
-        // Tương tác trực tiếp vào thân cây lúa (Dành cho VR đập trúng phần ngọn)
+        // Hỗ trợ va chạm xuyên thấu (Trigger)
         private void OnTriggerEnter(Collider other)
+        {
+            HandleInteraction(other);
+        }
+
+        // Hỗ trợ va chạm cứng (Collision)
+        private void OnCollisionEnter(Collision collision)
+        {
+            HandleInteraction(collision.collider);
+        }
+
+        // Tương tác trực tiếp vào thân cây lúa (Dành cho VR đập trúng phần ngọn)
+        private void HandleInteraction(Collider other)
         {
             if (other.CompareTag("Sickle"))
             {

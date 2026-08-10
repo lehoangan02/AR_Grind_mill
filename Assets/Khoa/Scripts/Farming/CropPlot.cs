@@ -73,8 +73,20 @@ namespace Khoa.Farming
             InteractWithPlot();
         }
 
-        // Tương tác vật lý thực tế: Cầm công cụ đập vào đất hoặc cây lúa
+        // Hỗ trợ cả va chạm xuyên thấu (Trigger)
         private void OnTriggerEnter(Collider other)
+        {
+            HandleInteraction(other);
+        }
+
+        // Hỗ trợ cả va chạm cứng (Physical Collision)
+        private void OnCollisionEnter(Collision collision)
+        {
+            HandleInteraction(collision.collider);
+        }
+
+        // Xử lý logic dùng chung cho cả 2 loại va chạm
+        private void HandleInteraction(Collider other)
         {
             // 1. Dùng Bừa (Plow) để xới đất trống
             if (other.CompareTag("Plow"))
@@ -113,7 +125,7 @@ namespace Khoa.Farming
                 // 5. Dùng Liềm (Sickle) để gặt
                 else if (other.CompareTag("Sickle"))
                 {
-                    if (currentCrop.currentState == CropState.ReadyToHarvest)
+                    if (currentCrop.currentState == Khoa.Farming.CropState.ReadyToHarvest)
                     {
                         HarvestCrop();
                     }
