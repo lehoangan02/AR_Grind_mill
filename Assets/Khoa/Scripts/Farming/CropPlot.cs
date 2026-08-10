@@ -11,7 +11,7 @@ namespace Khoa.Farming
     }
 
     // RequireComponent giúp tự động add các component này vào Prefab nếu chưa có
-    [RequireComponent(typeof(XRSimpleInteractable))]
+    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable))]
     [RequireComponent(typeof(BoxCollider))]
     public class CropPlot : MonoBehaviour
     {
@@ -28,12 +28,12 @@ namespace Khoa.Farming
         public Color colorEmpty = new Color(0.6f, 0.4f, 0.2f); // Nâu nhạt
         public Color colorTilled = new Color(0.3f, 0.2f, 0.1f); // Nâu đậm (đất ướt)
 
-        private XRSimpleInteractable xrInteractable;
+        private UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable xrInteractable;
         private RicePlant currentCrop; // Lưu trữ cây lúa hiện tại trên ô đất này
 
         void Awake()
         {
-            xrInteractable = GetComponent<XRSimpleInteractable>();
+            xrInteractable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
             
             // Đăng ký sự kiện khi VR Controller tương tác (bấm nút trigger vào ô đất)
             xrInteractable.selectEntered.AddListener(OnVRSelect);
