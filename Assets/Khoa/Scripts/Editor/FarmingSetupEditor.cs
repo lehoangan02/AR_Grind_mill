@@ -88,17 +88,20 @@ namespace Khoa.Farming.Editor
             // 3. Tạo Plot Prefab (Ô Đất)
             string plotPrefabPath = folderPath + "/Plot_Prefab.prefab";
             
-            // Luôn tạo mới ô đất để đảm bảo nó tàng hình
-            GameObject plotGO = new GameObject("Plot_Prefab");
+            // Tạo bằng Cube để có sẵn MeshFilter và MeshRenderer (người dùng có thể tự ẩn nếu không thích)
+            GameObject plotGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            plotGO.name = "Plot_Prefab";
             
-            // Thêm BoxCollider dẹt
-            BoxCollider boxCol = plotGO.AddComponent<BoxCollider>();
-            boxCol.size = new Vector3(1f, 0.1f, 1f);
+            // Làm dẹp xuống thành cái ô vuông
+            plotGO.transform.localScale = new Vector3(1f, 0.1f, 1f);
+            
+            // BoxCollider tự động có sẵn khi dùng CreatePrimitive
+            BoxCollider boxCol = plotGO.GetComponent<BoxCollider>();
             boxCol.isTrigger = false; 
             
             // Add XR và Plot script
             CropPlot cropPlot = plotGO.AddComponent<CropPlot>();
-            cropPlot.plotRenderer = null; // Cố tình để null vì ô đất tàng hình
+            cropPlot.plotRenderer = plotGO.GetComponent<MeshRenderer>(); // Gán sẵn Renderer để xài màu
             cropPlot.ricePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ricePrefabPath);
             
             // Setup Interaction (để raycast trúng)

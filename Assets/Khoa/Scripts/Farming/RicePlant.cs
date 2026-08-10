@@ -108,7 +108,17 @@ namespace Khoa.Farming
             if (currentState == CropState.Dead) return;
             // Thay đổi kích thước từ từ (Lerp) dựa trên % tiến độ
             float t = growthProgress / 100f;
-            transform.localScale = Vector3.Lerp(minScale, maxScale, t);
+            Vector3 targetScale = Vector3.Lerp(minScale, maxScale, t);
+            
+            // Khử đi sự bóp méo hình dạng của ô đất (vì ô đất có scale Y = 0.1)
+            if (transform.parent != null)
+            {
+                targetScale.x /= transform.parent.localScale.x;
+                targetScale.y /= transform.parent.localScale.y;
+                targetScale.z /= transform.parent.localScale.z;
+            }
+            
+            transform.localScale = targetScale;
         }
 
         private void UpdateStateBasedOnProgress()
