@@ -14,7 +14,7 @@ public class SettingsScreen : UIScreen
     // Graphics tab
     [SerializeField] private UISlider brightnessSlider;
     [SerializeField] private UIToggle vsyncToggle;
-    [SerializeField] private TMP_Dropdown qualityDropdown;
+    [SerializeField] private UISlider qualitySlider;
 
     // Controls tab
     [SerializeField] private UISlider lookSensitivitySlider;
@@ -53,23 +53,7 @@ public class SettingsScreen : UIScreen
 
     private void Start()
     {
-        SetupQualityDropdown();
         WireControls();
-    }
-
-    private void SetupQualityDropdown()
-    {
-        if (qualityDropdown == null)
-            return;
-
-        qualityDropdown.ClearOptions();
-        qualityDropdown.AddOptions(new System.Collections.Generic.List<string>
-        {
-            "Low",
-            "Medium",
-            "High",
-            "Ultra"
-        });
     }
 
     private void WireControls()
@@ -91,8 +75,8 @@ public class SettingsScreen : UIScreen
         if (vsyncToggle != null)
             vsyncToggle.onValueChanged.AddListener(v => currentSettings.vsync = v);
 
-        if (qualityDropdown != null)
-            qualityDropdown.onValueChanged.AddListener(v => currentSettings.qualityLevel = v);
+        if (qualitySlider != null)
+            qualitySlider.onValueChanged.AddListener(v => currentSettings.qualityLevel = Mathf.RoundToInt(v));
 
         // Controls tab
         if (lookSensitivitySlider != null)
@@ -131,8 +115,8 @@ public class SettingsScreen : UIScreen
         if (vsyncToggle != null)
             SetToggleValue(vsyncToggle, currentSettings.vsync);
 
-        if (qualityDropdown != null)
-            qualityDropdown.value = currentSettings.qualityLevel;
+        if (qualitySlider != null)
+            SetSliderValue(qualitySlider, currentSettings.qualityLevel);
 
         // Controls tab
         if (lookSensitivitySlider != null)
@@ -175,8 +159,8 @@ public class SettingsScreen : UIScreen
         if (vsyncToggle != null)
             currentSettings.vsync = GetToggleValue(vsyncToggle);
 
-        if (qualityDropdown != null)
-            currentSettings.qualityLevel = qualityDropdown.value;
+        if (qualitySlider != null)
+            currentSettings.qualityLevel = Mathf.RoundToInt(GetSliderValue(qualitySlider));
 
         // Controls tab
         if (lookSensitivitySlider != null)
