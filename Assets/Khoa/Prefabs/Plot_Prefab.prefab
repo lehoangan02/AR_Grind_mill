@@ -335,3 +335,7 @@ MonoBehaviour:
   colorWet: {r: 0.18, g: 0.11, b: 0.05, a: 1}
   waterSurfaceMesh: {fileID: 2100000000000000001}
   currentMoisture: 0
+  gleanStalkPrefab: {fileID: 50000001, guid: c4a5b6c7d8e9012345678901abcdef07, type: 3}
+  gleanSpawnChance: 0.8
+  minGleanStalks: 1
+  maxGleanStalks: 3

@@ -43,6 +43,19 @@ namespace Khoa.Farming
         [Range(0f, 1f)]
         public float currentMoisture = 0f;
 
+        [Header("Gleaning Settings (Mót lúa rơi vãi)")]
+        [Tooltip("Prefab bông lúa rơi vãi để người chơi mót")]
+        public GameObject gleanStalkPrefab;
+        [Tooltip("Tỉ lệ rơi vãi bông lúa mót sau khi gặt (0-1)")]
+        [Range(0f, 1f)]
+        public float gleanSpawnChance = 0.8f;
+        [Tooltip("Số bông lúa mót tối thiểu sinh ra")]
+        [Min(0)]
+        public int minGleanStalks = 1;
+        [Tooltip("Số bông lúa mót tối đa sinh ra")]
+        [Min(1)]
+        public int maxGleanStalks = 3;
+
         // Events cho Game Manager / Quest Manager / Audio Manager
         public event Action<PlotState> OnStateChanged;
         public event Action<CropPlot, RiceBundleItem> OnCropHarvestedWithItem;
@@ -221,6 +234,23 @@ namespace Khoa.Farming
                     {
                         Vector3 popDir = new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), 1.2f, UnityEngine.Random.Range(-0.3f, 0.3f));
                         bundleRb.linearVelocity = popDir;
+                    }
+                }
+
+                // Sinh các bông lúa rơi vãi để người chơi mót lúa
+                if (gleanStalkPrefab != null && UnityEngine.Random.value <= gleanSpawnChance)
+                {
+                    int stalkCount = UnityEngine.Random.Range(minGleanStalks, maxGleanStalks + 1);
+                    for (int i = 0; i < stalkCount; i++)
+                    {
+                        Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * 0.45f;
+                        Vector3 stalkPos = transform.position + new Vector3(randomOffset.x, 0.1f, randomOffset.y);
+                        GameObject stalkGO = Instantiate(gleanStalkPrefab, stalkPos, Quaternion.Euler(0f, UnityEngine.Random.Range(0f, 360f), 0f));
+                        Rigidbody stalkRb = stalkGO.GetComponent<Rigidbody>();
+                        if (stalkRb != null)
+                        {
+                            stalkRb.linearVelocity = new Vector3(randomOffset.x * 0.5f, 0.5f, randomOffset.y * 0.5f);
+                        }
                     }
                 }
 
