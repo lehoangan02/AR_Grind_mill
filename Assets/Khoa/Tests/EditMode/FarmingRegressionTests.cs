@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Linq;
+using System.Collections;
 using Khoa.Farming;
 using NUnit.Framework;
 using UnityEditor;
@@ -135,6 +136,132 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
+        public void FarmingSceneIntegrator_PreparationPreservesEveryPlotTransform()
+        {
+            GameObject root = new GameObject("TerrainMappedGrid");
+            CropPlot first = CreateMappedPlot(root.transform, new Vector3(2f, 4f, 6f), Quaternion.Euler(8f, 0f, 3f));
+            CropPlot second = CreateMappedPlot(root.transform, new Vector3(-3f, 7f, 9f), Quaternion.Euler(-5f, 4f, 11f));
+            Vector3[] positions = { first.transform.position, second.transform.position };
+            Quaternion[] rotations = { first.transform.rotation, second.transform.rotation };
+
+            System.Type integratorType = FindEditorType("Khoa.Farming.Editor.FarmingSceneIntegrator");
+            MethodInfo prepareMethod = integratorType?.GetMethod(
+                "PreparePlotsForIntegration",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+            Assert.IsNotNull(prepareMethod, "Integration needs a transform-preserving plot preparation API.");
+            IEnumerable prepared = prepareMethod.Invoke(null, new object[] { new[] { first, second } }) as IEnumerable;
+            Assert.IsNotNull(prepared);
+            Assert.AreEqual(2, prepared.Cast<object>().Count());
+            Assert.AreEqual(positions[0], first.transform.position);
+            Assert.AreEqual(positions[1], second.transform.position);
+            Assert.AreEqual(rotations[0], first.transform.rotation);
+            Assert.AreEqual(rotations[1], second.transform.rotation);
+
+            Object.DestroyImmediate(root);
+        }
+
+        [Test]
+        public void TerrainPlacement_MultiSampleKeepsWholePlotAboveUnevenGround()
+        {
+            TerrainData terrainData = new TerrainData
+            {
+                heightmapResolution = 33,
+                size = new Vector3(10f, 2f, 10f)
+            };
+            float[,] heights = new float[33, 33];
+            for (int z = 0; z < 33; z++)
+            {
+                for (int x = 0; x < 33; x++)
+                {
+                    float slope = x / 32f * 0.12f;
+                    float dx = (x - 21f) / 4f;
+                    float dz = (z - 21f) / 4f;
+                    heights[z, x] = slope + 0.18f * Mathf.Exp(-(dx * dx + dz * dz));
+                }
+            }
+            terrainData.SetHeights(0, 0, heights);
+
+            GameObject terrainObject = Terrain.CreateTerrainGameObject(terrainData);
+            Terrain terrain = terrainObject.GetComponent<Terrain>();
+            GameObject plot = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            plot.transform.localScale = new Vector3(3f, 0.1f, 3f);
+
+            System.Type placementType = FindEditorType("Khoa.Farming.Editor.TerrainPlotPlacement");
+            MethodInfo placeMethod = placementType?.GetMethod(
+                "TryPlaceOnTerrain",
+                BindingFlags.Static | BindingFlags.Public);
+
+            Assert.IsNotNull(placeMethod, "Grid generation needs a reusable multi-sample terrain placement utility.");
+            const float clearance = 0.05f;
+            bool placed = (bool)placeMethod.Invoke(null, new object[]
+            {
+                plot,
+                terrain,
+                new Vector3(5f, 0f, 5f),
+                clearance,
+                3
+            });
+
+            Assert.IsTrue(placed);
+            BoxCollider collider = plot.GetComponent<BoxCollider>();
+            for (int z = 0; z < 3; z++)
+            {
+                for (int x = 0; x < 3; x++)
+                {
+                    Vector3 localPoint = collider.center + new Vector3(
+                        Mathf.Lerp(-collider.size.x * 0.5f, collider.size.x * 0.5f, x / 2f),
+                        -collider.size.y * 0.5f,
+                        Mathf.Lerp(-collider.size.z * 0.5f, collider.size.z * 0.5f, z / 2f));
+                    Vector3 worldPoint = plot.transform.TransformPoint(localPoint);
+                    float terrainHeight = SampleTerrainHeight(terrain, worldPoint);
+                    Assert.GreaterOrEqual(worldPoint.y + 0.002f, terrainHeight + clearance,
+                        $"Plot penetrated terrain at sample ({x}, {z}).");
+                }
+            }
+
+            Object.DestroyImmediate(plot);
+            Object.DestroyImmediate(terrainObject);
+            Object.DestroyImmediate(terrainData);
+        }
+
+        [Test]
+        public void TerrainPlacement_FootprintCanCrossAdjacentTerrainTiles()
+        {
+            TerrainData leftData = CreateFlatTerrainData();
+            TerrainData rightData = CreateFlatTerrainData();
+            GameObject leftObject = Terrain.CreateTerrainGameObject(leftData);
+            GameObject rightObject = Terrain.CreateTerrainGameObject(rightData);
+            rightObject.transform.position = new Vector3(10f, 0f, 0f);
+            Terrain leftTerrain = leftObject.GetComponent<Terrain>();
+
+            GameObject plot = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            plot.transform.localScale = new Vector3(3f, 0.1f, 3f);
+            System.Type placementType = FindEditorType("Khoa.Farming.Editor.TerrainPlotPlacement");
+            MethodInfo placeMethod = placementType?.GetMethod(
+                "TryPlaceOnTerrain",
+                BindingFlags.Static | BindingFlags.Public);
+
+            Assert.IsNotNull(placeMethod);
+            bool placed = (bool)placeMethod.Invoke(null, new object[]
+            {
+                plot,
+                leftTerrain,
+                new Vector3(10f, 0f, 5f),
+                0.05f,
+                5
+            });
+
+            Assert.IsTrue(placed, "A plot spanning two adjacent Terrain tiles must not be dropped at their seam.");
+
+            Object.DestroyImmediate(plot);
+            Object.DestroyImmediate(leftObject);
+            Object.DestroyImmediate(rightObject);
+            Object.DestroyImmediate(leftData);
+            Object.DestroyImmediate(rightData);
+        }
+
+        [Test]
         public void MainScene_HasBoundedPlayableFarmingSetup()
         {
             EditorSceneManager.OpenScene(MainScenePath, OpenSceneMode.Single);
@@ -142,7 +269,7 @@ namespace Khoa.Farming.Tests
             CropPlot[] plots = Object.FindObjectsByType<CropPlot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             SluiceGate[] gates = Object.FindObjectsByType<SluiceGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-            Assert.AreEqual(10000, plots.Length, "The designed farming field must remain a 100 x 100 grid.");
+            Assert.Greater(plots.Length, 0, "The integration must support the grid size selected by the designer.");
             Assert.AreEqual(1, gates.Length);
             Assert.AreEqual(plots.Length, gates[0].connectedPlots.Count);
             Assert.AreEqual(1, Object.FindObjectsByType<RiceDryingYard>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
@@ -152,6 +279,39 @@ namespace Khoa.Farming.Tests
             Assert.AreEqual(1, Object.FindObjectsByType<BuffaloPlowAttachment>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
             Assert.AreEqual(1, Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None)
                 .Count(component => component != null && component.GetType().Name == "RiceBasketController"));
+        }
+
+        private static CropPlot CreateMappedPlot(Transform parent, Vector3 position, Quaternion rotation)
+        {
+            GameObject plotObject = new GameObject("MappedPlot");
+            plotObject.transform.SetParent(parent);
+            plotObject.transform.SetPositionAndRotation(position, rotation);
+            return plotObject.AddComponent<CropPlot>();
+        }
+
+        private static System.Type FindEditorType(string fullName)
+        {
+            return System.AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType(fullName, false))
+                .FirstOrDefault(type => type != null);
+        }
+
+        private static float SampleTerrainHeight(Terrain terrain, Vector3 worldPoint)
+        {
+            TerrainData data = terrain.terrainData;
+            Vector3 local = worldPoint - terrain.transform.position;
+            float normalizedX = Mathf.Clamp01(local.x / data.size.x);
+            float normalizedZ = Mathf.Clamp01(local.z / data.size.z);
+            return terrain.transform.position.y + data.GetInterpolatedHeight(normalizedX, normalizedZ);
+        }
+
+        private static TerrainData CreateFlatTerrainData()
+        {
+            return new TerrainData
+            {
+                heightmapResolution = 33,
+                size = new Vector3(10f, 2f, 10f)
+            };
         }
     }
 }

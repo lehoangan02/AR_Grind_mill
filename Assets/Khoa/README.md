@@ -6,9 +6,9 @@ namespace `Khoa.Farming`; scene mẫu đang dùng là
 
 ## Bắt đầu nhanh
 
-Scene chính đã có sẵn playable farming slice gồm lưới 100 x 100, van nước, sân phơi,
-máy tuốt, giỏ thóc, thời tiết, mái che và lưỡi bừa trên trâu. Không cần kéo lại từng
-prefab để test luồng hiện tại.
+Scene chính đã có sẵn playable farming slice gồm grid do designer chọn, van nước,
+sân phơi, máy tuốt, giỏ thóc, thời tiết, mái che và lưỡi bừa trên trâu. Grid thử
+hiện tại là 80 x 80; có thể generate lại 100 x 100 khi chốt map.
 
 Nếu scene bị merge hoặc cần tái tạo setup, mở Unity và chọn:
 
@@ -20,7 +20,7 @@ Hoặc chạy ở thư mục project:
 unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMainSceneSetup
 ```
 
-Tool giữ nguyên 10.000 plot của lưới 100 x 100, đặt chúng đúng cao độ mặt nước và nối đủ các station.
+Tool giữ nguyên toàn bộ transform và kích thước grid hiện có, sau đó chỉ nối lại các station.
 Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố cục thủ công chưa lưu.
 
 ## Luồng gameplay đã triển khai
@@ -75,10 +75,15 @@ Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố c�
 
 ## Editor tools
 
-- `Khoa/Farming/Apply Main Scene Integration`: chuẩn hóa playable setup ở scene chính.
+- `Khoa/Farming/Apply Main Scene Integration`: nối station vào grid hiện có; không
+  đổi position, rotation hoặc số lượng plot.
 - `Khoa/Farming/Setup Farming Prefabs`: tạo/cập nhật prefab farming.
 - `Khoa/Tạo Bộ Công Cụ Nông Nghiệp (Test)`: sinh bộ tool test VR.
-- `Khoa/Farming/Generate Plot Grid`: tạo grid plot theo terrain.
+- `Khoa/Farming/Generate Plot Grid`: tạo grid plot theo terrain. Mặc định lấy mẫu
+  3 x 3 trên footprint, lấy normal trung bình rồi nâng đáy plot đủ clearance tại
+  mọi điểm mẫu. `3 x 3` nghĩa là 9 điểm trên mỗi plot; `5 x 5` là 25 điểm, chính
+  xác hơn nhưng generate chậm hơn. Sampling tự chuyển sang Terrain tile kế bên khi
+  footprint nằm trên đường seam.
 
 ## Chạy kiểm thử
 
@@ -87,7 +92,7 @@ unity test . --mode EditMode --filter Khoa.Farming.Tests --output TestResults/Kh
 unity test . --mode PlayMode --filter Khoa.Farming.PlayModeTests --output TestResults/KhoaPlayMode.xml
 ```
 
-Mốc xác nhận 2026-08-21: **27/27 EditMode** và **2/2 PlayMode** passed.
+Mốc xác nhận 2026-08-21: **30/30 EditMode** và **2/2 PlayMode** passed.
 
 ## Khi có lỗi
 

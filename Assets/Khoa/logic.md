@@ -61,7 +61,8 @@ tưới và cây `ReadyToHarvest` ngừng update growth/water.
 Khi `isOpen`, mỗi frame cống gọi `WaterPlot(waterFlowRate * deltaTime)` cho từng
 plot không-null trong `connectedPlots`.
 
-- Scene chính gán trực tiếp đúng 10.000 plot và tắt auto-find để kết quả ổn định.
+- Scene chính gán trực tiếp mọi plot của grid do designer chọn và tắt auto-find để
+  kết quả ổn định. Chạy integration lại sau khi generate grid mới để refresh wiring.
 - Scene phụ có thể để danh sách rỗng và bật `autoFindNearbyPlotsOnStart`; `Start()`
   sẽ quét collider trong `autoFindRadius` (mặc định 25 m).
 - XR Select gọi `ToggleGate()`. Lever chỉ phản ánh hai góc đóng/mở, không phải mô
@@ -113,20 +114,34 @@ bằng việc đã tính ra số hạt.
 Quy tắc transaction ngăn mất bó lúa khi scene thiếu giỏ, inventory chưa sẵn sàng
 hoặc API phía team thay đổi.
 
-## 8. Scene invariants
+## 8. Terrain placement và scene invariants
+
+`PlotGridGenerator` xác định Terrain tại tâm mỗi cell, sau đó
+`TerrainPlotPlacement`:
+
+1. lấy mẫu footprint theo lưới 3 x 3 mặc định;
+2. lấy trung bình normal để tính rotation phù hợp địa hình;
+3. lấy lại đúng các điểm trên mặt đáy plot sau khi xoay;
+4. tính center Y tối thiểu sao cho mọi điểm đáy cao hơn Terrain ít nhất `Y Offset`.
+
+Nếu footprint vượt ranh giới một Terrain tile, từng điểm mẫu tự chọn tile lân cận
+chứa tọa độ đó. Plot không bị bỏ chỉ vì các góc nằm trên hai tile khác nhau.
+
+Cách này xử lý cả độ dốc và phần terrain lồi dưới góc plot. `Max Terrain Height`
+vẫn chỉ là bộ lọc cell; nó không quyết định placement Y.
 
 `FarmingSceneIntegrator` và regression test cùng bảo vệ các invariant sau:
 
-- đúng 10.000 plot; setup chuẩn là 100 x 100;
+- giữ nguyên số lượng plot và transform của grid do designer tạo;
 - đúng một cống, sân phơi, máy tuốt, weather system, shelter, plow attachment và
   physical rice basket;
 - cống nối đủ mọi plot;
 - prefab máy tuốt không có missing MonoBehaviour;
-- plot nằm sát dưới `FieldWaterPlane`, không nằm sâu dưới mặt nước.
+- các điểm mẫu ở đáy plot không xuyên Terrain.
 
 ## 9. Bằng chứng test
 
-EditMode 27 test bao phủ FSM, nước, tăng trưởng, phơi/mưa/mái che, tuốt, receiver,
+EditMode 30 test bao phủ FSM, nước, tăng trưởng, phơi/mưa/mái che, tuốt, receiver,
 mót lúa, particle factory, prefab và serialized scene invariants.
 
 PlayMode 2 test bao phủ:
@@ -134,5 +149,5 @@ PlayMode 2 test bao phủ:
 - `SluiceGate.Start()` tự tìm plot và tưới qua nhiều frame;
 - `RiceDryingYard` nhận physical bundle qua trigger và làm khô theo thời gian.
 
-Mốc chạy Unity CLI ngày 2026-08-21: 27/27 EditMode và 2/2 PlayMode passed. Vẫn cần
+Mốc chạy Unity CLI ngày 2026-08-21: 30/30 EditMode và 2/2 PlayMode passed. Vẫn cần
 QA thủ công trên kính VR cho ergonomics, collider thực tế và cảm giác tương tác.

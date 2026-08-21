@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -13,6 +14,7 @@ namespace Khoa.Farming.Editor
         private float spacingZ = 1.0f;
         private float maxHeight = 100f; // Ngưỡng độ cao mặc định
         private float yOffset = 0.08f; // Độ nổi của ô đất so với mặt đất
+        private int terrainSamplesPerAxis = TerrainPlotPlacement.DefaultSamplesPerAxis;
         
         [MenuItem("Khoa/Farming/Generate Plot Grid")]
         public static void ShowWindow()
@@ -44,8 +46,13 @@ namespace Khoa.Farming.Editor
             maxHeight = EditorGUILayout.FloatField("Max Terrain Height (Y)", maxHeight);
 
             GUILayout.Space(10);
-            EditorGUILayout.HelpBox("Y Offset: Tăng số này lên nếu ô đất vẫn bị chìm/cắt xén vào bề mặt Terrain gồ ghề. (0.05 là vừa vặn, 0.1 là nổi hẳn lên)", MessageType.Info);
+            EditorGUILayout.HelpBox("Y Offset là khoảng hở tối thiểu giữa Terrain và toàn bộ mặt đáy ô đất. Tool kiểm tra nhiều điểm nên không cần tăng quá cao để chữa phần góc bị chìm.", MessageType.Info);
             yOffset = EditorGUILayout.FloatField("Độ nổi (Y Offset)", yOffset);
+            terrainSamplesPerAxis = EditorGUILayout.IntPopup(
+                "Mẫu Terrain mỗi chiều",
+                terrainSamplesPerAxis,
+                new[] { "3 x 3 (Nhanh)", "5 x 5 (Địa hình gồ ghề)" },
+                new[] { 3, 5 });
 
             GUILayout.Space(20);
             if (GUILayout.Button("Tạo Grid Ô Đất", GUILayout.Height(40)))
@@ -118,6 +125,7 @@ namespace Khoa.Farming.Editor
                     
                     // Bắn xuyên qua mọi thứ (RaycastAll) để tìm đúng mặt đất (Terrain) kể cả khi có lớp nước che phủ
                     RaycastHit[] hits = Physics.RaycastAll(rayStart, Vector3.down, 2000f);
+                    Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
                     foreach (var hit in hits)
                     {
                         // Kiểm tra xem tia raycast có trúng Terrain không (bỏ qua mặt nước)
@@ -127,15 +135,23 @@ namespace Khoa.Farming.Editor
                             if (hit.point.y <= maxHeight)
                             {
                                 GameObject newPlot = (GameObject)PrefabUtility.InstantiatePrefab(plotPrefab);
-                                
-                                // Bẻ nghiêng cái ô đất cho nó úp sát bám theo độ dốc của mặt đất
-                                newPlot.transform.up = hit.normal;
-                                
-                                // Gắn chặt xuống mặt đất + nhấc thẳng đứng lên theo trục Y toàn cục (để chắc chắn nó nổi lên)
-                                newPlot.transform.position = hit.point + new Vector3(0, yOffset, 0); 
+                                Terrain terrain = hit.collider.GetComponent<Terrain>() ?? hit.collider.GetComponentInParent<Terrain>();
+                                Vector3 plotCenter = new Vector3(rayStart.x, hit.point.y, rayStart.z);
 
-                                newPlot.transform.SetParent(group.transform);
-                                count++;
+                                if (TerrainPlotPlacement.TryPlaceOnTerrain(
+                                        newPlot,
+                                        terrain,
+                                        plotCenter,
+                                        yOffset,
+                                        terrainSamplesPerAxis))
+                                {
+                                    newPlot.transform.SetParent(group.transform);
+                                    count++;
+                                }
+                                else
+                                {
+                                    DestroyImmediate(newPlot);
+                                }
                             }
                             break; // Đã tìm thấy Terrain ở tọa độ X,Z này rồi thì không xét các hit khác nữa
                         }

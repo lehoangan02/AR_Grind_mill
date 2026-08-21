@@ -42,11 +42,14 @@ nhất trước đợt sửa này là `b8537728`.
 
 ### Scene chính
 
-Scene chính hiện có một playable farming slice được Unity tạo và lưu:
+Scene chính hiện có một playable farming slice được Unity tạo và lưu. Grid hiện tại
+là bản 80 x 80 do designer generate để thử. Bản sinh trước khi sửa seam có 6.320
+plot vì thiếu một cột tại ranh giới Terrain; generate lại bằng tool mới sẽ đủ 6.400.
+Kích thước production vẫn có thể generate lại 100 x 100:
 
-- giữ nguyên 10.000 plot theo thiết kế lưới 100 x 100;
-- plot được đặt lại đúng cao độ so với `FieldWaterPlane`, không còn nằm sâu dưới nước;
-- đúng một van tưới nối đủ 10.000 plot;
+- mỗi plot giữ nguyên position/rotation đã map theo Terrain;
+- `Apply Main Scene Integration` không xóa, thu nhỏ, làm phẳng hay đổi cao độ grid;
+- đúng một van tưới nối đủ mọi plot trong grid hiện tại;
 - đúng một sân phơi, máy tuốt, giỏ thóc vật lý, weather system và shelter zone;
 - đúng một lưỡi bừa gắn vào object có `BuffaloRider`;
 - particle nước, hơi phơi, hạt thóc và bùn đã được nối vào component tương ứng.
@@ -61,10 +64,11 @@ unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMa
 
 Ngày 2026-08-21:
 
-- EditMode `Khoa.Farming.Tests`: **27/27 passed**.
+- EditMode `Khoa.Farming.Tests`: **30/30 passed**.
 - PlayMode `Khoa.Farming.PlayModeTests`: **2/2 passed**.
 - Regression riêng gồm kiểm tra prefab, FSM, ngưỡng tăng trưởng, transaction máy
-  tuốt, reset mót lúa và wiring scene: **10/10 passed**.
+  tuốt, reset mót lúa, wiring scene, bảo toàn transform và terrain clearance:
+  **13/13 passed**.
 
 PlayMode hiện kiểm tra hai đường runtime quan trọng: van tự tìm plot và tưới theo
 frame; sân phơi nhận bó lúa qua trigger rồi tăng độ khô.
@@ -79,6 +83,8 @@ frame; sân phơi nhận bó lúa qua trigger rồi tăng độ khô.
 - Tài liệu ghi sai ngưỡng 33/66/100, sai điều kiện hiện nước và sai việc bó mót
   “xuất hiện trên tay”.
 - Scene chính chưa tích hợp farming station và cao độ ruộng sai.
+- Bản integration cũ từng ép mọi plot về cùng cao độ nước và reset rotation, làm
+  mất terrain mapping; bước này đã bị xóa và có regression bảo vệ.
 
 ## 5. Chưa được coi là hoàn tất
 

@@ -17,7 +17,6 @@ namespace Khoa.Farming.Editor
     {
         private const string MainScenePath = "Assets/Scenes/Grind mill v1.0 Scene.unity";
         private const string SetupRootName = "Khoa_Farming_Runtime_Setup";
-        private const int PlayableGridSide = 100;
 
         [MenuItem("Khoa/Farming/Apply Main Scene Integration")]
         public static void ApplyMainSceneSetup()
@@ -33,8 +32,8 @@ namespace Khoa.Farming.Editor
             }
 
             Transform fieldRoot = FindFieldRoot(allPlots);
-            List<CropPlot> playablePlots = ReduceToCentralGrid(allPlots, fieldRoot, PlayableGridSide);
-            AlignPlotsToPaddyWater(playablePlots);
+            List<CropPlot> playablePlots = PreparePlotsForIntegration(
+                allPlots.Where(plot => plot != null && plot.transform.parent == fieldRoot));
 
             GameObject previousSetup = GameObject.Find(SetupRootName);
             if (previousSetup != null)
@@ -73,74 +72,19 @@ namespace Khoa.Farming.Editor
                 .First(parent => parent != null);
         }
 
-        private static List<CropPlot> ReduceToCentralGrid(
-            IEnumerable<CropPlot> plots,
-            Transform fieldRoot,
-            int side)
+        internal static List<CropPlot> PreparePlotsForIntegration(IEnumerable<CropPlot> plots)
         {
-            CropPlot[] fieldPlots = plots.Where(plot => plot.transform.parent == fieldRoot).ToArray();
-            int[] xCoordinates = SelectCentralCoordinates(fieldPlots.Select(plot => plot.transform.localPosition.x), side);
-            int[] zCoordinates = SelectCentralCoordinates(fieldPlots.Select(plot => plot.transform.localPosition.z), side);
-            HashSet<int> keptX = new HashSet<int>(xCoordinates);
-            HashSet<int> keptZ = new HashSet<int>(zCoordinates);
-            List<CropPlot> keptPlots = new List<CropPlot>(side * side);
-
-            foreach (CropPlot plot in fieldPlots)
+            List<CropPlot> preparedPlots = plots.Where(plot => plot != null).ToList();
+            foreach (CropPlot plot in preparedPlots)
             {
-                int x = Quantize(plot.transform.localPosition.x);
-                int z = Quantize(plot.transform.localPosition.z);
-                if (keptX.Contains(x) && keptZ.Contains(z))
+                XRSimpleInteractable interactable = plot.GetComponent<XRSimpleInteractable>();
+                if (interactable != null)
                 {
-                    keptPlots.Add(plot);
-                    XRSimpleInteractable interactable = plot.GetComponent<XRSimpleInteractable>();
-                    if (interactable != null)
-                    {
-                        interactable.enabled = false;
-                    }
-                }
-                else
-                {
-                    UnityEngine.Object.DestroyImmediate(plot.gameObject);
+                    interactable.enabled = false;
                 }
             }
 
-            fieldRoot.name = $"Khoa_Farming_Field_{side}x{side}";
-            if (keptPlots.Count != side * side)
-            {
-                throw new InvalidOperationException(
-                    $"Expected {side * side} central plots but kept {keptPlots.Count}.");
-            }
-
-            return keptPlots;
-        }
-
-        private static int[] SelectCentralCoordinates(IEnumerable<float> values, int count)
-        {
-            int[] coordinates = values.Select(Quantize).Distinct().OrderBy(value => value).ToArray();
-            if (coordinates.Length < count)
-            {
-                throw new InvalidOperationException($"Grid only has {coordinates.Length} unique coordinates.");
-            }
-
-            int start = (coordinates.Length - count) / 2;
-            return coordinates.Skip(start).Take(count).ToArray();
-        }
-
-        private static int Quantize(float value)
-        {
-            return Mathf.RoundToInt(value * 1000f);
-        }
-
-        private static void AlignPlotsToPaddyWater(IEnumerable<CropPlot> plots)
-        {
-            float waterHeight = FindPaddyWaterHeight(plots);
-            foreach (CropPlot plot in plots)
-            {
-                Vector3 position = plot.transform.position;
-                position.y = waterHeight - 0.08f;
-                plot.transform.position = position;
-                plot.transform.rotation = Quaternion.identity;
-            }
+            return preparedPlots;
         }
 
         private static float FindPaddyWaterHeight(IEnumerable<CropPlot> plots)
