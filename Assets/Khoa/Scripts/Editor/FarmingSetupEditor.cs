@@ -26,10 +26,16 @@ namespace Khoa.Farming.Editor
             GUILayout.Space(10);
             GUILayout.Label("🌾 1. Cụm Trồng & Thu Hoạch Lúa", EditorStyles.boldLabel);
 
+            EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Tạo/Cập nhật Prefab Bó Lúa (Rice Bundle)", GUILayout.Height(30)))
             {
                 CreateRiceBundlePrefab();
             }
+            if (GUILayout.Button("Tạo Bông Lúa Mót (Gleaned Stalk)", GUILayout.Height(30)))
+            {
+                CreateGleanedRiceStalkPrefab();
+            }
+            EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(5);
             sourceRiceModel = (GameObject)EditorGUILayout.ObjectField("Rice 3D Model (Tuỳ chọn)", sourceRiceModel, typeof(GameObject), false);
@@ -119,6 +125,57 @@ namespace Khoa.Farming.Editor
             AssetDatabase.Refresh();
 
             Debug.Log("<color=green>Đã tạo thành công Prefab Bó Lúa tại: " + bundlePrefabPath + "</color>");
+            return savedPrefab;
+        }
+
+        public static GameObject CreateGleanedRiceStalkPrefab()
+        {
+            string folderPath = "Assets/Khoa/Prefabs";
+            EnsureFolder(folderPath);
+
+            string stalkPrefabPath = folderPath + "/Gleaned_Rice_Stalk_Prefab.prefab";
+
+            GameObject stalkGO = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            stalkGO.name = "Gleaned_Rice_Stalk_Prefab";
+            stalkGO.transform.localScale = new Vector3(0.12f, 0.2f, 0.12f);
+
+            MeshRenderer renderer = stalkGO.GetComponent<MeshRenderer>();
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+            Material strawMat = new Material(shader) { color = new Color(0.95f, 0.8f, 0.2f) };
+            renderer.material = strawMat;
+
+            Rigidbody rb = stalkGO.GetComponent<Rigidbody>() ?? stalkGO.AddComponent<Rigidbody>();
+            rb.mass = 0.2f;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+            XRGrabInteractable grab = stalkGO.GetComponent<XRGrabInteractable>() ?? stalkGO.AddComponent<XRGrabInteractable>();
+            grab.interactionLayers = InteractionLayerMask.GetMask("Default");
+            grab.throwOnDetach = true;
+
+            GleanedRiceStalk stalk = stalkGO.GetComponent<GleanedRiceStalk>() ?? stalkGO.AddComponent<GleanedRiceStalk>();
+            stalk.bundlePrefabToSpawn = AssetDatabase.LoadAssetAtPath<GameObject>(folderPath + "/Rice_Bundle_Prefab.prefab");
+            stalk.stalksRequiredForBundle = 3;
+            stalk.grainYieldPerBundle = 10;
+
+            GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(stalkGO, stalkPrefabPath);
+            DestroyImmediate(stalkGO);
+
+            string plotPrefabPath = folderPath + "/Plot_Prefab.prefab";
+            GameObject plotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(plotPrefabPath);
+            if (plotPrefab != null)
+            {
+                CropPlot plotComponent = plotPrefab.GetComponent<CropPlot>();
+                if (plotComponent != null)
+                {
+                    plotComponent.gleanStalkPrefab = savedPrefab;
+                    EditorUtility.SetDirty(plotPrefab);
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Debug.Log("<color=green>Đã tạo thành công Prefab Bông Lúa Mót tại: " + stalkPrefabPath + "</color>");
             return savedPrefab;
         }
 
