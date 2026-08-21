@@ -234,6 +234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Khoa.Farming.CropPlot
   currentState: 0
   ricePrefab: {fileID: 413773182584572424, guid: 27dc2b49d8df4c84889a7baba3961440, type: 3}
+  harvestItemPrefab: {fileID: 519284719201948192, guid: b89f53e20a144e4ca06709841f3d81b4, type: 3}
   cropSpawnPoint: {fileID: 1455206620994060357}
   emptyModel3D: {fileID: 0}
   tilledModel3D: {fileID: 0}

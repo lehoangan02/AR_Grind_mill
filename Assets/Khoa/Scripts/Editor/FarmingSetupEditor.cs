@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace Khoa.Farming.Editor
 {
@@ -16,15 +17,95 @@ namespace Khoa.Farming.Editor
 
         private void OnGUI()
         {
-            GUILayout.Label("Tạo Prefab Tự Động", EditorStyles.boldLabel);
+            GUILayout.Label("Cấu hình & Tạo Prefab Nông Nghiệp", EditorStyles.boldLabel);
             
-            EditorGUILayout.HelpBox("Kéo thả Model 3D cây lúa của bạn vào đây (nếu có). Nếu để trống, sẽ dùng trụ tròn tạm thời.", MessageType.Info);
-            sourceRiceModel = (GameObject)EditorGUILayout.ObjectField("Rice 3D Model (Tuỳ chọn)", sourceRiceModel, typeof(GameObject), false);
-
-            if (GUILayout.Button("Tạo/Cập nhật Prefabs"))
+            EditorGUILayout.HelpBox("1. Tạo Bó Lúa Prefab: Dùng để làm vật phẩm rơi ra khi gặt lúa bằng liềm (có sẵn XR Grab để cầm nhặt trong VR).\n2. Tạo/Cập nhật Prefabs Hệ Thống: Tạo ô đất (Plot) và cây lúa (Rice Plant).", MessageType.Info);
+            
+            GUILayout.Space(10);
+            if (GUILayout.Button("🌾 Tạo/Cập nhật Prefab Bó Lúa (Rice Bundle)", GUILayout.Height(35)))
             {
-                CreatePrefabs();
+                CreateRiceBundlePrefab();
             }
+
+            GUILayout.Space(15);
+            GUILayout.Label("Model 3D Cây Lúa Tùy Chọn", EditorStyles.boldLabel);
+            sourceRiceModel = (GameObject)EditorGUILayout.ObjectField("Rice 3D Model", sourceRiceModel, typeof(GameObject), false);
+
+            GUILayout.Space(5);
+            if (GUILayout.Button("🛠️ Tạo/Cập nhật Prefabs Ruộng & Cây Lúa", GUILayout.Height(35)))
+            {
+                if (EditorUtility.DisplayDialog("Xác nhận", "Bạn có chắc chắn muốn tạo/cập nhật lại Prefab Ruộng và Cây Lúa không?\n(Dữ liệu cũ nếu có sẽ được bảo lưu an toàn)", "Đồng ý", "Hủy"))
+                {
+                    CreatePrefabs();
+                }
+            }
+        }
+
+        public static GameObject CreateRiceBundlePrefab()
+        {
+            string folderPath = "Assets/Khoa/Prefabs";
+            if (!AssetDatabase.IsValidFolder("Assets/Khoa"))
+                AssetDatabase.CreateFolder("Assets", "Khoa");
+            if (!AssetDatabase.IsValidFolder(folderPath))
+                AssetDatabase.CreateFolder("Assets/Khoa", "Prefabs");
+
+            string bundlePrefabPath = folderPath + "/Rice_Bundle_Prefab.prefab";
+
+            // Tạo model bó lúa mẫu hình con thoi / capsule dẹp
+            GameObject bundleGO = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            bundleGO.name = "Rice_Bundle_Prefab";
+            bundleGO.tag = "Untagged";
+            bundleGO.transform.localScale = new Vector3(0.25f, 0.4f, 0.25f);
+
+            // Vật liệu màu vàng rơm
+            MeshRenderer renderer = bundleGO.GetComponent<MeshRenderer>();
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null) shader = Shader.Find("Standard");
+
+            Material strawMat = new Material(shader);
+            strawMat.color = new Color(0.9f, 0.75f, 0.2f); // Vàng rơm
+            renderer.material = strawMat;
+
+            // Rigidbody
+            Rigidbody rb = bundleGO.GetComponent<Rigidbody>();
+            if (rb == null) rb = bundleGO.AddComponent<Rigidbody>();
+            rb.mass = 0.8f;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+            // XR Grab Interactable
+            XRGrabInteractable grab = bundleGO.GetComponent<XRGrabInteractable>();
+            if (grab == null) grab = bundleGO.AddComponent<XRGrabInteractable>();
+            grab.interactionLayers = InteractionLayerMask.GetMask("Default");
+            grab.throwOnDetach = true;
+
+            // RiceBundleItem component
+            RiceBundleItem item = bundleGO.GetComponent<RiceBundleItem>();
+            if (item == null) item = bundleGO.AddComponent<RiceBundleItem>();
+            item.cropData = AssetDatabase.LoadAssetAtPath<CropData>("Assets/Khoa/ScriptableObjects/Rice_Data.asset");
+            item.grainAmount = 10;
+            item.isDry = false;
+
+            GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(bundleGO, bundlePrefabPath);
+            DestroyImmediate(bundleGO);
+
+            // Cập nhật liên kết vào Plot_Prefab nếu có
+            string plotPrefabPath = folderPath + "/Plot_Prefab.prefab";
+            GameObject plotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(plotPrefabPath);
+            if (plotPrefab != null)
+            {
+                CropPlot plotComponent = plotPrefab.GetComponent<CropPlot>();
+                if (plotComponent != null && plotComponent.harvestItemPrefab == null)
+                {
+                    plotComponent.harvestItemPrefab = savedPrefab;
+                    EditorUtility.SetDirty(plotPrefab);
+                }
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Debug.Log("<color=green>Đã tạo thành công Prefab Bó Lúa tại: " + bundlePrefabPath + "</color>");
+            return savedPrefab;
         }
 
         private void CreatePrefabs()
@@ -57,13 +138,11 @@ namespace Khoa.Farming.Editor
             
             if (sourceRiceModel != null)
             {
-                // Dùng model thật của user
                 riceGO = (GameObject)PrefabUtility.InstantiatePrefab(sourceRiceModel);
                 riceGO.name = "Rice_Prefab";
             }
             else
             {
-                // Dùng trụ tròn tạm thời
                 riceGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 riceGO.name = "Rice_Prefab";
                 riceGO.transform.localScale = new Vector3(0.2f, 0.5f, 0.2f);
@@ -71,13 +150,9 @@ namespace Khoa.Farming.Editor
             
             RicePlant ricePlant = riceGO.GetComponent<RicePlant>();
             if (ricePlant == null) ricePlant = riceGO.AddComponent<RicePlant>();
-            
             ricePlant.cropData = data;
-            
-            // Tìm Renderer trên model để đổi màu (nếu có)
             ricePlant.cropRenderer = riceGO.GetComponentInChildren<MeshRenderer>();
             
-            // Giữ lại Collider để VR có thể chém trúng thân cây, nhưng set là Trigger
             Collider col = riceGO.GetComponent<Collider>();
             if (col == null) col = riceGO.AddComponent<BoxCollider>();
             col.isTrigger = true;
@@ -85,36 +160,32 @@ namespace Khoa.Farming.Editor
             PrefabUtility.SaveAsPrefabAsset(riceGO, ricePrefabPath);
             DestroyImmediate(riceGO);
 
-            // 3. Tạo Plot Prefab (Ô Đất)
+            // 3. Tạo Bó Lúa Prefab
+            GameObject bundlePrefab = CreateRiceBundlePrefab();
+
+            // 4. Tạo Plot Prefab (Ô Đất)
             string plotPrefabPath = folderPath + "/Plot_Prefab.prefab";
-            
-            // Tạo bằng Cube để có sẵn MeshFilter và MeshRenderer (người dùng có thể tự ẩn nếu không thích)
             GameObject plotGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
             plotGO.name = "Plot_Prefab";
-            
-            // Làm dẹp xuống thành cái ô vuông
             plotGO.transform.localScale = new Vector3(1f, 0.1f, 1f);
             
-            // BoxCollider tự động có sẵn khi dùng CreatePrimitive
             BoxCollider boxCol = plotGO.GetComponent<BoxCollider>();
             boxCol.isTrigger = false; 
             
-            // Add XR và Plot script
             CropPlot cropPlot = plotGO.AddComponent<CropPlot>();
-            cropPlot.plotRenderer = plotGO.GetComponent<MeshRenderer>(); // Gán sẵn Renderer để xài màu
+            cropPlot.plotRenderer = plotGO.GetComponent<MeshRenderer>();
             cropPlot.ricePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ricePrefabPath);
+            cropPlot.harvestItemPrefab = bundlePrefab;
             
-            // Setup Interaction (để raycast trúng)
-            UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable interactable = plotGO.GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
+            XRSimpleInteractable interactable = plotGO.GetComponent<XRSimpleInteractable>();
             if (interactable != null)
             {
                 interactable.interactionLayers = InteractionLayerMask.GetMask("Default");
             }
 
-            // Tạo Spawn Point
             GameObject spawnPoint = new GameObject("SpawnPoint");
             spawnPoint.transform.SetParent(plotGO.transform);
-            spawnPoint.transform.localPosition = new Vector3(0, 0f, 0); // Đặt sát mặt đất
+            spawnPoint.transform.localPosition = Vector3.zero;
             cropPlot.cropSpawnPoint = spawnPoint.transform;
 
             PrefabUtility.SaveAsPrefabAsset(plotGO, plotPrefabPath);
@@ -123,7 +194,7 @@ namespace Khoa.Farming.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             
-            Debug.Log("<color=green>Đã tạo thành công Prefab và Data cho hệ thống Farming tại Assets/Khoa!</color>");
+            Debug.Log("<color=green>Đã cập nhật thành công Prefab và Data cho hệ thống Farming tại Assets/Khoa!</color>");
         }
     }
 }

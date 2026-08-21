@@ -22,6 +22,10 @@ namespace Khoa.Farming
         [Header("Prefabs")]
         public GameObject ricePrefab; // Prefab cây lúa sẽ được sinh ra
         
+        [Header("Harvest Drops (Vật phẩm rơi khi gặt)")]
+        [Tooltip("Prefab Bó Lúa sẽ sinh ra khi gặt bằng liềm")]
+        public GameObject harvestItemPrefab;
+
         [Header("Spawn Settings")]
         public Transform cropSpawnPoint; // Vị trí cây lúa mọc lên (nên là 1 empty object con)
 
@@ -36,6 +40,7 @@ namespace Khoa.Farming
 
         // Events cho Game Manager / Quest Manager / Audio Manager
         public event Action<PlotState> OnStateChanged;
+        public event Action<CropPlot, RiceBundleItem> OnCropHarvestedWithItem;
         public event Action<CropPlot> OnCropHarvested;
         public event Action<CropPlot> OnCropPlanted;
 
@@ -191,7 +196,31 @@ namespace Khoa.Farming
             
             if (currentCrop.currentState == CropState.ReadyToHarvest)
             {
+                RiceBundleItem spawnedBundle = null;
+
+                // Sinh ra Bó Lúa vật lý để người chơi có thể cầm nắm bằng tay VR
+                if (harvestItemPrefab != null)
+                {
+                    Vector3 spawnPos = cropSpawnPoint != null ? cropSpawnPoint.position + Vector3.up * 0.15f : transform.position + Vector3.up * 0.15f;
+                    GameObject bundleGO = Instantiate(harvestItemPrefab, spawnPos, Quaternion.identity);
+
+                    spawnedBundle = bundleGO.GetComponent<RiceBundleItem>();
+                    if (spawnedBundle != null)
+                    {
+                        spawnedBundle.cropData = currentCrop.cropData;
+                    }
+
+                    // Thêm lực nảy nhẹ (pop impulse) để bó lúa văng nhẹ ra đất cực đẹp mắt
+                    Rigidbody bundleRb = bundleGO.GetComponent<Rigidbody>();
+                    if (bundleRb != null)
+                    {
+                        Vector3 popDir = new Vector3(UnityEngine.Random.Range(-0.3f, 0.3f), 1.2f, UnityEngine.Random.Range(-0.3f, 0.3f));
+                        bundleRb.linearVelocity = popDir;
+                    }
+                }
+
                 OnCropHarvested?.Invoke(this);
+                OnCropHarvestedWithItem?.Invoke(this, spawnedBundle);
 
                 Destroy(currentCrop.gameObject);
                 currentCrop = null;
@@ -200,7 +229,7 @@ namespace Khoa.Farming
                 currentState = PlotState.Empty;
                 UpdateVisuals();
                 OnStateChanged?.Invoke(currentState);
-                Debug.Log("Đã gặt lúa thành công!");
+                Debug.Log("Đã gặt lúa thành công và sinh ra Bó Lúa!");
             }
             else
             {

@@ -34,7 +34,14 @@ namespace Khoa.Farming
         private float dryTimer = 0f;
         private float _growthRatePerSecond = 0.555f;
 
-        [Header("Visual Feedback")]
+        [Header("3D Stage Models (Tuỳ chọn - Kéo thả Model 3D của từng giai đoạn vào đây)")]
+        public GameObject modelSeedling;     // Giai đoạn Mạ non
+        public GameObject modelGrowing;      // Giai đoạn Đang lớn / đẻ nhánh
+        public GameObject modelMaturing;     // Giai đoạn Trổ đòng
+        public GameObject modelReady;        // Giai đoạn Chín vàng trĩu hạt
+        public GameObject modelDead;         // Giai đoạn Chết héo (tuỳ chọn)
+
+        [Header("Visual Feedback (Dùng khi chưa có Model 3D)")]
         public MeshRenderer cropRenderer; // Tạm thời dùng màu để phân biệt state
         public Color colorSeedling = Color.green;
         public Color colorGrowing = new Color(0.2f, 0.8f, 0.2f);
@@ -43,6 +50,9 @@ namespace Khoa.Farming
         public Color colorDead = Color.gray;
         
         [Header("Organic Growth")]
+        [Tooltip("Bật nếu muốn cây lớn dần theo scale; Tắt nếu dùng Model 3D đã có kích thước chuẩn")]
+        public bool useOrganicScaling = true;
+
         [Tooltip("Kích thước tối đa của cây lúa khi chín")]
         public Vector3 maxScale = new Vector3(0.5f, 1f, 0.5f);
         public Vector3 minScale = new Vector3(0.1f, 0.2f, 0.1f);
@@ -120,7 +130,8 @@ namespace Khoa.Farming
 
         private void UpdateScale()
         {
-            if (currentState == CropState.Dead) return;
+            if (!useOrganicScaling || currentState == CropState.Dead) return;
+
             // Thay đổi kích thước từ từ (Lerp) dựa trên % tiến độ
             float t = growthProgress / 100f;
             Vector3 targetScale = Vector3.Lerp(minScale, maxScale, t);
@@ -231,33 +242,48 @@ namespace Khoa.Farming
             }
         }
 
-        // Cập nhật màu sắc bằng MaterialPropertyBlock tránh phân mảnh bộ nhớ RAM và Draw Calls
+        // Cập nhật hiển thị theo giai đoạn: Ưu tiên Model 3D riêng biệt, nếu không có sẽ fallback về màu sắc
         private void UpdateVisuals()
         {
-            if (cropRenderer == null) return;
+            bool hasCustomStageModels = (modelSeedling != null || modelGrowing != null || modelMaturing != null || modelReady != null || modelDead != null);
 
-            Color targetColor;
-            switch (currentState)
+            if (hasCustomStageModels)
             {
-                case CropState.Seedling:
-                    targetColor = colorSeedling;
-                    break;
-                case CropState.Growing:
-                    targetColor = colorGrowing;
-                    break;
-                case CropState.Maturing:
-                    targetColor = colorMaturing;
-                    break;
-                case CropState.ReadyToHarvest:
-                    targetColor = colorReady;
-                    break;
-                case CropState.Dead:
-                default:
-                    targetColor = colorDead;
-                    break;
-            }
+                if (modelSeedling != null) modelSeedling.SetActive(currentState == CropState.Seedling);
+                if (modelGrowing != null) modelGrowing.SetActive(currentState == CropState.Growing);
+                if (modelMaturing != null) modelMaturing.SetActive(currentState == CropState.Maturing);
+                if (modelReady != null) modelReady.SetActive(currentState == CropState.ReadyToHarvest);
+                if (modelDead != null) modelDead.SetActive(currentState == CropState.Dead);
 
-            SetRendererColor(cropRenderer, targetColor);
+                // Giấu renderer tạm thời nếu dùng model 3D
+                if (cropRenderer != null) cropRenderer.enabled = false;
+            }
+            else if (cropRenderer != null)
+            {
+                cropRenderer.enabled = true;
+                Color targetColor;
+                switch (currentState)
+                {
+                    case CropState.Seedling:
+                        targetColor = colorSeedling;
+                        break;
+                    case CropState.Growing:
+                        targetColor = colorGrowing;
+                        break;
+                    case CropState.Maturing:
+                        targetColor = colorMaturing;
+                        break;
+                    case CropState.ReadyToHarvest:
+                        targetColor = colorReady;
+                        break;
+                    case CropState.Dead:
+                    default:
+                        targetColor = colorDead;
+                        break;
+                }
+
+                SetRendererColor(cropRenderer, targetColor);
+            }
         }
 
         private void SetRendererColor(Renderer r, Color c)
