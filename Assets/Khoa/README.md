@@ -32,12 +32,13 @@ Tất cả Prefab đã được cấu hình đầy đủ Vật lý (Physics), T�
 
 | Tên Prefab | Chức Năng | Vị Trí Nên Đặt Trên Map |
 | :--- | :--- | :--- |
-| **`Plot_Prefab`** | Ô đất ruộng (tự đổi màu đất ẩm/khô, có váng nước nổi) | Khu vực đồng ruộng |
+| **`Plot_Prefab`** | Ô đất ruộng (tự đổi màu đất ẩm/khô, có váng nước nổi, rơi vãi lúa khi gặt) | Khu vực đồng ruộng |
 | **`Sluice_Gate_Prefab`** | Van nước kênh mương (gạt cần van để xả nước vào ruộng) | Đầu mương nước dẫn vào ruộng |
 | **`Rice_Drying_Yard_Prefab`** | Sân phơi lúa gạch (tăng độ khô khi nắng, cảnh báo khi mưa) | Sân trước nhà chính |
 | **`Rice_Thresher_Prefab`** | Cối tuốt lúa (tách hạt thóc từ bó lúa khô, tự nạp vào giỏ) | Cạnh sân phơi hoặc gần Cối xay |
 | **`Rice_Bundle_Prefab`** | Bó lúa vật lý sau khi gặt (cầm nắm bằng tay VR, mang vác) | Tự sinh khi gặt (hoặc đặt test) |
-| **`Rice_Prefab`** | Cây lúa mẫu 5 giai đoạn phát triển | Tự sinh khi cấy mạ |
+| **`Gleaned_Rice_Stalk_Prefab`** | Bông lúa mót rơi vãi trên ruộng (cầm nắm tay VR, gom 3 bông -> 1 Bó lúa) | Tự sinh khi gặt lúa |
+| **`Rice_Prefab`** | Cây lúa mẫu 5 giai đoạn phát triển (dùng model RicePlant 3D) | Tự sinh khi cấy mạ |
 
 ---
 
@@ -48,8 +49,10 @@ graph TD
     A[1. Trâu Kéo Bừa] -->|Xới đất| B(Ô Đất Tilled)
     B -->|Cấy mạ| C(Cây Lúa Lớn Dần)
     C -->|Mở van nước / Tưới| D(Ruộng Đủ Nước)
-    D -->|Cắt bằng Liềm| E[2. Rơi Bó Lúa Vật Lý]
+    D -->|Cắt bằng Liềm| E[2. Rơi Bó Lúa Chính + Rơi Vãi Bông Lúa Mót]
+    E -->|Cúi nhặt đủ 3 bông mót| E2[Ghép thành 1 Bó Lúa Mới]
     E -->|Đặt lên Sân phơi| F[3. Phơi Nắng Khô 100%]
+    E2 -->|Đặt lên Sân phơi| F
     F -->|Bỏ vào Cối tuốt| G[4. Cối Tuốt Lúa]
     G -->|Tự nạp đầy thóc| H[5. Giỏ Lúa RiceBasket]
     H -->|Mang sang Cối xay| I[6. Cối Xay Gạo GrindMill]
@@ -58,7 +61,9 @@ graph TD
 ### Chi tiết từng bước:
 1. **Xới đất**: Cưỡi trâu đi qua ô đất `Plot_Prefab` (hoặc dùng cuốc) để đất chuyển sang trạng thái xới tơi.
 2. **Cấy mạ & Tưới nước**: Cầm mạ cấy vào ô đất -> Cây lúa mọc lên. Gạt cần van nước `Sluice_Gate_Prefab` để cấp nước cho ruộng.
-3. **Gặt lúa**: Khi lúa chín vàng, dùng Liềm chém vào gốc lúa -> Rơi ra **Bó Lúa (`Rice_Bundle_Prefab`)**.
+3. **Gặt lúa & Mót lúa**: 
+   * Khi lúa chín vàng, dùng Liềm chém vào gốc lúa -> Rơi ra **Bó Lúa chính (`Rice_Bundle_Prefab`)**.
+   * Đồng thời trên mặt bùn sẽ rơi vãi 1-3 **Bông lúa mót (`Gleaned_Rice_Stalk_Prefab`)**. Người chơi cúi xuống nhặt bằng tay VR, cứ gom đủ **3 bông lúa mót** sẽ tự động ghép thành **1 Bó Lúa hoàn chỉnh**!
 4. **Phơi lúa**: Cầm bó lúa đặt lên **Sân Phơi (`Rice_Drying_Yard_Prefab`)**. Khi phơi đủ nắng (100%), bó lúa sẽ chuyển sang trạng thái khô giòn.
    * *Nếu trời mưa*: Sân phơi sẽ ngừng phơi và cảnh báo. Mang bó lúa vào hiên nhà/kho để bảo quản.
 5. **Tuốt lúa**: Cầm bó lúa khô thả vào **Cối Tuốt (`Rice_Thresher_Prefab`)**.
@@ -77,6 +82,7 @@ Trên thanh menu Unity, vào mục **`Khoa`**:
    * Tự động sinh ra 1 bộ đồ nghề VR hoàn chỉnh ngay trước mặt Camera: **Cuốc xới đất, Bó mạ, Bao phân bón, Bình tưới nước, Liềm gặt lúa** (tất cả đều cầm nắm được bằng tay VR).
 2. **`Khoa/Farming/Setup Farming Prefabs`**:
    * Bấm nút **"Gắn Lưỡi Bừa Tự Động Vào Trâu Trong Scene"**: Tự động tìm con trâu và gắn lưỡi bừa sau đuôi trâu.
+   * Bấm nút **"Tạo Bông Lúa Mót (Gleaned Stalk)"**: Tạo hoặc cập nhật Prefab bông lúa mót.
 3. **`Khoa/Farming/Generate Plot Grid`**:
    * Tạo nhanh một lưới ruộng n x m ô, tự động bắt dính theo cao độ Terrain.
 
@@ -86,7 +92,7 @@ Trên thanh menu Unity, vào mục **`Khoa`**:
 
 Các bạn làm Quest, UI hoặc Audio chỉ cần `using Khoa.Farming;` để lắng nghe các sự kiện:
 
-### Bắt sự kiện khi gặt lúa hoặc tuốt lúa:
+### Bắt sự kiện Mót Lúa, Gặt Lúa & Tuốt Lúa:
 ```csharp
 using Khoa.Farming;
 using UnityEngine;
@@ -102,42 +108,21 @@ public class QuestManagerExample : MonoBehaviour
         if (cropPlot != null)
             cropPlot.OnCropHarvested += OnHarvestRice;
 
+        // Khi nhặt được 1 bông lúa mót
+        GleanedRiceStalk.OnStalkGleaned += (current, required) => {
+            Debug.Log($"Quest Mót lúa: {current}/{required} bông");
+        };
+
+        // Khi ghép thành công 1 bó lúa từ lúa mót
+        GleanedRiceStalk.OnBundleCraftedFromGleaning += (bundle) => {
+            Debug.Log("Quest: Đã hoàn thành 1 bó lúa từ việc mót lúa!");
+        };
+
         // Khi tuốt lúa ra hạt thóc
         if (thresher != null)
-            thresher.OnRiceThreshed += OnThreshGrains;
-    }
-
-    private void OnHarvestRice(RicePlant plant)
-    {
-        Debug.Log("Quest: Đã gặt lúa thành công!");
-    }
-
-    private void OnThreshGrains(int grainAmount)
-    {
-        Debug.Log($"Quest: Đã tuốt được {grainAmount} hạt thóc!");
-    }
-}
-```
-
-### Bắt sự kiện thay đổi thời tiết (Nắng/Mưa):
-```csharp
-using Khoa.Farming;
-
-void Start()
-{
-    if (FarmingWeatherSystem.Instance != null)
-    {
-        FarmingWeatherSystem.Instance.OnWeatherChanged += (weather) =>
-        {
-            if (weather == WeatherType.Rainy)
-            {
-                Debug.Log("Trời mưa: Bật hiệu ứng mưa và đổi nhạc nền rả rích!");
-            }
-            else if (weather == WeatherType.Sunny)
-            {
-                Debug.Log("Trời nắng: Bật tiếng chim hót và nhạc miền Tây rộn ràng!");
-            }
-        };
+            thresher.OnRiceThreshed += (grainAmount) => {
+                Debug.Log($"Quest: Đã tuốt được {grainAmount} hạt thóc!");
+            };
     }
 }
 ```
@@ -146,6 +131,7 @@ void Start()
 
 ## 6. ⚠️ Lưu Ý Kỹ Thuật & Tương Thích
 
+* **Chuẩn API Unity 6 / Modern Unity**: Không sử dụng các hàm deprecated.
 * **Assembly Definition**: Toàn bộ script của hệ thống nằm trong `Khoa.Farming.asmdef`.
 * **Kết nối với `RiceBasketController` & `InventoryController`**: Được thực hiện qua cơ chế Component Reflection an toàn. Các bạn thoải mái sửa đổi, mở rộng file trong `Assets/MyFolder/` mà không lo bị gãy biên dịch (Compile Error).
-* **Kiểm thử tự động**: Có sẵn 14 EditMode Unit Tests trong `Assets/Khoa/Tests/EditMode/`. Chạy qua Unity Test Runner bất kỳ lúc nào để xác nhận tính ổn định.
+* **Kiểm thử tự động**: Có sẵn 17 EditMode Unit Tests trong `Assets/Khoa/Tests/EditMode/`. Chạy qua Unity Test Runner bất kỳ lúc nào để xác nhận tính ổn định.
