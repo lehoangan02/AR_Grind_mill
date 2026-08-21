@@ -92,20 +92,29 @@ namespace Khoa.Farming
             OnItemDropped?.Invoke(this);
         }
 
+        [Header("Shelter State")]
+        [Tooltip("Bó lúa có đang ở trong khu vực có mái che an toàn không")]
+        public bool isSheltered = false;
+
         /// <summary>
-        /// Tăng tiến độ phơi khô khi để ngoài sân nắng
+        /// Tăng hoặc giảm tiến độ phơi khô (dương khi phơi nắng, âm khi dính mưa)
         /// </summary>
         public void AddDryness(float amount)
         {
-            if (isDry) return;
+            drynessProgress = Mathf.Clamp(drynessProgress + amount, 0f, 100f);
 
-            drynessProgress += amount;
             if (drynessProgress >= 100f)
             {
-                drynessProgress = 100f;
-                isDry = true;
-                OnDriedComplete?.Invoke(this);
-                Debug.Log("Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!");
+                if (!isDry)
+                {
+                    isDry = true;
+                    OnDriedComplete?.Invoke(this);
+                    Debug.Log("Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!");
+                }
+            }
+            else
+            {
+                isDry = false;
             }
         }
 
