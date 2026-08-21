@@ -164,5 +164,87 @@ namespace Khoa.Farming.Tests
             Assert.IsTrue(dryResult, "Cối tuốt phải tuốt thành công bó lúa khô");
             Assert.AreEqual(20, grainsReceived, "Số hạt thóc thu được phải là 10 * 2 = 20");
         }
+
+        [Test]
+        public void Test_FarmingWeatherSystem_StateTransition()
+        {
+            GameObject weatherGO = new GameObject("WeatherSystem");
+            weatherGO.transform.SetParent(testRoot.transform);
+            FarmingWeatherSystem weather = weatherGO.AddComponent<FarmingWeatherSystem>();
+
+            Assert.IsTrue(weather.IsSunny, "Thời tiết mặc định phải là Nắng");
+            Assert.IsFalse(weather.IsRaining);
+
+            WeatherType notifiedWeather = WeatherType.Sunny;
+            weather.OnWeatherChanged += (w) => { notifiedWeather = w; };
+
+            weather.SetWeather(WeatherType.Rainy);
+            Assert.AreEqual(WeatherType.Rainy, weather.CurrentWeather);
+            Assert.IsTrue(weather.IsRaining);
+            Assert.IsFalse(weather.IsSunny);
+            Assert.AreEqual(WeatherType.Rainy, notifiedWeather, "Event OnWeatherChanged phải được kích hoạt");
+
+            weather.ToggleNextWeather();
+            Assert.AreEqual(WeatherType.Sunny, weather.CurrentWeather, "Sau Rainy phải quay về Sunny");
+        }
+
+        [Test]
+        public void Test_RiceDryingYard_RainDecay_WhenNotSheltered()
+        {
+            GameObject bundleGO = new GameObject("BundleForRain");
+            bundleGO.transform.SetParent(testRoot.transform);
+            bundleGO.AddComponent<CapsuleCollider>();
+            RiceBundleItem bundle = bundleGO.AddComponent<RiceBundleItem>();
+            bundle.cropData = testCropData;
+            bundle.AddDryness(80f);
+
+            Assert.AreEqual(80f, bundle.drynessProgress, 0.01f);
+            Assert.IsFalse(bundle.isSheltered);
+
+            // Giả lập mưa làm ướt lúa (giảm 25%)
+            bundle.AddDryness(-25f);
+            Assert.AreEqual(55f, bundle.drynessProgress, 0.01f, "Độ khô phải bị giảm xuống 55%");
+            Assert.IsFalse(bundle.isDry);
+
+            // Giả lập lúa đã khô 100% gặp mưa
+            bundle.AddDryness(50f);
+            Assert.IsTrue(bundle.isDry, "Lúa đạt 100% thì isDry = true");
+
+            bundle.AddDryness(-10f);
+            Assert.IsFalse(bundle.isDry, "Khi dính mưa bị tụt dưới 100%, isDry phải trở về false");
+        }
+
+        [Test]
+        public void Test_RiceShelterZone_ProtectsBundleFromRain()
+        {
+            GameObject shelterGO = new GameObject("ShelterZone");
+            shelterGO.transform.SetParent(testRoot.transform);
+            RiceShelterZone shelter = shelterGO.AddComponent<RiceShelterZone>();
+
+            GameObject bundleGO = new GameObject("ShelteredBundle");
+            bundleGO.transform.SetParent(testRoot.transform);
+            bundleGO.AddComponent<CapsuleCollider>();
+            RiceBundleItem bundle = bundleGO.AddComponent<RiceBundleItem>();
+
+            Assert.IsFalse(bundle.isSheltered, "Ban đầu bó lúa chưa được che chắn");
+
+            bundle.isSheltered = true;
+            shelter.shelteredBundles.Add(bundle);
+
+            Assert.IsTrue(bundle.isSheltered, "Bó lúa trong nhà kho phải có isSheltered = true");
+        }
+
+        [Test]
+        public void Test_RiceThresherBasketReceiver_ComponentSetup()
+        {
+            GameObject thresherGO = new GameObject("ThresherWithReceiver");
+            thresherGO.transform.SetParent(testRoot.transform);
+            RiceThresher thresher = thresherGO.AddComponent<RiceThresher>();
+            RiceThresherBasketReceiver receiver = thresherGO.AddComponent<RiceThresherBasketReceiver>();
+
+            Assert.IsNotNull(receiver);
+            Assert.IsTrue(receiver.autoFillInventoryBasket);
+            Assert.AreEqual(2.5f, receiver.basketSearchRadius, 0.01f);
+        }
     }
 }

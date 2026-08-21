@@ -47,9 +47,12 @@ namespace Khoa.Farming
             grabInteractable = GetComponent<XRGrabInteractable>();
 
             // Setup Rigidbody cho trải nghiệm vật lý VR tự nhiên
-            rb.mass = 1.0f;
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            if (rb != null)
+            {
+                rb.mass = 1.0f;
+                rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
+            }
 
             // Setup XRGrabInteractable
             if (grabInteractable != null)
