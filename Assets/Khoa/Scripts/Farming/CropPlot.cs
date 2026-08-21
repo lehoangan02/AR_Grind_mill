@@ -33,10 +33,15 @@ namespace Khoa.Farming
         public GameObject emptyModel3D; // Model đất trống chưa cày (thả vào đây)
         public GameObject tilledModel3D; // Model luống đất đã cày (thả vào đây)
 
-        [Header("Visuals (Test Mù màu)")]
+        [Header("Visuals & Moisture (Đất động & Độ ẩm nước)")]
         public MeshRenderer plotRenderer;
-        public Color colorEmpty = new Color(0.6f, 0.4f, 0.2f); // Nâu nhạt
-        public Color colorTilled = new Color(0.3f, 0.2f, 0.1f); // Nâu đậm (đất ướt)
+        public Color colorEmpty = new Color(0.6f, 0.4f, 0.2f); // Nâu vàng đất tự nhiên
+        public Color colorDry = new Color(0.55f, 0.43f, 0.27f);  // Nâu sáng đất xới khô
+        public Color colorWet = new Color(0.18f, 0.11f, 0.05f);  // Nâu đen bùn phù sa ướt
+        [Tooltip("Lớp váng nước mỏng trên mặt ruộng (sẽ hiện khi ruộng đủ nước)")]
+        public GameObject waterSurfaceMesh;
+        [Range(0f, 1f)]
+        public float currentMoisture = 0f;
 
         // Events cho Game Manager / Quest Manager / Audio Manager
         public event Action<PlotState> OnStateChanged;
@@ -250,22 +255,53 @@ namespace Khoa.Farming
             OnStateChanged?.Invoke(currentState);
         }
 
+        /// <summary>
+        /// Cấp nước cho ô đất (dùng bởi Bình tưới, Van nước kênh mương, hoặc trời mưa)
+        /// </summary>
+        public void WaterPlot(float amount)
+        {
+            if (currentState == PlotState.Occupied && currentCrop != null)
+            {
+                currentCrop.WaterPlant(amount);
+            }
+            else
+            {
+                // Khi chưa trồng cây nhưng được xả nước kênh vào ruộng
+                currentMoisture = Mathf.Clamp01(currentMoisture + (amount / 100f));
+                UpdateVisuals();
+            }
+        }
+
+        public void UpdateSoilMoistureVisuals(float moistureRatio)
+        {
+            currentMoisture = Mathf.Clamp01(moistureRatio);
+            UpdateVisuals();
+        }
+
         private void UpdateVisuals()
         {
             // 1. Xử lý hiển thị bằng Model 3D xịn (Nếu bạn đã kéo thả vào)
             if (emptyModel3D != null && tilledModel3D != null)
             {
                 emptyModel3D.SetActive(currentState == PlotState.Empty);
-                tilledModel3D.SetActive(currentState != PlotState.Empty); // Khi đã xới hoặc đã trồng thì dùng đất ướt
+                tilledModel3D.SetActive(currentState != PlotState.Empty);
                 
                 if (plotRenderer != null) plotRenderer.enabled = false;
             }
-            // 2. Xử lý hiển thị bằng màu sắc (Dùng MaterialPropertyBlock để tránh clone Material trên RAM)
+            // 2. Xử lý hiển thị bằng màu sắc & độ ẩm nước (Dùng MaterialPropertyBlock để tránh clone Material)
             else if (plotRenderer != null)
             {
                 plotRenderer.enabled = true;
-                Color targetColor = currentState == PlotState.Empty ? colorEmpty : colorTilled;
+                Color baseColor = (currentState == PlotState.Empty) ? colorEmpty : colorDry;
+                Color targetColor = Color.Lerp(baseColor, colorWet, currentMoisture);
                 SetRendererColor(plotRenderer, targetColor);
+            }
+
+            // 3. Xử lý lớp váng nước phẳng phản chiếu khi ruộng đủ nước
+            if (waterSurfaceMesh != null)
+            {
+                bool showWater = (currentState == PlotState.Occupied && currentMoisture >= 0.35f) || (currentState != PlotState.Empty && currentMoisture >= 0.7f);
+                waterSurfaceMesh.SetActive(showWater);
             }
         }
 

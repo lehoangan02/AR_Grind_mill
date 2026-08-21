@@ -96,6 +96,11 @@ namespace Khoa.Farming
             currentWater -= cropData.waterDepletionRate * Time.deltaTime;
             currentWater = Mathf.Clamp(currentWater, 0f, cropData.maxWater);
 
+            if (assignedPlot != null && cropData.maxWater > 0f)
+            {
+                assignedPlot.UpdateSoilMoistureVisuals(currentWater / cropData.maxWater);
+            }
+
             if (currentWater <= 0f)
             {
                 // Bắt đầu chết khát
@@ -183,6 +188,12 @@ namespace Khoa.Farming
             
             currentWater += amount;
             currentWater = Mathf.Clamp(currentWater, 0f, cropData.maxWater);
+            
+            if (assignedPlot != null && cropData.maxWater > 0f)
+            {
+                assignedPlot.UpdateSoilMoistureVisuals(currentWater / cropData.maxWater);
+            }
+            
             Debug.Log($"Đã tưới nước! Lượng nước: {currentWater:F1}");
         }
 
