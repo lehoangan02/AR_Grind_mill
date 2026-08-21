@@ -68,13 +68,14 @@ namespace Khoa.Farming.Editor
             {
                 if (obj.name.StartsWith("Farm_Grid_"))
                 {
-                    DestroyImmediate(obj);
+                    Undo.DestroyObjectImmediate(obj);
                 }
             }
 
             // Tạo một group để chứa toàn bộ grid cho gọn Hierarchy
             GameObject group = new GameObject("Farm_Grid_" + System.DateTime.Now.ToString("HHmmss"));
             group.transform.position = gridOrigin.position;
+            Undo.RegisterCreatedObjectUndo(group, "Generate Farm Grid");
 
             int count = 0;
             

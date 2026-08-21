@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace Khoa.Farming
 {
@@ -11,7 +13,7 @@ namespace Khoa.Farming
     }
 
     // RequireComponent giúp tự động add các component này vào Prefab nếu chưa có
-    [RequireComponent(typeof(UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable))]
+    [RequireComponent(typeof(XRSimpleInteractable))]
     [RequireComponent(typeof(BoxCollider))]
     public class CropPlot : MonoBehaviour
     {
@@ -32,12 +34,21 @@ namespace Khoa.Farming
         public Color colorEmpty = new Color(0.6f, 0.4f, 0.2f); // Nâu nhạt
         public Color colorTilled = new Color(0.3f, 0.2f, 0.1f); // Nâu đậm (đất ướt)
 
-        private UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable xrInteractable;
+        // Events cho Game Manager / Quest Manager / Audio Manager
+        public event Action<PlotState> OnStateChanged;
+        public event Action<CropPlot> OnCropHarvested;
+        public event Action<CropPlot> OnCropPlanted;
+
+        private XRSimpleInteractable xrInteractable;
         private RicePlant currentCrop; // Lưu trữ cây lúa hiện tại trên ô đất này
+
+        private static MaterialPropertyBlock _mpb;
+        private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorId = Shader.PropertyToID("_Color");
 
         void Awake()
         {
-            xrInteractable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
+            xrInteractable = GetComponent<XRSimpleInteractable>();
             
             // Đăng ký sự kiện khi VR Controller tương tác (bấm nút trigger vào ô đất)
             if (xrInteractable != null)
@@ -51,12 +62,9 @@ namespace Khoa.Farming
         void Start()
         {
             // Tính năng Test nhanh: Nếu chọn sẵn Occupied trong Inspector, game chạy sẽ tự mọc lúa luôn
-            if (currentState == PlotState.Occupied && ricePrefab != null)
+            if (currentState == PlotState.Occupied && ricePrefab != null && currentCrop == null)
             {
-                Vector3 spawnPos = cropSpawnPoint != null ? cropSpawnPoint.position : transform.position;
-                Transform cropParent = transform.parent != null ? transform.parent : null;
-                GameObject cropGO = Instantiate(ricePrefab, spawnPos, Quaternion.identity, cropParent);
-                currentCrop = cropGO.GetComponent<RicePlant>();
+                SpawnRicePlant();
             }
         }
 
@@ -69,7 +77,6 @@ namespace Khoa.Farming
         // Hàm này chạy khi người chơi bấm tương tác (bắn tia Ray hoặc cầm tay chạm vào bằng XR Interaction Toolkit)
         private void OnVRSelect(SelectEnterEventArgs args)
         {
-            // Tương tác cơ bản bằng nút bấm VR
             InteractWithPlot();
         }
 
@@ -85,9 +92,11 @@ namespace Khoa.Farming
             HandleInteraction(collision.collider);
         }
 
-        // Xử lý logic dùng chung cho cả 2 loại va chạm
+        // Xử lý logic va chạm ở cấp độ ô đất (Plot)
         private void HandleInteraction(Collider other)
         {
+            if (other == null) return;
+
             // 1. Dùng Bừa (Plow) để xới đất trống
             if (other.CompareTag("Plow"))
             {
@@ -107,33 +116,17 @@ namespace Khoa.Farming
             else if (other.CompareTag("Seed") && currentState == PlotState.Tilled)
             {
                 PlantCrop();
-                // Có thể thêm: Destroy(other.gameObject) nếu muốn tiêu hao mạ
             }
-            // Các tương tác khi đã có lúa (Occupied)
+            // Các tương tác chăm sóc cây (khi có lúa) nếu đập trúng đất thay vì trúng thân cây
             else if (currentState == PlotState.Occupied && currentCrop != null)
             {
-                // 3. Dùng Phân (Fertilizer) để bón
                 if (other.CompareTag("Fertilizer") && !currentCrop.hasFertilizer)
                 {
                     currentCrop.Fertilize();
                 }
-                // 4. Dùng Nước (Water) để tưới
                 else if (other.CompareTag("Water"))
                 {
-                    currentCrop.WaterPlant(20f); // Mỗi lần tưới thêm 20 nước (tuỳ chỉnh)
-                }
-                // 5. Dùng Liềm (Sickle) để gặt
-                else if (other.CompareTag("Sickle"))
-                {
-                    if (currentCrop.currentState == Khoa.Farming.CropState.ReadyToHarvest)
-                    {
-                        HarvestCrop();
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Bạn đã chém đứt cây lúa chưa chín (hoặc đã chết)!");
-                        DestroyCropAccidentally();
-                    }
+                    currentCrop.WaterPlant(20f);
                 }
             }
         }
@@ -155,6 +148,7 @@ namespace Khoa.Farming
             
             currentState = PlotState.Tilled;
             UpdateVisuals();
+            OnStateChanged?.Invoke(currentState);
             Debug.Log("Đã dùng Bừa để xới đất!");
         }
 
@@ -167,19 +161,28 @@ namespace Khoa.Farming
                 return;
             }
 
-            // Tạo cây lúa
+            SpawnRicePlant();
+            currentState = PlotState.Occupied;
+            UpdateVisuals();
+            OnStateChanged?.Invoke(currentState);
+            OnCropPlanted?.Invoke(this);
+            
+            Debug.Log("Đã cấy mạ!");
+        }
+
+        private void SpawnRicePlant()
+        {
             Vector3 spawnPos = cropSpawnPoint != null ? cropSpawnPoint.position : transform.position;
             
-            // QUAN TRỌNG: Gắn cây lúa làm con của transform.parent (cái Grid) thay vì cái Plot_Prefab.
-            // Vì Plot_Prefab bị bẹp (Y=0.1) và bị xoay nghiêng, nên Unity sẽ bóp méo (shear) mọi object con.
-            // Đưa ra ngoài Grid (có scale 1x1x1) sẽ giúp cây lúa không bao giờ bị méo, và nó sẽ tự động mọc thẳng đứng lên trời!
+            // Gắn cây lúa làm con của transform.parent (Grid) để tránh méo scale Y=0.1 của Plot_Prefab
             Transform cropParent = transform.parent != null ? transform.parent : null;
             GameObject cropGO = Instantiate(ricePrefab, spawnPos, Quaternion.identity, cropParent);
             
             currentCrop = cropGO.GetComponent<RicePlant>();
-            currentState = PlotState.Occupied;
-            
-            Debug.Log("Đã cấy mạ!");
+            if (currentCrop != null)
+            {
+                currentCrop.Initialize(this);
+            }
         }
 
         public void HarvestCrop()
@@ -188,13 +191,15 @@ namespace Khoa.Farming
             
             if (currentCrop.currentState == CropState.ReadyToHarvest)
             {
-                // Xoá cây lúa (Trong thực tế sẽ sinh ra Item Hạt Lúa để nhặt)
+                OnCropHarvested?.Invoke(this);
+
                 Destroy(currentCrop.gameObject);
                 currentCrop = null;
                 
                 // Trở về đất trống
                 currentState = PlotState.Empty;
                 UpdateVisuals();
+                OnStateChanged?.Invoke(currentState);
                 Debug.Log("Đã gặt lúa thành công!");
             }
             else
@@ -213,6 +218,7 @@ namespace Khoa.Farming
             // Trở về đất trống
             currentState = PlotState.Empty;
             UpdateVisuals();
+            OnStateChanged?.Invoke(currentState);
         }
 
         private void UpdateVisuals()
@@ -223,17 +229,25 @@ namespace Khoa.Farming
                 emptyModel3D.SetActive(currentState == PlotState.Empty);
                 tilledModel3D.SetActive(currentState != PlotState.Empty); // Khi đã xới hoặc đã trồng thì dùng đất ướt
                 
-                // Giấu cái hình khối hộp vuông vức của Unity đi
                 if (plotRenderer != null) plotRenderer.enabled = false;
             }
-            // 2. Xử lý hiển thị bằng màu sắc (Dùng tạm khi chưa có Model)
+            // 2. Xử lý hiển thị bằng màu sắc (Dùng MaterialPropertyBlock để tránh clone Material trên RAM)
             else if (plotRenderer != null)
             {
-                if (currentState == PlotState.Empty)
-                    plotRenderer.material.color = colorEmpty;
-                else if (currentState == PlotState.Tilled)
-                    plotRenderer.material.color = colorTilled;
+                plotRenderer.enabled = true;
+                Color targetColor = currentState == PlotState.Empty ? colorEmpty : colorTilled;
+                SetRendererColor(plotRenderer, targetColor);
             }
+        }
+
+        private void SetRendererColor(Renderer r, Color c)
+        {
+            if (r == null) return;
+            if (_mpb == null) _mpb = new MaterialPropertyBlock();
+            r.GetPropertyBlock(_mpb);
+            _mpb.SetColor(BaseColorId, c);
+            _mpb.SetColor(ColorId, c);
+            r.SetPropertyBlock(_mpb);
         }
     }
 }
