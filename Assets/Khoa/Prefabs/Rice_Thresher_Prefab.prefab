@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 40000004}
   - component: {fileID: 40000005}
   - component: {fileID: 40000006}
+  - component: {fileID: 40000007}
   m_Layer: 0
   m_Name: Rice_Thresher_Prefab
   m_TagString: Untagged
@@ -123,3 +124,19 @@ MonoBehaviour:
   strawDropPoint: {fileID: 0}
   grainParticleFX: {fileID: 0}
   thresherAudioSource: {fileID: 0}
+--- !u!114 &40000007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5a6b7c8d9e0123456789012abcdef05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Khoa.Farming::Khoa.Farming.RiceThresherBasketReceiver
+  basketSearchRadius: 2.5
+  basketSlotTransform: {fileID: 0}
+  autoFillInventoryBasket: 1
+  fillBasketSound: {fileID: 0}

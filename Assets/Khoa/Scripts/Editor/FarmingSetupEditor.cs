@@ -226,6 +226,9 @@ namespace Khoa.Farming.Editor
             RiceThresher thresher = thresherGO.AddComponent<RiceThresher>();
             thresher.grainYieldMultiplier = 1f;
 
+            RiceThresherBasketReceiver receiver = thresherGO.AddComponent<RiceThresherBasketReceiver>();
+            receiver.autoFillInventoryBasket = true;
+
             GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(thresherGO, thresherPath);
             DestroyImmediate(thresherGO);
 
