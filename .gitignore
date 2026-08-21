@@ -80,3 +80,12 @@ BuildToRunAndroid/
 .omo/
 !.omo/rules/
 !.omo/rules/**
+# macOS Junk
+.DS_Store
+
+# Visual Studio solution file format
+*.slnx
+
+# Mono Crash Dumps & Test Results
+mono_crash.*.json
+test-results.xml
