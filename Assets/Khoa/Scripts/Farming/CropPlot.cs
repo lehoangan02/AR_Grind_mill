@@ -257,7 +257,10 @@ namespace Khoa.Farming
                 OnCropHarvested?.Invoke(this);
                 OnCropHarvestedWithItem?.Invoke(this, spawnedBundle);
 
-                Destroy(currentCrop.gameObject);
+                if (Application.isPlaying)
+                    Destroy(currentCrop.gameObject);
+                else
+                    DestroyImmediate(currentCrop.gameObject);
                 currentCrop = null;
                 
                 // Trở về đất trống
@@ -276,7 +279,10 @@ namespace Khoa.Farming
         {
             if (currentState != PlotState.Occupied || currentCrop == null) return;
             
-            Destroy(currentCrop.gameObject);
+            if (Application.isPlaying)
+                Destroy(currentCrop.gameObject);
+            else
+                DestroyImmediate(currentCrop.gameObject);
             currentCrop = null;
             
             // Trở về đất trống

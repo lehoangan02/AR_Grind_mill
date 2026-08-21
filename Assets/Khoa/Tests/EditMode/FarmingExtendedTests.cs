@@ -246,5 +246,112 @@ namespace Khoa.Farming.Tests
             Assert.IsTrue(receiver.autoFillInventoryBasket);
             Assert.AreEqual(2.5f, receiver.basketSearchRadius, 0.01f);
         }
+
+        [Test]
+        public void Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle()
+        {
+            GleanedRiceStalk.currentGleanedCount = 0;
+
+            // Tạo template bundle
+            GameObject bundleTemplate = new GameObject("BundleTemplate");
+            bundleTemplate.transform.SetParent(testRoot.transform);
+            bundleTemplate.AddComponent<CapsuleCollider>();
+            RiceBundleItem bundleItem = bundleTemplate.AddComponent<RiceBundleItem>();
+            bundleItem.cropData = testCropData;
+
+            // Tạo 3 bông lúa mót
+            GameObject s1GO = new GameObject("Stalk1");
+            s1GO.transform.SetParent(testRoot.transform);
+            s1GO.AddComponent<CapsuleCollider>();
+            GleanedRiceStalk s1 = s1GO.AddComponent<GleanedRiceStalk>();
+            s1.stalksRequiredForBundle = 3;
+            s1.bundlePrefabToSpawn = bundleTemplate;
+
+            GameObject s2GO = new GameObject("Stalk2");
+            s2GO.transform.SetParent(testRoot.transform);
+            s2GO.AddComponent<CapsuleCollider>();
+            GleanedRiceStalk s2 = s2GO.AddComponent<GleanedRiceStalk>();
+            s2.stalksRequiredForBundle = 3;
+            s2.bundlePrefabToSpawn = bundleTemplate;
+
+            GameObject s3GO = new GameObject("Stalk3");
+            s3GO.transform.SetParent(testRoot.transform);
+            s3GO.AddComponent<CapsuleCollider>();
+            GleanedRiceStalk s3 = s3GO.AddComponent<GleanedRiceStalk>();
+            s3.stalksRequiredForBundle = 3;
+            s3.bundlePrefabToSpawn = bundleTemplate;
+
+            bool craftedEventFired = false;
+            GleanedRiceStalk.OnBundleCraftedFromGleaning += (b) => { craftedEventFired = true; };
+
+            s1.CollectStalk();
+            Assert.AreEqual(1, GleanedRiceStalk.currentGleanedCount);
+
+            s2.CollectStalk();
+            Assert.AreEqual(2, GleanedRiceStalk.currentGleanedCount);
+
+            s3.CollectStalk();
+            Assert.AreEqual(0, GleanedRiceStalk.currentGleanedCount, "Khi gom đủ 3 bông, bộ đếm phải reset về 0");
+            Assert.IsTrue(craftedEventFired, "Sự kiện tạo bó lúa từ mót lúa phải được kích hoạt");
+        }
+
+        [Test]
+        public void Test_CropPlot_Harvest_SpawnsGleanStalks()
+        {
+            GameObject plotGO = new GameObject("GleanTestPlot");
+            plotGO.transform.SetParent(testRoot.transform);
+            CropPlot plot = plotGO.AddComponent<CropPlot>();
+
+            GameObject riceTemplate = new GameObject("RiceTemplate");
+            riceTemplate.transform.SetParent(testRoot.transform);
+            RicePlant riceComp = riceTemplate.AddComponent<RicePlant>();
+            riceComp.cropData = testCropData;
+            plot.ricePrefab = riceTemplate;
+
+            GameObject stalkTemplate = new GameObject("StalkTemplate");
+            stalkTemplate.transform.SetParent(testRoot.transform);
+            stalkTemplate.AddComponent<CapsuleCollider>();
+            stalkTemplate.AddComponent<GleanedRiceStalk>();
+
+            plot.gleanStalkPrefab = stalkTemplate;
+            plot.gleanSpawnChance = 1.0f; // 100% tỉ lệ rơi vãi
+            plot.minGleanStalks = 2;
+            plot.maxGleanStalks = 2;
+
+            plot.PlowPlot();
+            plot.PlantCrop();
+
+            foreach (var p in testRoot.GetComponentsInChildren<RicePlant>())
+            {
+                p.currentState = CropState.ReadyToHarvest;
+            }
+
+            int stalkCountBefore = Object.FindObjectsByType<GleanedRiceStalk>(FindObjectsSortMode.None).Length;
+
+            plot.HarvestCrop();
+
+            int stalkCountAfter = Object.FindObjectsByType<GleanedRiceStalk>(FindObjectsSortMode.None).Length;
+            Assert.IsTrue(stalkCountAfter > stalkCountBefore, "Sau khi gặt lúa phải sinh ra các bông lúa mót rơi vãi trên ruộng");
+        }
+
+        [Test]
+        public void Test_FarmingParticleFactory_CreatesValidParticleSystems()
+        {
+            ParticleSystem waterFX = FarmingParticleFactory.CreateWaterFlowFX(testRoot.transform);
+            Assert.IsNotNull(waterFX);
+            Assert.AreEqual("WaterFlow_ParticleFX", waterFX.gameObject.name);
+
+            ParticleSystem steamFX = FarmingParticleFactory.CreateSteamFX(testRoot.transform);
+            Assert.IsNotNull(steamFX);
+
+            ParticleSystem grainFX = FarmingParticleFactory.CreateGrainBurstFX(testRoot.transform);
+            Assert.IsNotNull(grainFX);
+
+            ParticleSystem mudFX = FarmingParticleFactory.CreateMudDustFX(testRoot.transform);
+            Assert.IsNotNull(mudFX);
+
+            ParticleSystem sparkleFX = FarmingParticleFactory.CreateSparkleFX(testRoot.transform);
+            Assert.IsNotNull(sparkleFX);
+        }
     }
 }
