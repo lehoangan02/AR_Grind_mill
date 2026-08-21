@@ -135,7 +135,7 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
-        public void Test_RiceThresher_RejectsWet_AcceptsDryBundle()
+        public void Test_RiceThresher_RejectsWet_AndPreservesDryBundleWithoutReceiver()
         {
             GameObject thresherGO = new GameObject("Thresher");
             thresherGO.transform.SetParent(testRoot.transform);
@@ -161,8 +161,9 @@ namespace Khoa.Farming.Tests
             thresher.OnRiceThreshed += (grains) => { grainsReceived = grains; };
 
             bool dryResult = thresher.ThreshRiceBundle(wetBundle);
-            Assert.IsTrue(dryResult, "Cối tuốt phải tuốt thành công bó lúa khô");
-            Assert.AreEqual(20, grainsReceived, "Số hạt thóc thu được phải là 10 * 2 = 20");
+            Assert.IsFalse(dryResult, "Cối tuốt không được tiêu thụ bó lúa khi không có giỏ nhận thóc");
+            Assert.AreEqual(0, grainsReceived, "Không được phát sự kiện thành công khi đầu ra chưa nhận thóc");
+            Assert.IsNotNull(wetBundle, "Bó lúa khô phải được giữ lại để người chơi đặt giỏ rồi thử lại");
         }
 
         [Test]

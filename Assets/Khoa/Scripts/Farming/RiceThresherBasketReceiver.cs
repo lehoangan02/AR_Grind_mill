@@ -30,33 +30,24 @@ namespace Khoa.Farming
         // Sự kiện khi đổ đầy thóc vào giỏ thành công
         public event Action<GameObject> OnBasketFilled;
 
-        private RiceThresher thresher;
         private AudioSource audioSource;
 
         private void Awake()
         {
-            thresher = GetComponent<RiceThresher>();
             audioSource = GetComponent<AudioSource>();
         }
 
-        private void OnEnable()
+        /// <summary>
+        /// Thử chuyển thóc vào giỏ vật lý hoặc giỏ trong inventory.
+        /// Trả về true chỉ khi đầu ra đã nhận thóc, để cối tuốt quyết định có tiêu thụ bó lúa hay không.
+        /// </summary>
+        public bool TryReceiveGrain(int grainAmount)
         {
-            if (thresher != null)
+            if (grainAmount <= 0)
             {
-                thresher.OnRiceThreshed += HandleRiceThreshed;
+                return false;
             }
-        }
 
-        private void OnDisable()
-        {
-            if (thresher != null)
-            {
-                thresher.OnRiceThreshed -= HandleRiceThreshed;
-            }
-        }
-
-        private void HandleRiceThreshed(int grainAmount)
-        {
             bool filled = false;
 
             // 1. Ưu tiên tìm giỏ lúa vật lý đặt gần cối tuốt
@@ -80,6 +71,8 @@ namespace Khoa.Farming
             {
                 Debug.Log($"<color=yellow>[RiceThresher] Thu được {grainAmount} thóc, nhưng chưa có giỏ lúa (RiceBasket) rỗng nào gần đó để hứng.</color>");
             }
+
+            return filled;
         }
 
         /// <summary>

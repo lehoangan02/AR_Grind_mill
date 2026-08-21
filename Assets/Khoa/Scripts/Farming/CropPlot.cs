@@ -29,6 +29,10 @@ namespace Khoa.Farming
         [Header("Spawn Settings")]
         public Transform cropSpawnPoint; // Vị trí cây lúa mọc lên (nên là 1 empty object con)
 
+        [Header("Debug Interaction")]
+        [Tooltip("Chỉ bật trong scene test. Gameplay thật yêu cầu nông cụ có đúng Tag.")]
+        public bool allowDebugSelectInteractions = false;
+
         [Header("Models 3D (Optional)")]
         public GameObject emptyModel3D; // Model đất trống chưa cày (thả vào đây)
         public GameObject tilledModel3D; // Model luống đất đã cày (thả vào đây)
@@ -77,6 +81,7 @@ namespace Khoa.Farming
             if (xrInteractable != null)
             {
                 xrInteractable.selectEntered.AddListener(OnVRSelect);
+                xrInteractable.enabled = allowDebugSelectInteractions;
             }
 
             UpdateVisuals();
@@ -157,6 +162,11 @@ namespace Khoa.Farming
         // Hàm xử lý chung khi bấm bằng tia Laser VR (Dùng để dự phòng / Test)
         private void InteractWithPlot()
         {
+            if (!allowDebugSelectInteractions)
+            {
+                return;
+            }
+
             if (currentState == PlotState.Empty) PlowPlot();
             else if (currentState == PlotState.Tilled) PlantCrop();
             else if (currentState == PlotState.Occupied)
@@ -336,7 +346,8 @@ namespace Khoa.Farming
             // 3. Xử lý lớp váng nước phẳng phản chiếu khi ruộng đủ nước
             if (waterSurfaceMesh != null)
             {
-                bool showWater = (currentState == PlotState.Occupied && currentMoisture >= 0.35f) || (currentState != PlotState.Empty && currentMoisture >= 0.7f);
+                bool showWater = (currentState == PlotState.Occupied && currentMoisture >= 0.35f) ||
+                                 (currentState != PlotState.Occupied && currentMoisture >= 0.7f);
                 waterSurfaceMesh.SetActive(showWater);
             }
         }

@@ -1,170 +1,102 @@
-# 📋 Khoa Farming System — Context & Status Report
-> **Cập nhật lần cuối:** 2026-08-21 17:43 (GMT+7)  
-> **Branch:** VR → origin/VR  
-> **Commit mới nhất:** d3c7c89  
-> **Author:** Chris-KH <klowgamervn@gmail.com>
+# Khoa Farming System — Context hiện tại
 
----
+> Cập nhật: 2026-08-21 (GMT+7)
+>
+> Branch kiểm tra: `VR`
+>
+> Người thực hiện chuỗi commit gần đây: Chris-KH
 
-## 🗂️ Cấu Trúc Thư Mục Assets/Khoa/
+## 1. Phạm vi đã đối chiếu
 
-`
-Assets/Khoa/
-├── Prefabs/
-│   ├── Plot_Prefab.prefab                ← Ô đất ruộng (PBR Soil + WaterSurface con + Glean Stalk Spawn)
-│   ├── Rice_Prefab.prefab                ← Cây lúa mẫu (Mesh 3D RicePlant.obj)
-│   ├── Rice_Bundle_Prefab.prefab         ← Bó lúa sau gặt (XRGrabInteractable)
-│   ├── Gleaned_Rice_Stalk_Prefab.prefab  ← Bông lúa mót rơi vãi trên ruộng (XRGrabInteractable)
-│   ├── Sluice_Gate_Prefab.prefab         ← Van nước kênh mương (XR Interactable)
-│   ├── Rice_Drying_Yard_Prefab.prefab    ← Sân phơi lúa gạch PBR
-│   └── Rice_Thresher_Prefab.prefab       ← Cối tuốt lúa (kèm RiceThresherBasketReceiver)
-├── ScriptableObjects/
-│   └── Rice_Data.asset                   ← CropData config cho lúa
-├── Scripts/
-│   ├── Farming/                          ← Namespace: Khoa.Farming
-│   │   ├── CropData.cs                   ← ScriptableObject thông số cây trồng
-│   │   ├── CropPlot.cs                   ← Ô đất ruộng (Empty → Tilled → Occupied, sinh bông lúa mót khi gặt)
-│   │   ├── RicePlant.cs                  ← Cây lúa (5 giai đoạn tăng trưởng)
-│   │   ├── RiceBundleItem.cs             ← Bó lúa vật lý (XR Grab, phơi khô, che mưa)
-│   │   ├── GleanedRiceStalk.cs           ← Bông lúa mót (cúi nhặt trong VR, gom 3 bông ghép thành Bó Lúa)
-│   │   ├── SluiceGate.cs                 ← Van nước kênh mương (tưới đồng loạt)
-│   │   ├── BuffaloPlowAttachment.cs      ← Lưỡi bừa gắn trâu (tự xới đất)
-│   │   ├── RiceDryingYard.cs             ← Sân phơi lúa (phơi nắng + cơ chế mưa ướt)
-│   │   ├── RiceThresher.cs               ← Cối tuốt lúa (tách hạt thóc + rơm rạ)
-│   │   ├── FarmingWeatherSystem.cs       ← Quản lý thời tiết Nắng / Mưa / Âm u
-│   │   ├── RiceShelterZone.cs            ← Khu vực có mái che bảo vệ lúa khi mưa
-│   │   ├── RiceThresherBasketReceiver.cs ← Nạp thóc vào Giỏ lúa (RiceBasket) & Túi đồ (Inventory)
-│   │   ├── FarmingParticleFactory.cs     ← Factory tạo Particle Systems (Nước chảy, Hơi nước, Bụi bùn, Lúa vàng)
-│   │   └── FarmingAudioFXHelper.cs       ← Helper phát 3D Spatial Audio chuẩn VR
-│   └── Editor/                           ← Namespace: Khoa.Farming.Editor (Editor tools)
-│       ├── FarmingSetupEditor.cs          ← Menu tạo đầy đủ 7 Prefabs
-│       ├── FarmingTestKitCreator.cs       ← Menu tạo bộ đồ nghề test VR
-│       └── PlotGridGenerator.cs           ← Menu tạo lưới ô ruộng tự động theo Terrain
-├── Tests/EditMode/
-│   ├── FarmingLogicTests.cs               ← 5 test cases cơ bản
-│   └── FarmingExtendedTests.cs            ← 12 test cases mở rộng (Weather, Shelter, Thresher, Gleaning, Particle Factory)
-├── README.md                             ← Cẩm nang hướng dẫn sử dụng cho các bạn trong nhóm
-└── context.md                             ← (File này - lưu context kỹ thuật chi tiết)
-`
+Trạng thái này được lập từ `now_plan.md`, code/prefab trong `Assets/Khoa/`, scene chính
+`Assets/Scenes/Grind mill v1.0 Scene.unity`, lịch sử Git của Chris-KH và kết quả chạy bằng Unity CLI.
 
----
+Chuỗi commit ngày 2026-08-21 cho thấy Chris-KH đã lần lượt làm nền tảng trồng/gặt,
+visual đất và nước, van tưới, trâu bừa, sân phơi, máy tuốt, thời tiết/mái che,
+tích hợp giỏ, mót lúa, particle/audio helper, test và tài liệu. Commit tài liệu gần
+nhất trước đợt sửa này là `b8537728`.
 
-## ✅ Những Gì ĐÃ LÀM ĐƯỢC
+## 2. Trạng thái đã xác nhận
 
-### 1. Hệ Thống Trồng & Gặt Lúa Hoàn Chỉnh
-- **CropPlot**: Ô đất 3 trạng thái (Empty → Tilled → Occupied), nhận va chạm nông cụ VR.
-- **RicePlant**: Cây lúa 5 giai đoạn (Seedling → Growing → Maturing → ReadyToHarvest → Dead), bón phân tăng tốc, héo khi cạn nước.
-- **RiceBundleItem**: Bó lúa VR cầm nắm được, có drynessProgress, isDry, isSheltered.
+### Code và prefab
 
-### 2. Cơ Chế Mót Lúa (Rice Gleaning System - Mới)
-- **GleanedRiceStalk.cs**: Bông lúa rơi vãi trên ruộng bùn sau khi gặt.
-- Người chơi cúi xuống nhặt bằng tay VR (XRGrabInteractable).
-- Khi gom đủ 3 bông lúa mót → **Tự động bó lại thành 1 Bó Lúa (RiceBundleItem) hoàn chỉnh trên tay người chơi**!
-- Phát hiệu ứng lấp lánh (GleanSparkle_ParticleFX) và âm thanh nhặt lúa.
-- Đã tạo sẵn Gleaned_Rice_Stalk_Prefab.prefab.
+- `CropPlot`: FSM `Empty -> Tilled -> Occupied`; thao tác gameplay đi qua nông cụ có
+  tag `Plow`, `Seed`, `Fertilizer`, `Water`, `Sickle`. Generic XR Select bị tắt mặc
+  định để không bỏ qua nông cụ.
+- `RicePlant`: 5 trạng thái, ngưỡng đúng là 25% / 60% / 90%; thiếu nước thì ngừng
+  lớn và chết sau thời gian cấu hình.
+- Visual ruộng: đất đổi màu theo độ ẩm; lớp nước hiện ở 35% khi có lúa và 70% khi
+  đất trống/đã bừa.
+- `SluiceGate`: tưới các plot đã nối; nếu một scene khác chưa gán danh sách, `Start()`
+  tự quét plot gần đó trong bán kính cấu hình.
+- `BuffaloPlowAttachment`: gắn dưới object có `BuffaloRider`, xới plot qua trigger
+  mà không sửa `BuffaloRider.cs`.
+- `RiceDryingYard`, `FarmingWeatherSystem`, `RiceShelterZone`: phơi nắng, làm ướt
+  lại khi mưa và bảo vệ bó lúa trong vùng mái che.
+- `RiceThresher`: chỉ nhận bó lúa khô. Đây là giao dịch an toàn: bó lúa chỉ bị tiêu
+  thụ sau khi `RiceThresherBasketReceiver` xác nhận một giỏ vật lý hoặc giỏ inventory
+  đã nhận thóc. Không có đầu ra thì bó lúa được giữ nguyên.
+- `GleanedRiceStalk`: đủ 3 bông sẽ sinh một bó lúa gần vị trí bông cuối cùng; không
+  tự gắn bó vào tay. Bộ đếm static được reset khi bắt đầu play session mới.
+- Prefab máy tuốt không còn missing script; GUID của receiver đã được sửa đúng.
 
-### 3. Dynamic Soil & Moisture Visuals
-- CropPlot đổi màu đất mượt mà Color.Lerp(dryColor, wetColor, currentMoisture).
-- Váng nước (waterSurfaceMesh) tự bật khi ruộng ngập nước.
-- Prefab đã gán PBR Soil.mat.
+### Scene chính
 
-### 4. Sluice Gate & Irrigation
-- SluiceGate.cs: Cần gạt mở/đóng van nước VR, tưới đồng loạt các ô ruộng kết nối.
-- Đã tạo sẵn Sluice_Gate_Prefab.prefab.
+Scene chính hiện có một playable farming slice được Unity tạo và lưu:
 
-### 5. Buffalo Plowing
-- BuffaloPlowAttachment.cs: Gắn vào sau trâu, tự xới đất khi đi qua.
-- **KHÔNG sửa code BuffaloRider.cs của đồng đội** (0% xung đột).
+- giữ nguyên 10.000 plot theo thiết kế lưới 100 x 100;
+- plot được đặt lại đúng cao độ so với `FieldWaterPlane`, không còn nằm sâu dưới nước;
+- đúng một van tưới nối đủ 10.000 plot;
+- đúng một sân phơi, máy tuốt, giỏ thóc vật lý, weather system và shelter zone;
+- đúng một lưỡi bừa gắn vào object có `BuffaloRider`;
+- particle nước, hơi phơi, hạt thóc và bùn đã được nối vào component tương ứng.
 
-### 6. Rice Drying Yard & Weather Integration
-- RiceDryingYard.cs: Sân phơi tăng độ khô khi trời nắng.
-- **Tích hợp thời tiết**: Khi trời mưa (WeatherType.Rainy), sân phơi dừng phơi và làm giảm độ khô lúa nếu không được che chắn.
-- Đã tạo sẵn Rice_Drying_Yard_Prefab.prefab.
+Tool tái tạo/cập nhật setup: `Khoa/Farming/Apply Main Scene Integration`, hoặc:
 
-### 7. Farming Weather System & Shelter Zone
-- FarmingWeatherSystem.cs: Quản lý Sunny, Rainy, Overcast, hỗ trợ auto cycle hoặc đổi thủ công, phát event OnWeatherChanged.
-- RiceShelterZone.cs: Khu vực có mái che (Hiên nhà, kho lúa), bảo vệ bó lúa khỏi mưa bão.
+```powershell
+unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMainSceneSetup
+```
 
-### 8. Rice Thresher & Giỏ Lúa / Inventory Integration
-- RiceThresher.cs: Cối tuốt lúa, từ chối lúa ướt, tuốt lúa khô sinh thóc + rơm rạ.
-- RiceThresherBasketReceiver.cs: Tự động tìm RiceBasketController gần cối hoặc trong InventoryController của người chơi để nạp đầy thóc vàng (SetFull(true)).
-- Đã tạo sẵn Rice_Thresher_Prefab.prefab.
+## 3. Kiểm thử đã chạy bằng Unity CLI
 
-### 9. Particle Systems & 3D Spatial Audio Helpers (Mới)
-- FarmingParticleFactory.cs: Tự động tạo WaterFlowFX, SteamFX, GrainBurstFX, MudDustFX, SparkleFX (sử dụng 100% Unity modern non-deprecated API).
-- FarmingAudioFXHelper.cs: Cấu hình và phát 3D Spatial Audio cho trải nghiệm VR sống động.
+Ngày 2026-08-21:
 
-### 10. Editor Tools
-- **Menu Khoa/Farming/Setup Farming Prefabs**: Tạo/cập nhật đầy đủ 7 Prefabs.
-- **Menu Khoa/Tạo Bộ Công Cụ Nông Nghiệp (Test)**: Spawn bộ đồ nghề VR test.
-- **Menu Khoa/Farming/Generate Plot Grid**: Tạo lưới ô ruộng tự động theo Terrain.
+- EditMode `Khoa.Farming.Tests`: **27/27 passed**.
+- PlayMode `Khoa.Farming.PlayModeTests`: **2/2 passed**.
+- Regression riêng gồm kiểm tra prefab, FSM, ngưỡng tăng trưởng, transaction máy
+  tuốt, reset mót lúa và wiring scene: **10/10 passed**.
 
----
+PlayMode hiện kiểm tra hai đường runtime quan trọng: van tự tìm plot và tưới theo
+frame; sân phơi nhận bó lúa qua trigger rồi tăng độ khô.
 
-## 🧪 Trạng Thái Kiểm Thử
+## 4. Các lỗi cũ đã sửa trong đợt audit
 
-### Unit Tests (EditMode) — 17/17 PASSED (100%) ✅
-| # | Test Case | Mô tả | Kết quả |
-|---|-----------|-------|---------|
-| 1 | Test_CropPlot_InitialState_IsEmpty | Khởi tạo ô đất | ✅ |
-| 2 | Test_CropPlot_Plow_TransitionsToTilled | Xới đất Empty → Tilled | ✅ |
-| 3 | Test_RiceBundleItem_AddDryness_CalculatesCorrectly | Phơi khô bó lúa | ✅ |
-| 4 | Test_RicePlant_Fertilize_SetsFlag | Bón phân | ✅ |
-| 5 | Test_RicePlant_Water_ClampsAtMaxWater | Giới hạn nước tưới | ✅ |
-| 6 | Test_CropPlot_WaterPlot_IncreasesMoisture | Độ ẩm đất tăng khi tưới | ✅ |
-| 7 | Test_SluiceGate_OpenClose_And_IrrigatesPlots | Mở/đóng van nước | ✅ |
-| 8 | Test_BuffaloPlowAttachment_PlowsEmptyPlot | Trâu bừa tự xới đất | ✅ |
-| 9 | Test_RiceDryingYard_DriesBundleToCompletion | Sân phơi làm khô bó lúa | ✅ |
-| 10 | Test_RiceThresher_RejectsWet_AcceptsDryBundle | Cối tuốt từ chối lúa ướt, tuốt lúa khô | ✅ |
-| 11 | Test_FarmingWeatherSystem_StateTransition | Chuyển đổi thời tiết Nắng/Mưa/Âm u | ✅ |
-| 12 | Test_RiceDryingYard_RainDecay_WhenNotSheltered | Lúa phơi ngoài mưa bị giảm độ khô | ✅ |
-| 13 | Test_RiceShelterZone_ProtectsBundleFromRain | Nhà kho che chở lúa an toàn khi mưa | ✅ |
-| 14 | Test_RiceThresherBasketReceiver_ComponentSetup | Cấu hình bộ nhận thóc vào Giỏ lúa | ✅ |
-| 15 | Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle | Nhặt đủ 3 bông lúa mót sinh ra 1 Bó Lúa | ✅ |
-| 16 | Test_CropPlot_Harvest_SpawnsGleanStalks | Gặt lúa rơi vãi các bông lúa mót | ✅ |
-| 17 | Test_FarmingParticleFactory_CreatesValidParticleSystems | Khởi tạo Particle Systems hợp lệ | ✅ |
+- Missing script trên `Rice_Thresher_Prefab` do GUID sai.
+- Generic select trên plot có thể tự đi qua chuỗi bừa/cấy/gặt mà không cần tool.
+- Máy tuốt hủy bó lúa dù không có giỏ nhận thóc.
+- Cống ở scene mới có danh sách rỗng và không tự kết nối.
+- Bộ đếm mót lúa tồn tại qua play session.
+- Tài liệu ghi sai ngưỡng 33/66/100, sai điều kiện hiện nước và sai việc bó mót
+  “xuất hiện trên tay”.
+- Scene chính chưa tích hợp farming station và cao độ ruộng sai.
 
-### Lệnh chạy test:
-`ash
-unity test --mode EditMode --output test-results.xml
-`
+## 5. Chưa được coi là hoàn tất
 
----
+- Cần QA trực tiếp bằng kính VR cho cảm giác cầm/ném, vùng trigger, tầm với và vị
+  trí station; automated tests không thay thế được kiểm tra ergonomics.
+- Lever của van hiện là tương tác chọn/grip để toggle và cập nhật góc hiển thị;
+  chưa phải cần gạt vật lý liên tục có joint/angle constraint.
+- Quest/NPC dẫn đường, UI hướng dẫn, save/load tiến độ và audio clip thực tế chưa
+  nằm trong farming slice này.
+- Theo `now_plan.md`, bếp + vo/nấu cơm, chèo thuyền/câu cá và NPC nhắc nhiệm vụ vẫn
+  là công việc riêng chưa được hệ thống Khoa triển khai.
 
-## ❌ Những Gì CHƯA LÀM (Cho Các Buổi Tiếp Theo)
+## 6. Quy tắc tích hợp
 
-### Gameplay Mechanics Còn Lại (Theo now_plan.md)
-- [ ] **Thêm Nhà Bếp & Cơ Chế Vo Gạo - Nấu Cơm** *(Task của Khoa - Dòng 29, 59, 103)*:
-  - Dựng khu vực bếp bên phải nhà chính.
-  - Tương tác: Lấy gạo từ cối xay (GrindMillController) -> Cho vào nồi -> Vo gạo -> Nấu cơm.
-- [ ] **Chèo thuyền, câu cá VR** *(Dòng 57, 93-99)*: Chưa bắt đầu.
-- [ ] **NPC nhắc nhiệm vụ** *(Dòng 67)*: Chưa bắt đầu.
-
----
-
-## ⚠️ Lưu Ý Kỹ Thuật & Tương Thích
-
-1. **Chuẩn API Unity 6 / Modern Unity**:
-   - Sử dụng FindObjectsByType<T>(FindObjectsSortMode.None).
-   - Rigidbody dùng linearVelocity.
-   - Particle System dùng main, mission, shape modules chuẩn.
-   - Destroy bọc qua Application.isPlaying để an toàn cho cả Runtime và EditMode Tests.
-2. **Không Sửa File Đồng Đội**:
-   - Assets/MyFolder/Scripts/ và Assets/Scripts/BuffaloRider.cs giữ nguyên 100%.
-
----
-
-## 🔗 Lịch Sử Git Commits (Nhánh VR)
-
-| Commit | Mô Tả |
-|--------|-------|
-| d3c7c89 | test: add unit tests for gleaning mechanics, particle factory, and fix editmode destroy in CropPlot (17/17 passed) |
-| 733d9069 | feat: update FarmingSetupEditor with gleaning prefab generator and polish prefab references |
-| 565101fa | feat: add farming particle factory and audio fx helper for VR interactions |
-| da66118e | feat: implement GleanedRiceStalk and crop plot gleaning spawn mechanics |
-| f96c125 | docs: add comprehensive user manual and developer integration guide in Assets/Khoa/README.md |
-| cdc5aaef | docs: update Khoa context.md with weather system, shelter zones, basket receiver |
-| 5c2afc99 | test: add unit tests for weather, rain decay, shelter protection, and basket receiver |
-| ddbc647 | feat: connect RiceThresher output with RiceBasket and Inventory |
-| 8fd1be14 | feat: add weather system and rain decay mechanics with shelter zones |
-| 6999ee4 | feat: generate complete prefabs for SluiceGate, DryingYard, and Thresher |
+- Runtime chính nằm trong assembly `Khoa.Farming`; editor tool và tests có assembly
+  riêng.
+- Kết nối với `RiceBasketController`, inventory và `BuffaloRider` dùng tra cứu type/
+  reflection để tránh hard reference giữa assembly. Điều này giảm compile coupling
+  nhưng vẫn cần regression test nếu code của team đổi tên field, type hoặc method.
+- Khi đổi prefab hoặc scene, luôn chạy cả EditMode và PlayMode bằng Unity CLI trước
+  khi cập nhật trạng thái trong tài liệu.

@@ -157,11 +157,11 @@ namespace Khoa.Farming
         {
             CropState newState = currentState;
 
-            if (growthProgress >= 100f)
+            if (growthProgress >= 90f)
                 newState = CropState.ReadyToHarvest;
-            else if (growthProgress >= 66f)
+            else if (growthProgress >= 60f)
                 newState = CropState.Maturing;
-            else if (growthProgress >= 33f)
+            else if (growthProgress >= 25f)
                 newState = CropState.Growing;
             else
                 newState = CropState.Seedling;

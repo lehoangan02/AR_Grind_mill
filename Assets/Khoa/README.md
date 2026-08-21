@@ -1,137 +1,106 @@
-# 🌾 Hướng Dẫn Sử Dụng Hệ Thống Nông Nghiệp (Khoa Farming System)
-> **Dành cho:** Các thành viên trong nhóm phát triển dự án *AR_Grind_mill (VR)*  
-> **Vị trí tài nguyên:** `Assets/Khoa/`  
-> **Namespace:** `Khoa.Farming`
+# Khoa Farming System
 
----
+Hệ thống gameplay trồng lúa cho project VR `AR_Grind_mill`. Runtime nằm trong
+namespace `Khoa.Farming`; scene mẫu đang dùng là
+`Assets/Scenes/Grind mill v1.0 Scene.unity`.
 
-## 📖 Mục Lục
-1. [Cách Lấy Code Mới Nhất](#1-cách-lấy-code-mới-nhất)
-2. [Các Prefab Có Sẵn & Cách Đặt Vào Scene](#2-các-prefab-có-sẵn--cách-đặt-vào-scene)
-3. [Chuỗi Gameplay Hoàn Chỉnh (Game Loop)](#3-chuỗi-gameplay-hoàn-chỉnh-game-loop)
-4. [Công Cụ Menu 1-Click Trong Unity Editor](#4-công-cụ-menu-1-click-trong-unity-editor)
-5. [Tích Hợp API & Events (Dành Cho Quest, UI, Audio)](#5-tích-hợp-api--events-dành-cho-quest-ui-audio)
-6. [Lưu Ý Kỹ Thuật & Tương Thích](#6-lưu-ý-kỹ-thuật--tương-thích)
+## Bắt đầu nhanh
 
----
+Scene chính đã có sẵn playable farming slice gồm lưới 100 x 100, van nước, sân phơi,
+máy tuốt, giỏ thóc, thời tiết, mái che và lưỡi bừa trên trâu. Không cần kéo lại từng
+prefab để test luồng hiện tại.
 
-## 1. 📥 Cách Lấy Code Mới Nhất
+Nếu scene bị merge hoặc cần tái tạo setup, mở Unity và chọn:
 
-Hệ thống Farming nằm hoàn toàn trong thư mục `Assets/Khoa/`, có `Assembly Definition` riêng và độc lập 100%, **không sửa bất kỳ file nào trong `Assets/MyFolder/` hay `Assets/Scripts/`** nên bạn có thể pull thoải mái mà không sợ conflict:
+`Khoa > Farming > Apply Main Scene Integration`
 
-```bash
-git checkout VR
-git pull origin VR
+Hoặc chạy ở thư mục project:
+
+```powershell
+unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMainSceneSetup
 ```
 
----
+Tool giữ nguyên 10.000 plot của lưới 100 x 100, đặt chúng đúng cao độ mặt nước và nối đủ các station.
+Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố cục thủ công chưa lưu.
 
-## 2. 🏗️ Các Prefab Có Sẵn & Cách Đặt Vào Scene
+## Luồng gameplay đã triển khai
 
-Tất cả Prefab đã được cấu hình đầy đủ Vật lý (Physics), Tương tác VR (XR Interaction Toolkit) và Vật liệu PBR trong thư mục `Assets/Khoa/Prefabs/`:
+1. Đi qua ruộng bằng trâu có lưỡi bừa, hoặc dùng tool tag `Plow`, để chuyển
+   `Empty -> Tilled`.
+2. Dùng mạ/tool tag `Seed` để cấy lúa (`Tilled -> Occupied`).
+3. Mở cống hoặc dùng tool `Water`; dùng `Fertilizer` để tăng tốc sinh trưởng.
+4. Khi lúa đạt `ReadyToHarvest` (từ 90%), dùng `Sickle` để gặt.
+5. Đặt bó lúa lên sân phơi. Nắng làm khô; mưa làm giảm độ khô nếu bó không nằm
+   trong `RiceShelterZone`.
+6. Đưa bó đã khô 100% vào máy tuốt. Máy chỉ tiêu thụ bó khi một giỏ rỗng gần đó
+   hoặc giỏ trong inventory nhận thóc thành công.
+7. Nhặt các bông mót. Đủ 3 bông sẽ sinh thêm một bó ở vị trí nhặt cuối cùng.
 
-| Tên Prefab | Chức Năng | Vị Trí Nên Đặt Trên Map |
-| :--- | :--- | :--- |
-| **`Plot_Prefab`** | Ô đất ruộng (tự đổi màu đất ẩm/khô, có váng nước nổi, rơi vãi lúa khi gặt) | Khu vực đồng ruộng |
-| **`Sluice_Gate_Prefab`** | Van nước kênh mương (gạt cần van để xả nước vào ruộng) | Đầu mương nước dẫn vào ruộng |
-| **`Rice_Drying_Yard_Prefab`** | Sân phơi lúa gạch (tăng độ khô khi nắng, cảnh báo khi mưa) | Sân trước nhà chính |
-| **`Rice_Thresher_Prefab`** | Cối tuốt lúa (tách hạt thóc từ bó lúa khô, tự nạp vào giỏ) | Cạnh sân phơi hoặc gần Cối xay |
-| **`Rice_Bundle_Prefab`** | Bó lúa vật lý sau khi gặt (cầm nắm bằng tay VR, mang vác) | Tự sinh khi gặt (hoặc đặt test) |
-| **`Gleaned_Rice_Stalk_Prefab`** | Bông lúa mót rơi vãi trên ruộng (cầm nắm tay VR, gom 3 bông -> 1 Bó lúa) | Tự sinh khi gặt lúa |
-| **`Rice_Prefab`** | Cây lúa mẫu 5 giai đoạn phát triển (dùng model RicePlant 3D) | Tự sinh khi cấy mạ |
+## Tương tác VR quan trọng
 
----
+- Plot không còn cho phép generic XR Select tự đổi trạng thái. Gameplay chuẩn phải
+  dùng collider/tag của đúng nông cụ.
+- Cống dùng `XRSimpleInteractable`: thao tác select/grip toggle mở/đóng và đổi góc
+  lever hiển thị. Nó chưa mô phỏng kéo cần liên tục bằng physics joint.
+- `RiceBundleItem` và `GleanedRiceStalk` dùng XR Grab; cảm giác cầm/ném cần được QA
+  trên kính thật sau khi thay đổi scale hoặc collider.
+- Bó lúa tạo từ mót xuất hiện trong world, không tự attach vào tay người chơi.
 
-## 3. 🎮 Chuỗi Gameplay Hoàn Chỉnh (Game Loop)
+## Prefab chính
 
-```mermaid
-graph TD
-    A[1. Trâu Kéo Bừa] -->|Xới đất| B(Ô Đất Tilled)
-    B -->|Cấy mạ| C(Cây Lúa Lớn Dần)
-    C -->|Mở van nước / Tưới| D(Ruộng Đủ Nước)
-    D -->|Cắt bằng Liềm| E[2. Rơi Bó Lúa Chính + Rơi Vãi Bông Lúa Mót]
-    E -->|Cúi nhặt đủ 3 bông mót| E2[Ghép thành 1 Bó Lúa Mới]
-    E -->|Đặt lên Sân phơi| F[3. Phơi Nắng Khô 100%]
-    E2 -->|Đặt lên Sân phơi| F
-    F -->|Bỏ vào Cối tuốt| G[4. Cối Tuốt Lúa]
-    G -->|Tự nạp đầy thóc| H[5. Giỏ Lúa RiceBasket]
-    H -->|Mang sang Cối xay| I[6. Cối Xay Gạo GrindMill]
+| Prefab | Vai trò |
+|---|---|
+| `Plot_Prefab` | Plot đất, visual ẩm/nước, cấy và gặt |
+| `Rice_Prefab` | Cây lúa 5 trạng thái |
+| `Rice_Bundle_Prefab` | Bó lúa có độ khô và lượng thóc |
+| `Gleaned_Rice_Stalk_Prefab` | Bông lúa mót XR Grab |
+| `Sluice_Gate_Prefab` | Cống tưới |
+| `Rice_Drying_Yard_Prefab` | Sân phơi có trigger |
+| `Rice_Thresher_Prefab` | Máy tuốt và receiver giỏ |
+
+## Thông số đang dùng
+
+| Thông số | Giá trị |
+|---|---:|
+| Thời gian lúa chín (`Rice_Data`) | 180 giây |
+| Hệ số phân bón | 1.5x |
+| Ngưỡng Growing / Maturing / Ready | 25% / 60% / 90% |
+| Nước hiện khi có lúa / đất trống | 35% / 70% moisture |
+| Lưu lượng cống prefab | 25 đơn vị/giây/plot |
+| Tốc độ phơi | 5%/giây |
+| Tốc độ ướt lại khi mưa | 8%/giây |
+| Bông mót cần cho một bó | 3 |
+| Bán kính tìm giỏ của máy tuốt | 2.5 m |
+| Chu kỳ thời tiết ở scene chính | 120 giây |
+
+## Editor tools
+
+- `Khoa/Farming/Apply Main Scene Integration`: chuẩn hóa playable setup ở scene chính.
+- `Khoa/Farming/Setup Farming Prefabs`: tạo/cập nhật prefab farming.
+- `Khoa/Tạo Bộ Công Cụ Nông Nghiệp (Test)`: sinh bộ tool test VR.
+- `Khoa/Farming/Generate Plot Grid`: tạo grid plot theo terrain.
+
+## Chạy kiểm thử
+
+```powershell
+unity test . --mode EditMode --filter Khoa.Farming.Tests --output TestResults/KhoaEditMode.xml
+unity test . --mode PlayMode --filter Khoa.Farming.PlayModeTests --output TestResults/KhoaPlayMode.xml
 ```
 
-### Chi tiết từng bước:
-1. **Xới đất**: Cưỡi trâu đi qua ô đất `Plot_Prefab` (hoặc dùng cuốc) để đất chuyển sang trạng thái xới tơi.
-2. **Cấy mạ & Tưới nước**: Cầm mạ cấy vào ô đất -> Cây lúa mọc lên. Gạt cần van nước `Sluice_Gate_Prefab` để cấp nước cho ruộng.
-3. **Gặt lúa & Mót lúa**: 
-   * Khi lúa chín vàng, dùng Liềm chém vào gốc lúa -> Rơi ra **Bó Lúa chính (`Rice_Bundle_Prefab`)**.
-   * Đồng thời trên mặt bùn sẽ rơi vãi 1-3 **Bông lúa mót (`Gleaned_Rice_Stalk_Prefab`)**. Người chơi cúi xuống nhặt bằng tay VR, cứ gom đủ **3 bông lúa mót** sẽ tự động ghép thành **1 Bó Lúa hoàn chỉnh**!
-4. **Phơi lúa**: Cầm bó lúa đặt lên **Sân Phơi (`Rice_Drying_Yard_Prefab`)**. Khi phơi đủ nắng (100%), bó lúa sẽ chuyển sang trạng thái khô giòn.
-   * *Nếu trời mưa*: Sân phơi sẽ ngừng phơi và cảnh báo. Mang bó lúa vào hiên nhà/kho để bảo quản.
-5. **Tuốt lúa**: Cầm bó lúa khô thả vào **Cối Tuốt (`Rice_Thresher_Prefab`)**.
-6. **Nhận thóc vào Giỏ**:
-   * Nếu đặt một chiếc `RiceBasket` (Giỏ lúa) cạnh cối tuốt -> Cối sẽ **tự động đổ đầy thóc vàng vào giỏ**.
-   * Hoặc nếu người chơi đang chọn Giỏ lúa trong túi đồ (`Inventory`) -> **Giỏ trong túi đồ sẽ tự động đầy thóc**.
-7. **Xay gạo**: Cầm giỏ lúa đầy mang sang Cối xay gạo (`GrindMill`) để thực hiện công đoạn xay xát gạo như bình thường!
+Mốc xác nhận 2026-08-21: **27/27 EditMode** và **2/2 PlayMode** passed.
 
----
+## Khi có lỗi
 
-## 4. 🛠️ Công Cụ Menu 1-Click Trong Unity Editor
+- Plot đổi state khi chỉ bấm vào đất: kiểm tra `allowDebugSelectInteractions` phải
+  tắt và `XRSimpleInteractable` trên plot không được enable ở runtime.
+- Mở cống nhưng ruộng không ướt: kiểm tra `connectedPlots`; ở scene phụ có thể bật
+  `autoFindNearbyPlotsOnStart` và tăng `autoFindRadius`.
+- Máy tuốt không nhận bó khô: đặt giỏ `RiceBasketController` rỗng trong 2.5 m. Không
+  có đầu ra hợp lệ thì máy cố ý giữ lại bó.
+- Không phơi được: bó phải đi qua trigger của `RiceDryingYard`; kiểm tra collider và
+  layer collision matrix.
+- Sau khi code team đổi `RiceBasketController`/inventory: chạy regression vì phần
+  nối này dùng reflection và phụ thuộc tên API runtime.
 
-Trên thanh menu Unity, vào mục **`Khoa`**:
-
-1. **`Khoa/Tạo Bộ Công Cụ Nông Nghiệp (Test)`**:
-   * Tự động sinh ra 1 bộ đồ nghề VR hoàn chỉnh ngay trước mặt Camera: **Cuốc xới đất, Bó mạ, Bao phân bón, Bình tưới nước, Liềm gặt lúa** (tất cả đều cầm nắm được bằng tay VR).
-2. **`Khoa/Farming/Setup Farming Prefabs`**:
-   * Bấm nút **"Gắn Lưỡi Bừa Tự Động Vào Trâu Trong Scene"**: Tự động tìm con trâu và gắn lưỡi bừa sau đuôi trâu.
-   * Bấm nút **"Tạo Bông Lúa Mót (Gleaned Stalk)"**: Tạo hoặc cập nhật Prefab bông lúa mót.
-3. **`Khoa/Farming/Generate Plot Grid`**:
-   * Tạo nhanh một lưới ruộng n x m ô, tự động bắt dính theo cao độ Terrain.
-
----
-
-## 5. 💻 Tích Hợp API & Events (Dành Cho Quest, UI, Audio)
-
-Các bạn làm Quest, UI hoặc Audio chỉ cần `using Khoa.Farming;` để lắng nghe các sự kiện:
-
-### Bắt sự kiện Mót Lúa, Gặt Lúa & Tuốt Lúa:
-```csharp
-using Khoa.Farming;
-using UnityEngine;
-
-public class QuestManagerExample : MonoBehaviour
-{
-    public RiceThresher thresher;
-    public CropPlot cropPlot;
-
-    void OnEnable()
-    {
-        // Khi gặt được 1 bó lúa
-        if (cropPlot != null)
-            cropPlot.OnCropHarvested += OnHarvestRice;
-
-        // Khi nhặt được 1 bông lúa mót
-        GleanedRiceStalk.OnStalkGleaned += (current, required) => {
-            Debug.Log($"Quest Mót lúa: {current}/{required} bông");
-        };
-
-        // Khi ghép thành công 1 bó lúa từ lúa mót
-        GleanedRiceStalk.OnBundleCraftedFromGleaning += (bundle) => {
-            Debug.Log("Quest: Đã hoàn thành 1 bó lúa từ việc mót lúa!");
-        };
-
-        // Khi tuốt lúa ra hạt thóc
-        if (thresher != null)
-            thresher.OnRiceThreshed += (grainAmount) => {
-                Debug.Log($"Quest: Đã tuốt được {grainAmount} hạt thóc!");
-            };
-    }
-}
-```
-
----
-
-## 6. ⚠️ Lưu Ý Kỹ Thuật & Tương Thích
-
-* **Chuẩn API Unity 6 / Modern Unity**: Không sử dụng các hàm deprecated.
-* **Assembly Definition**: Toàn bộ script của hệ thống nằm trong `Khoa.Farming.asmdef`.
-* **Kết nối với `RiceBasketController` & `InventoryController`**: Được thực hiện qua cơ chế Component Reflection an toàn. Các bạn thoải mái sửa đổi, mở rộng file trong `Assets/MyFolder/` mà không lo bị gãy biên dịch (Compile Error).
-* **Kiểm thử tự động**: Có sẵn 17 EditMode Unit Tests trong `Assets/Khoa/Tests/EditMode/`. Chạy qua Unity Test Runner bất kỳ lúc nào để xác nhận tính ổn định.
+Xem [context.md](context.md) để biết trạng thái, giới hạn và các việc còn lại; xem
+[logic.md](logic.md) để đọc đặc tả FSM và transaction chi tiết.

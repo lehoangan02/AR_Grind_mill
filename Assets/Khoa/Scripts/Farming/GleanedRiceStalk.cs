@@ -35,6 +35,12 @@ namespace Khoa.Farming
         // Tiến độ mót lúa toàn cục của người chơi
         public static int currentGleanedCount = 0;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetGleaningProgress()
+        {
+            currentGleanedCount = 0;
+        }
+
         // Events
         public static event Action<int, int> OnStalkGleaned; // (currentCount, targetCount)
         public static event Action<RiceBundleItem> OnBundleCraftedFromGleaning;

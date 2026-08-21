@@ -27,6 +27,10 @@ namespace Khoa.Farming
         [Tooltip("Âm thanh máy tuốt lúa quay")]
         public AudioSource thresherAudioSource;
 
+        [Header("Output Receiver")]
+        [Tooltip("Bộ nhận thóc. Nếu không có đầu ra hợp lệ, bó lúa sẽ không bị tiêu thụ.")]
+        public RiceThresherBasketReceiver basketReceiver;
+
         // Sự kiện khi tuốt thành công 1 bó lúa
         public event Action<int> OnRiceThreshed;
 
@@ -36,6 +40,11 @@ namespace Khoa.Farming
             if (col != null)
             {
                 col.isTrigger = true;
+            }
+
+            if (basketReceiver == null)
+            {
+                basketReceiver = GetComponent<RiceThresherBasketReceiver>();
             }
         }
 
@@ -70,6 +79,18 @@ namespace Khoa.Farming
             }
 
             int grainsHarvested = Mathf.RoundToInt(bundle.grainAmount * grainYieldMultiplier);
+
+            if (basketReceiver == null)
+            {
+                basketReceiver = GetComponent<RiceThresherBasketReceiver>();
+            }
+
+            if (basketReceiver == null || !basketReceiver.TryReceiveGrain(grainsHarvested))
+            {
+                Debug.LogWarning("Không có giỏ lúa rỗng nhận thóc. Bó lúa được giữ lại để người chơi thử lại.");
+                return false;
+            }
+
             Debug.Log($"Tuốt lúa thành công! Thu được {grainsHarvested} hạt thóc vàng.");
 
             // Phát hiệu ứng và âm thanh

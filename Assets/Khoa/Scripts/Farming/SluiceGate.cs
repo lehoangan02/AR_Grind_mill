@@ -24,6 +24,12 @@ namespace Khoa.Farming
         [Tooltip("Các ô ruộng nhận nước khi mở van")]
         public List<CropPlot> connectedPlots = new List<CropPlot>();
 
+        [Tooltip("Tự tìm ruộng gần van khi scene chưa gán danh sách thủ công")]
+        public bool autoFindNearbyPlotsOnStart = true;
+
+        [Min(1f)]
+        public float autoFindRadius = 25f;
+
         [Header("Visual & Audio Feedback")]
         [Tooltip("Hiệu ứng hạt dòng nước chảy khi mở van")]
         public GameObject waterFlowParticles;
@@ -63,6 +69,14 @@ namespace Khoa.Farming
             if (xrInteractable != null)
             {
                 xrInteractable.selectEntered.RemoveListener(OnVRSelect);
+            }
+        }
+
+        void Start()
+        {
+            if (autoFindNearbyPlotsOnStart && (connectedPlots == null || connectedPlots.Count == 0))
+            {
+                AutoFindNearbyPlots(autoFindRadius);
             }
         }
 

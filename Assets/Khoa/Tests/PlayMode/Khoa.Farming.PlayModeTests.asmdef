@@ -1,0 +1,19 @@
+{
+    "name": "Khoa.Farming.PlayModeTests",
+    "rootNamespace": "Khoa.Farming.PlayModeTests",
+    "references": [
+        "Khoa.Farming"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

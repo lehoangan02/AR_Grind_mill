@@ -133,7 +133,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 40000001}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5a6b7c8d9e0123456789012abcdef05, type: 3}
+  m_Script: {fileID: 11500000, guid: ba0a5ff254f6df146b771195849ff75b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Khoa.Farming::Khoa.Farming.RiceThresherBasketReceiver
   basketSearchRadius: 2.5
