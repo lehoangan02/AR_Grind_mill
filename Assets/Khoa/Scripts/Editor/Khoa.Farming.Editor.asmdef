@@ -3,7 +3,8 @@
     "rootNamespace": "Khoa.Farming.Editor",
     "references": [
         "Khoa.Farming",
-        "Unity.XR.Interaction.Toolkit"
+        "Unity.XR.Interaction.Toolkit",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

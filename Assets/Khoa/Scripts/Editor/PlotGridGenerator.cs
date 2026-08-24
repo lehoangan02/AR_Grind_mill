@@ -8,8 +8,8 @@ namespace Khoa.Farming.Editor
     {
         private GameObject plotPrefab;
         private Transform gridOrigin;
-        private int rows = 20;
-        private int columns = 20;
+        private int rows = 100;
+        private int columns = 100;
         private float spacingX = 1.0f;
         private float spacingZ = 1.0f;
         private float maxHeight = 100f; // Ngưỡng độ cao mặc định

@@ -7,6 +7,7 @@ namespace Khoa.Farming
     /// Lưỡi bừa gắn sau đuôi trâu (hoặc nông cụ cày bừa).
     /// Khi trâu kéo bừa đi qua các ô đất CropPlot ở trạng thái Empty, đất sẽ tự động được xới (PlowPlot) thành Tilled.
     /// </summary>
+    [RequireComponent(typeof(Rigidbody))]
     public class BuffaloPlowAttachment : MonoBehaviour
     {
         [Header("Plowing Settings")]
@@ -41,7 +42,15 @@ namespace Khoa.Farming
                 }
             }
 
-            // Đảm bảo có Collider Trigger
+            EnsurePhysicsSetup();
+        }
+
+        /// <summary>
+        /// Trigger callbacks require at least one Rigidbody in the collision pair.
+        /// A kinematic body lets the blade follow the buffalo without gravity or force drift.
+        /// </summary>
+        public void EnsurePhysicsSetup()
+        {
             Collider col = GetComponent<Collider>();
             if (col == null)
             {
@@ -53,6 +62,17 @@ namespace Khoa.Farming
             {
                 col.isTrigger = true;
             }
+
+            Rigidbody body = GetComponent<Rigidbody>();
+            if (body == null)
+            {
+                body = gameObject.AddComponent<Rigidbody>();
+            }
+
+            body.isKinematic = true;
+            body.useGravity = false;
+            body.interpolation = RigidbodyInterpolation.Interpolate;
+            body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -77,7 +97,6 @@ namespace Khoa.Farming
                 plot.PlowPlot();
                 PlayPlowEffects(plot.transform.position);
                 OnPlotPlowedByBuffalo?.Invoke(plot);
-                Debug.Log($"Trâu đã bừa tơi xốp ô đất: {plot.name}");
             }
         }
 

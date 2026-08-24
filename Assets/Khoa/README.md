@@ -20,8 +20,10 @@ Hoặc chạy ở thư mục project:
 unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMainSceneSetup
 ```
 
-Tool giữ nguyên toàn bộ transform và kích thước grid hiện có, sau đó chỉ nối lại các station.
-Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố cục thủ công chưa lưu.
+Tool giữ nguyên toàn bộ transform và kích thước grid hiện có, sau đó chỉ nối lại các
+station. Nếu scene chính đang mở và có thay đổi chưa lưu (ví dụ grid vừa generate),
+tool dùng ngay scene đó nên không làm mất thay đổi. Khi chạy từ scene khác đang dirty,
+tool sẽ hỏi lưu; batch mode sẽ dừng an toàn.
 
 ## Luồng gameplay đã triển khai
 
@@ -42,6 +44,9 @@ Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố c�
   dùng collider/tag của đúng nông cụ.
 - Cống dùng `XRSimpleInteractable`: thao tác select/grip toggle mở/đóng và đổi góc
   lever hiển thị. Nó chưa mô phỏng kéo cần liên tục bằng physics joint.
+- Integration nối đủ Left Select, Right Select và Left Move cho `BuffaloRider`.
+- Lưỡi bừa có trigger collider cùng kinematic Rigidbody; vì vậy việc xới ruộng dùng
+  đúng physics trigger thay vì chỉ hoạt động khi gọi hàm trực tiếp trong test.
 - `RiceBundleItem` và `GleanedRiceStalk` dùng XR Grab; cảm giác cầm/ném cần được QA
   trên kính thật sau khi thay đổi scale hoặc collider.
 - Bó lúa tạo từ mót xuất hiện trong world, không tự attach vào tay người chơi.
@@ -67,6 +72,7 @@ Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố c�
 | Ngưỡng Growing / Maturing / Ready | 25% / 60% / 90% |
 | Nước hiện khi có lúa / đất trống | 35% / 70% moisture |
 | Lưu lượng cống prefab | 25 đơn vị/giây/plot |
+| Nhịp cập nhật tưới | 0,1 giây |
 | Tốc độ phơi | 5%/giây |
 | Tốc độ ướt lại khi mưa | 8%/giây |
 | Bông mót cần cho một bó | 3 |
@@ -76,10 +82,11 @@ Nên commit/backup scene trước khi chạy nếu đang có thay đổi bố c�
 ## Editor tools
 
 - `Khoa/Farming/Apply Main Scene Integration`: nối station vào grid hiện có; không
-  đổi position, rotation hoặc số lượng plot.
+  đổi position, rotation hoặc số lượng plot; station bám Terrain và dùng giỏ output
+  riêng của Khoa.
 - `Khoa/Farming/Setup Farming Prefabs`: tạo/cập nhật prefab farming.
 - `Khoa/Tạo Bộ Công Cụ Nông Nghiệp (Test)`: sinh bộ tool test VR.
-- `Khoa/Farming/Generate Plot Grid`: tạo grid plot theo terrain. Mặc định lấy mẫu
+- `Khoa/Farming/Generate Plot Grid`: tạo grid 100 x 100 mặc định theo terrain. Mặc định lấy mẫu
   3 x 3 trên footprint, lấy normal trung bình rồi nâng đáy plot đủ clearance tại
   mọi điểm mẫu. `3 x 3` nghĩa là 9 điểm trên mỗi plot; `5 x 5` là 25 điểm, chính
   xác hơn nhưng generate chậm hơn. Sampling tự chuyển sang Terrain tile kế bên khi
@@ -92,7 +99,7 @@ unity test . --mode EditMode --filter Khoa.Farming.Tests --output TestResults/Kh
 unity test . --mode PlayMode --filter Khoa.Farming.PlayModeTests --output TestResults/KhoaPlayMode.xml
 ```
 
-Mốc xác nhận 2026-08-21: **30/30 EditMode** và **2/2 PlayMode** passed.
+Mốc xác nhận 2026-08-24: **38/38 EditMode** và **4/4 PlayMode** passed.
 
 ## Khi có lỗi
 

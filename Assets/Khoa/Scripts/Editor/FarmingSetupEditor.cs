@@ -330,6 +330,7 @@ namespace Khoa.Farming.Editor
 
             BuffaloPlowAttachment plow = plowGO.AddComponent<BuffaloPlowAttachment>();
             plow.isPlowingActive = true;
+            plow.EnsurePhysicsSetup();
 
             EditorUtility.SetDirty(buffaloGO);
             Debug.Log("<color=green>Đã gắn thành công Lưỡi bừa tự động vào sau đuôi con trâu trong Scene!</color>");
@@ -416,7 +417,10 @@ namespace Khoa.Farming.Editor
             // Tạo SpawnPoint
             GameObject spawnPoint = new GameObject("SpawnPoint");
             spawnPoint.transform.SetParent(plotGO.transform);
-            spawnPoint.transform.localPosition = Vector3.zero;
+            spawnPoint.transform.localPosition = new Vector3(
+                boxCol.center.x,
+                boxCol.center.y + boxCol.size.y * 0.5f,
+                boxCol.center.z);
             spawnPoint.transform.localScale = new Vector3(1f, 10f, 1f);
             cropPlot.cropSpawnPoint = spawnPoint.transform;
 

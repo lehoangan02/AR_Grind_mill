@@ -1,6 +1,6 @@
 # Khoa Farming — đặc tả logic đã kiểm chứng
 
-Tài liệu này mô tả hành vi hiện có trong code ngày 2026-08-21. Nếu tài liệu và test
+Tài liệu này mô tả hành vi hiện có trong code ngày 2026-08-24. Nếu tài liệu và test
 mâu thuẫn, test regression cùng code runtime là nguồn sự thật cần ưu tiên.
 
 ## 1. Vòng lặp chính
@@ -58,8 +58,10 @@ tưới và cây `ReadyToHarvest` ngừng update growth/water.
 
 ## 4. Cống tưới
 
-Khi `isOpen`, mỗi frame cống gọi `WaterPlot(waterFlowRate * deltaTime)` cho từng
-plot không-null trong `connectedPlots`.
+Khi `isOpen`, cống cộng dồn `deltaTime` và chỉ duyệt `connectedPlots` khi đủ
+`irrigationTickInterval` (mặc định 0,1 giây). Lượng nước mỗi tick là
+`waterFlowRate * thời_gian_đã_cộng_dồn`, nên tốc độ nước/giây không đổi nhưng grid
+lớn không còn bị cập nhật theo từng rendered frame.
 
 - Scene chính gán trực tiếp mọi plot của grid do designer chọn và tắt auto-find để
   kết quả ổn định. Chạy integration lại sau khi generate grid mới để refresh wiring.
@@ -67,6 +69,8 @@ plot không-null trong `connectedPlots`.
   sẽ quét collider trong `autoFindRadius` (mặc định 25 m).
 - XR Select gọi `ToggleGate()`. Lever chỉ phản ánh hai góc đóng/mở, không phải mô
   phỏng joint liên tục.
+- Đóng van reset phần thời gian tick đang cộng dồn, tránh một đợt tưới cũ bị phát
+  ngay khi mở lại.
 
 ## 5. Gặt và mót
 
@@ -133,21 +137,35 @@ vẫn chỉ là bộ lọc cell; nó không quyết định placement Y.
 `FarmingSceneIntegrator` và regression test cùng bảo vệ các invariant sau:
 
 - giữ nguyên số lượng plot và transform của grid do designer tạo;
+- grid generator mặc định 100 x 100; kích thước grid đang có (hiện là bản thử
+  80 x 80) không bị integration tự đổi;
 - đúng một cống, sân phơi, máy tuốt, weather system, shelter, plow attachment và
   physical rice basket;
 - cống nối đủ mọi plot;
+- input Left Select, Right Select và Left Move của `BuffaloRider` đều khác null;
+- plow trigger có kinematic Rigidbody để Unity phát `OnTriggerEnter`;
+- station đặt đáy collider theo Terrain; object nước inactive vẫn được tìm thấy khi
+  cần fallback cao độ;
+- giỏ output của Khoa là instance riêng, không reparent giỏ do hệ thống khác sở hữu;
+- `SpawnPoint` của plot nằm trên mặt trên collider;
 - prefab máy tuốt không có missing MonoBehaviour;
 - các điểm mẫu ở đáy plot không xuyên Terrain.
 
+Khi scene chính đã mở, integration dùng lại đúng scene instance đang dirty để giữ
+grid vừa generate. Nếu đang đứng ở scene khác có thay đổi chưa lưu, interactive mode
+hỏi lưu trước; batch mode dừng an toàn.
+
 ## 9. Bằng chứng test
 
-EditMode 30 test bao phủ FSM, nước, tăng trưởng, phơi/mưa/mái che, tuốt, receiver,
+EditMode 38 test bao phủ FSM, nước, tăng trưởng, phơi/mưa/mái che, tuốt, receiver,
 mót lúa, particle factory, prefab và serialized scene invariants.
 
-PlayMode 2 test bao phủ:
+PlayMode 4 test bao phủ:
 
-- `SluiceGate.Start()` tự tìm plot và tưới qua nhiều frame;
+- `SluiceGate.Start()` tự tìm plot và tưới theo tick;
+- batching không ghi lại toàn grid mỗi rendered frame;
 - `RiceDryingYard` nhận physical bundle qua trigger và làm khô theo thời gian.
+- `BuffaloPlowAttachment` xới plot qua đường physics trigger thật.
 
-Mốc chạy Unity CLI ngày 2026-08-21: 30/30 EditMode và 2/2 PlayMode passed. Vẫn cần
+Mốc chạy Unity CLI ngày 2026-08-24: 38/38 EditMode và 4/4 PlayMode passed. Vẫn cần
 QA thủ công trên kính VR cho ergonomics, collider thực tế và cảm giác tương tác.

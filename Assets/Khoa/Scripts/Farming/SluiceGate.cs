@@ -20,6 +20,10 @@ namespace Khoa.Farming
         [Min(0.1f)]
         public float waterFlowRate = 20f;
 
+        [Tooltip("Khoảng thời gian giữa hai đợt cập nhật tưới. Giảm số lần quét ruộng lớn nhưng giữ nguyên lượng nước/giây.")]
+        [Min(0.02f)]
+        public float irrigationTickInterval = 0.1f;
+
         [Header("Connected Field Plots (Danh sách các ô ruộng kết nối)")]
         [Tooltip("Các ô ruộng nhận nước khi mở van")]
         public List<CropPlot> connectedPlots = new List<CropPlot>();
@@ -48,6 +52,8 @@ namespace Khoa.Farming
 
         // Sự kiện khi đóng/mở van
         public event Action<bool> OnGateStateChanged;
+
+        private float irrigationAccumulator;
 
         void Awake()
         {
@@ -87,16 +93,27 @@ namespace Khoa.Farming
 
         void Update()
         {
-            if (isOpen && connectedPlots != null && connectedPlots.Count > 0)
+            if (!isOpen || connectedPlots == null || connectedPlots.Count == 0)
             {
-                float amountThisFrame = waterFlowRate * Time.deltaTime;
-                for (int i = 0; i < connectedPlots.Count; i++)
+                irrigationAccumulator = 0f;
+                return;
+            }
+
+            irrigationAccumulator += Time.deltaTime;
+            float tickInterval = Mathf.Max(0.02f, irrigationTickInterval);
+            if (irrigationAccumulator < tickInterval)
+            {
+                return;
+            }
+
+            float amountThisTick = waterFlowRate * irrigationAccumulator;
+            irrigationAccumulator = 0f;
+            for (int i = 0; i < connectedPlots.Count; i++)
+            {
+                CropPlot plot = connectedPlots[i];
+                if (plot != null)
                 {
-                    CropPlot plot = connectedPlots[i];
-                    if (plot != null)
-                    {
-                        plot.WaterPlot(amountThisFrame);
-                    }
+                    plot.WaterPlot(amountThisTick);
                 }
             }
         }
@@ -129,6 +146,7 @@ namespace Khoa.Farming
         public void CloseGate()
         {
             isOpen = false;
+            irrigationAccumulator = 0f;
             UpdateVisuals();
             OnGateStateChanged?.Invoke(false);
             Debug.Log("Đã đóng van nước kênh mương.");

@@ -194,7 +194,6 @@ namespace Khoa.Farming
                 assignedPlot.UpdateSoilMoistureVisuals(currentWater / cropData.maxWater);
             }
             
-            Debug.Log($"Đã tưới nước! Lượng nước: {currentWater:F1}");
         }
 
         public void Fertilize()
