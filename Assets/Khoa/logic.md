@@ -1,6 +1,6 @@
 # Khoa Farming — đặc tả logic đã kiểm chứng
 
-Tài liệu này mô tả hành vi hiện có trong code ngày 2026-08-24. Nếu tài liệu và test
+Tài liệu này mô tả hành vi hiện có trong code ngày 2026-08-25. Nếu tài liệu và test
 mâu thuẫn, test regression cùng code runtime là nguồn sự thật cần ưu tiên.
 
 ## 1. Vòng lặp chính
@@ -60,15 +60,20 @@ tưới và cây `ReadyToHarvest` ngừng update growth/water.
 
 Khi `isOpen`, cống cộng dồn `deltaTime` và chỉ duyệt `connectedPlots` khi đủ
 `irrigationTickInterval` (mặc định 0,1 giây). Lượng nước mỗi tick là
-`waterFlowRate * thời_gian_đã_cộng_dồn`, nên tốc độ nước/giây không đổi nhưng grid
-lớn không còn bị cập nhật theo từng rendered frame.
+`waterFlowRate * openAmount * thời_gian_đã_cộng_dồn`, nên tốc độ nước thay đổi liên
+tục theo góc cần nhưng grid lớn không bị cập nhật theo từng rendered frame.
 
 - Scene chính gán trực tiếp mọi plot của grid do designer chọn và tắt auto-find để
   kết quả ổn định. Chạy integration lại sau khi generate grid mới để refresh wiring.
 - Scene phụ có thể để danh sách rỗng và bật `autoFindNearbyPlotsOnStart`; `Start()`
   sẽ quét collider trong `autoFindRadius` (mặc định 25 m).
-- XR Select gọi `ToggleGate()`. Lever chỉ phản ánh hai góc đóng/mở, không phải mô
-  phỏng joint liên tục.
+- `SluiceGateLever` lấy vị trí attach của tay XR trong mặt phẳng YZ của pivot, đổi
+  thành góc quanh trục X rồi map cung 90° -> 45° thành `openAmount` 0 -> 1.
+- `XRGrabInteractable` của handle tắt track position, rotation, scale và throw;
+  kinematic Rigidbody vẫn cho XRI/physics nhận tương tác nhưng không làm rời cần.
+- Thả trong 8% gần đầu cung sẽ snap về 0 hoặc 1. Ở giữa cung, mức mở được giữ nguyên.
+- XR Select trên collider khung gọi `ToggleGate()` làm fallback và vẫn giữ API cũ
+  `OpenGate()`, `CloseGate()`, `ToggleGate()`, `OnGateStateChanged(bool)`.
 - Đóng van reset phần thời gian tick đang cộng dồn, tránh một đợt tưới cũ bị phát
   ngay khi mở lại.
 
@@ -137,8 +142,8 @@ vẫn chỉ là bộ lọc cell; nó không quyết định placement Y.
 `FarmingSceneIntegrator` và regression test cùng bảo vệ các invariant sau:
 
 - giữ nguyên số lượng plot và transform của grid do designer tạo;
-- grid generator mặc định 100 x 100; kích thước grid đang có (hiện là bản thử
-  80 x 80) không bị integration tự đổi;
+- grid generator và scene production đều là 100 x 100, spacing 0,08 m, sampling
+  5 x 5; scene có đúng 10.000 plot và 100 tọa độ X × 100 tọa độ Z;
 - đúng một cống, sân phơi, máy tuốt, weather system, shelter, plow attachment và
   physical rice basket;
 - cống nối đủ mọi plot;
@@ -155,17 +160,49 @@ Khi scene chính đã mở, integration dùng lại đúng scene instance đang 
 grid vừa generate. Nếu đang đứng ở scene khác có thay đổi chưa lưu, interactive mode
 hỏi lưu trước; batch mode dừng an toàn.
 
-## 9. Bằng chứng test
+## 9. Vegetation cảnh quan
 
-EditMode 38 test bao phủ FSM, nước, tăng trưởng, phơi/mưa/mái che, tuốt, receiver,
-mót lúa, particle factory, prefab và serialized scene invariants.
+Vegetation trang trí dùng Unity Terrain `TreeInstance`, độc lập với FSM `RicePlant`.
+Generator tuân theo pipeline:
 
-PlayMode 4 test bao phủ:
+1. nhận diện nhóm prototype bằng tên prefab, loại `RicePlant` và `Vegetable`;
+2. sinh candidate Poisson-disc deterministic trên từng Terrain;
+3. bỏ điểm chìm dưới water plane, dốc quá 32 độ, nằm trong công trình hoặc texture
+   đường có weight từ 0,72;
+4. phân loại `VillageGarden`, `Waterside`, `FieldEdge`, `OpenCountryside` bằng khoảng
+   cách tới bounds scene thật;
+5. áp mật độ và bảng tỷ lệ loài riêng theo zone; patch hash 55 m tạo cụm cây nhưng
+   vẫn trộn sample uniform để không một loài phủ toàn map;
+6. áp khoảng cách tán 4,8..11 m tùy loài bằng spatial hash dùng chung qua seam giữa
+   bốn Terrain;
+7. đo bounds renderer của prefab trong preview scene và đổi về kích thước mục tiêu
+   theo mét trước khi tạo `TreeInstance`.
+
+Các invariant:
+
+- cùng scene + seed tạo cùng plan;
+- preview không sửa `TerrainData` và không save scene;
+- apply thay cây trang trí nhưng không sinh Rice/Vegetable;
+- vùng cấm không gộp các công trình xa nhau thành một root AABB khổng lồ;
+- `ApplyBatch` chỉ lưu scene chính và TerrainData sau khi plan tạo thành công;
+- cây cao/tán lớn phải giữ khoảng cách lớn hơn chuối và chanh.
+
+## 10. Bằng chứng test
+
+PlayMode 5 test bao phủ:
 
 - `SluiceGate.Start()` tự tìm plot và tưới theo tick;
 - batching không ghi lại toàn grid mỗi rendered frame;
+- mức mở 25% tạo đúng 25% lượng tưới thực tế so với mở hoàn toàn;
 - `RiceDryingYard` nhận physical bundle qua trigger và làm khô theo thời gian.
 - `BuffaloPlowAttachment` xới plot qua đường physics trigger thật.
 
-Mốc chạy Unity CLI ngày 2026-08-24: 38/38 EditMode và 4/4 PlayMode passed. Vẫn cần
-QA thủ công trên kính VR cho ergonomics, collider thực tế và cảm giác tương tác.
+Mốc chạy Unity CLI ngày 2026-08-25: 4/4 EditMode lever/grid, 1/1 validation scene
+production và 5/5 PlayMode passed. Full EditMode suite không chạy lại theo chủ đích
+giảm tải; mốc full gần nhất là 38/38 ngày 2026-08-24. Vẫn cần QA thủ công trên kính
+VR cho ergonomics và cảm giác kéo cần.
+
+Vegetation có 10 EditMode test mục tiêu cho determinism, Poisson minimum distance,
+zone priority, species profile, variable canopy spacing, density, prototype mapping,
+kích thước mục tiêu, preview không ghi asset và giới hạn diversity. Inspector sau
+apply xác nhận đúng 20.999 instance, dùng 50 prototype và không có Rice/Vegetable.

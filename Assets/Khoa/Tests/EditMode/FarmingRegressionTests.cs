@@ -473,9 +473,20 @@ namespace Khoa.Farming.Tests
             CropPlot[] plots = Object.FindObjectsByType<CropPlot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             SluiceGate[] gates = Object.FindObjectsByType<SluiceGate>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-            Assert.Greater(plots.Length, 0, "The integration must support the grid size selected by the designer.");
+            Assert.AreEqual(10000, plots.Length, "The production scene is locked to a complete 100x100 grid.");
+            Assert.AreEqual(100, plots.Select(plot => Mathf.RoundToInt(plot.transform.position.x * 1000f)).Distinct().Count());
+            Assert.AreEqual(100, plots.Select(plot => Mathf.RoundToInt(plot.transform.position.z * 1000f)).Distinct().Count());
             Assert.AreEqual(1, gates.Length);
             Assert.AreEqual(plots.Length, gates[0].connectedPlots.Count);
+            SluiceGateLever[] levers = Object.FindObjectsByType<SluiceGateLever>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            Assert.AreEqual(1, levers.Length);
+            Assert.AreEqual(gates[0], levers[0].sluiceGate);
+            Assert.IsNotNull(levers[0].grabInteractable);
+            Assert.IsFalse(levers[0].grabInteractable.trackPosition);
+            Assert.IsFalse(levers[0].grabInteractable.trackRotation);
+            Assert.IsTrue(levers[0].grabInteractable.GetComponent<Rigidbody>().isKinematic);
             Assert.AreEqual(1, Object.FindObjectsByType<RiceDryingYard>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
             Assert.AreEqual(1, Object.FindObjectsByType<RiceThresher>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);
             Assert.AreEqual(1, Object.FindObjectsByType<FarmingWeatherSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None).Length);

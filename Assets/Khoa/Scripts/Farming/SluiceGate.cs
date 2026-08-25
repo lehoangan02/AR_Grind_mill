@@ -16,6 +16,10 @@ namespace Khoa.Farming
         [Tooltip("Trạng thái van đang mở hay đóng")]
         public bool isOpen = false;
 
+        [SerializeField, Range(0f, 1f)]
+        [Tooltip("Mức mở thực tế của van. 0 là đóng hoàn toàn, 1 là mở hoàn toàn.")]
+        private float openAmount;
+
         [Tooltip("Tốc độ cấp nước mỗi giây cho từng ô ruộng (water units/s)")]
         [Min(0.1f)]
         public float waterFlowRate = 20f;
@@ -55,8 +59,27 @@ namespace Khoa.Farming
 
         private float irrigationAccumulator;
 
+        /// <summary>
+        /// Gets the normalized physical opening of the gate.
+        /// </summary>
+        public float OpenAmount => openAmount;
+
+        /// <summary>
+        /// Gets the effective irrigation rate after applying the lever opening.
+        /// </summary>
+        public float CurrentWaterFlowRate => waterFlowRate * openAmount;
+
         void Awake()
         {
+            // Scenes serialized before continuous control only stored the boolean state.
+            if (isOpen && openAmount <= 0f)
+            {
+                openAmount = 1f;
+            }
+
+            openAmount = Mathf.Clamp01(openAmount);
+            isOpen = openAmount > 0.001f;
+
             if (xrInteractable == null)
             {
                 xrInteractable = GetComponent<XRSimpleInteractable>();
@@ -93,7 +116,7 @@ namespace Khoa.Farming
 
         void Update()
         {
-            if (!isOpen || connectedPlots == null || connectedPlots.Count == 0)
+            if (openAmount <= 0.001f || connectedPlots == null || connectedPlots.Count == 0)
             {
                 irrigationAccumulator = 0f;
                 return;
@@ -106,7 +129,7 @@ namespace Khoa.Farming
                 return;
             }
 
-            float amountThisTick = waterFlowRate * irrigationAccumulator;
+            float amountThisTick = CurrentWaterFlowRate * irrigationAccumulator;
             irrigationAccumulator = 0f;
             for (int i = 0; i < connectedPlots.Count; i++)
             {
@@ -134,9 +157,7 @@ namespace Khoa.Farming
         /// </summary>
         public void OpenGate()
         {
-            isOpen = true;
-            UpdateVisuals();
-            OnGateStateChanged?.Invoke(true);
+            SetOpenAmount(1f);
             Debug.Log("Đã mở van nước! Nước đang chảy vào các thửa ruộng...");
         }
 
@@ -145,11 +166,30 @@ namespace Khoa.Farming
         /// </summary>
         public void CloseGate()
         {
-            isOpen = false;
-            irrigationAccumulator = 0f;
-            UpdateVisuals();
-            OnGateStateChanged?.Invoke(false);
+            SetOpenAmount(0f);
             Debug.Log("Đã đóng van nước kênh mương.");
+        }
+
+        /// <summary>
+        /// Sets the physical gate opening while preserving the legacy open/closed event contract.
+        /// </summary>
+        public void SetOpenAmount(float normalizedAmount)
+        {
+            float clampedAmount = Mathf.Clamp01(normalizedAmount);
+            bool wasOpen = isOpen;
+            openAmount = clampedAmount;
+            isOpen = openAmount > 0.001f;
+
+            if (!isOpen)
+            {
+                irrigationAccumulator = 0f;
+            }
+
+            UpdateVisuals();
+            if (wasOpen != isOpen)
+            {
+                OnGateStateChanged?.Invoke(isOpen);
+            }
         }
 
         /// <summary>
@@ -184,11 +224,12 @@ namespace Khoa.Farming
         {
             if (waterFlowParticles != null)
             {
-                waterFlowParticles.SetActive(isOpen);
+                waterFlowParticles.SetActive(openAmount > 0.001f);
             }
 
             if (waterAudioSource != null)
             {
+                waterAudioSource.volume = openAmount;
                 if (isOpen && !waterAudioSource.isPlaying)
                     waterAudioSource.Play();
                 else if (!isOpen && waterAudioSource.isPlaying)
@@ -197,8 +238,19 @@ namespace Khoa.Farming
 
             if (leverTransform != null)
             {
-                leverTransform.localEulerAngles = isOpen ? leverOpenRotation : leverClosedRotation;
+                leverTransform.localRotation = Quaternion.Slerp(
+                    Quaternion.Euler(leverClosedRotation),
+                    Quaternion.Euler(leverOpenRotation),
+                    openAmount);
             }
+        }
+
+        private void OnValidate()
+        {
+            openAmount = Mathf.Clamp01(openAmount);
+            isOpen = openAmount > 0.001f;
+            irrigationTickInterval = Mathf.Max(0.02f, irrigationTickInterval);
+            UpdateVisuals();
         }
     }
 }

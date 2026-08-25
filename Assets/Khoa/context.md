@@ -1,6 +1,6 @@
 # Khoa Farming System — Context hiện tại
 
-> Cập nhật: 2026-08-24 (GMT+7)
+> Cập nhật: 2026-08-25 (GMT+7)
 >
 > Branch kiểm tra: `VR`
 >
@@ -29,7 +29,11 @@ nhất trước đợt sửa này là `b8537728`.
   đất trống/đã bừa.
 - `SluiceGate`: tưới các plot đã nối; nếu một scene khác chưa gán danh sách, `Start()`
   tự quét plot gần đó trong bán kính cấu hình. Scene lớn được tưới theo tick 0,1
-  giây thay vì quét toàn bộ grid mỗi rendered frame; lưu lượng theo giây không đổi.
+  giây thay vì quét toàn bộ grid mỗi rendered frame. `openAmount` 0..1 lấy từ góc
+  cần gạt và nhân trực tiếp vào lưu lượng nước.
+- `SluiceGateLever`: handle XR Grab quay quanh pivot cố định từ 90° đến 45°. XRI
+  không được phép track position/rotation/scale của handle, nên người chơi có thể
+  kéo cần nhưng không thể giật nó rời khỏi cống. Thả gần endpoint sẽ snap.
 - `BuffaloPlowAttachment`: gắn dưới object có `BuffaloRider`, xới plot qua trigger
   mà không sửa `BuffaloRider.cs`. Lưỡi bừa tự bảo đảm có trigger collider và
   kinematic Rigidbody, nên physics callback hoạt động ngay cả khi plot và trâu đều
@@ -47,16 +51,17 @@ nhất trước đợt sửa này là `b8537728`.
 
 ### Scene chính
 
-Scene chính hiện có một playable farming slice được Unity tạo và lưu. Grid hiện tại
-là bản 80 x 80 do designer generate để thử. Bản sinh trước khi sửa seam có 6.320
-plot vì thiếu một cột tại ranh giới Terrain; generate lại bằng tool mới sẽ đủ 6.400.
-Kích thước production vẫn có thể generate lại 100 x 100:
+Scene chính hiện có một playable farming slice được Unity tạo và lưu. Grid production
+đã chốt **100 x 100**, gồm đúng **10.000 plot** tại root
+`Farm_Grid_Production_100x100`. Grid dùng tâm cũ `(9.9, 100, -204.4)`, spacing
+0,08 m và lấy mẫu Terrain 5 x 5 trên mỗi footprint:
 
 - mỗi plot giữ nguyên position/rotation đã map theo Terrain;
 - `Apply Main Scene Integration` không xóa, thu nhỏ, làm phẳng hay đổi cao độ grid;
   nếu scene chính đang mở và có thay đổi chưa lưu, tool dùng trực tiếp scene đó thay
   vì mở lại rồi làm mất grid vừa generate;
 - đúng một van tưới nối đủ mọi plot trong grid hiện tại;
+- van có đúng một physical lever, XR Grab riêng và kinematic Rigidbody;
 - đúng một sân phơi, máy tuốt, giỏ thóc vật lý, weather system và shelter zone;
 - đúng một lưỡi bừa gắn vào object có `BuffaloRider`;
 - `BuffaloRider` đã được nối đủ Left Select, Right Select và Left Move từ XRI Default
@@ -67,6 +72,28 @@ Kích thước production vẫn có thể generate lại 100 x 100:
   chiếm và di chuyển giỏ của hệ thống khác trong scene;
 - particle nước, hơi phơi, hạt thóc và bùn đã được nối vào component tương ứng.
 
+### Cảnh quan cây trên Terrain
+
+Vegetation generator v2 đã thay thuật toán jittered-grid cũ bằng plan deterministic:
+
+- bốn Terrain có tổng **20.999** cây trang trí, lần lượt 5.304 / 5.149 / 5.350 /
+  5.196 instance;
+- 50/52 prototype được sử dụng; hai prototype cố ý không dùng là `Vegetable` và
+  `RicePlant`;
+- phân bố hiện tại: tràm 5.327, nhóm tre 5.071, chanh 3.948, chuối 3.464, dừa
+  1.645, palm gần-cau 1.215 và palm cluster 329;
+- không nhóm nào vượt 35% tổng cây; nhóm cao nhất hiện khoảng 25,4%;
+- điểm neo dùng Poisson-disc, sau đó lọc theo nước, dốc, công trình, texture đường,
+  mật độ zone và khoảng cách tán theo loài;
+- vùng cấm dùng bounds nhỏ của từng renderer/collider. Grid 100 x 100 vẫn dùng một
+  bounds tổng riêng để tránh duyệt và index 10.000 plot;
+- khoảng cách render Terrain đã giảm còn 650 m, billboard 55 m và tối đa 150 cây
+  full LOD để hợp lý hơn cho VR.
+
+Preview không ghi asset; Apply mới thay `TreeInstance` và lưu scene. `ArecaPalm` vẫn
+là placeholder từ generic palm asset. Chưa có prefab cau và bạch đàn đúng loài trong
+project; `Melaleuca` là tràm, không phải bạch đàn.
+
 Tool tái tạo/cập nhật setup: `Khoa/Farming/Apply Main Scene Integration`, hoặc:
 
 ```powershell
@@ -75,17 +102,15 @@ unity run . -- -executeMethod Khoa.Farming.Editor.FarmingSceneIntegrator.ApplyMa
 
 ## 3. Kiểm thử đã chạy bằng Unity CLI
 
-Ngày 2026-08-24:
+Đợt thay đổi ngày 2026-08-25 chủ động chỉ chạy test mục tiêu nhẹ:
 
-- EditMode `Khoa.Farming.Tests`: **38/38 passed**.
-- PlayMode `Khoa.Farming.PlayModeTests`: **4/4 passed**.
-- Regression riêng gồm kiểm tra prefab, FSM, ngưỡng tăng trưởng, transaction máy
-  tuốt, reset mót lúa, wiring scene/input, bảo toàn transform/grid, station placement,
-  trigger bừa, batching tưới và terrain clearance: **21/21 passed**.
+- EditMode lever/grid: **4/4 passed**.
+- Validation scene production: **1/1 passed**.
+- PlayMode `Khoa.Farming.PlayModeTests`: **5/5 passed**.
 
-PlayMode hiện kiểm tra bốn đường runtime quan trọng: van tự tìm plot, tưới theo
-tick thay vì mỗi frame, sân phơi nhận bó lúa qua trigger, và lưỡi bừa thật sự xới
-plot qua physics trigger.
+PlayMode hiện kiểm tra thêm đường tưới thật: van mở 25% cấp đúng một phần tư lượng
+nước so với van mở hoàn toàn. Full EditMode suite không chạy lại để tránh tốn tài
+nguyên không liên quan; mốc gần nhất là 38/38 ngày 2026-08-24.
 
 ## 4. Các lỗi cũ đã sửa trong đợt audit
 
@@ -106,19 +131,23 @@ plot qua physics trigger.
 - Integration từng có thể lấy nhầm giỏ của designer rồi reparent/di chuyển nó.
 - Tìm `FieldWaterPlane`/`StiltHouse` từng bỏ sót object inactive.
 - Hai input của `BuffaloRider` từng để null; integration nay nối đủ cả ba action.
-- Tool grid mặc định 20 x 20 không khớp kích thước production; mặc định mới là
-  100 x 100. Grid 80 x 80 hiện tại vẫn được giữ vì đó là lựa chọn thử của designer.
+- Tool grid mặc định 20 x 20 không khớp kích thước production; mặc định và scene
+  chính nay đều đã chốt 100 x 100.
+- Van cũ chỉ toggle hai trạng thái; prefab mới có physical grab handle, mức mở liên
+  tục và lưu lượng tỷ lệ theo góc.
 
 ## 5. Chưa được coi là hoàn tất
 
-- Cần QA trực tiếp bằng kính VR cho cảm giác cầm/ném, vùng trigger, tầm với và vị
-  trí station; automated tests không thay thế được kiểm tra ergonomics.
-- Lever của van hiện là tương tác chọn/grip để toggle và cập nhật góc hiển thị;
-  chưa phải cần gạt vật lý liên tục có joint/angle constraint.
+- Cần QA trực tiếp bằng kính VR cho cảm giác cầm/ném, vùng trigger, tầm với, vị trí
+  station và góc kéo cần. Automated tests đã xác nhận mapping, constraint, Rigidbody
+  và dòng nước nhưng không thay thế được kiểm tra ergonomics bằng tay thật.
 - Quest/NPC dẫn đường, UI hướng dẫn, save/load tiến độ và audio clip thực tế chưa
   nằm trong farming slice này.
 - Theo `now_plan.md`, bếp + vo/nấu cơm, chèo thuyền/câu cá và NPC nhắc nhiệm vụ vẫn
   là công việc riêng chưa được hệ thống Khoa triển khai.
+- Cảnh quan cây vẫn cần một vòng nhìn trực tiếp trong Scene/VR để tinh chỉnh art
+  direction. Cần thay palm placeholder bằng model cau thật và bổ sung prefab bạch đàn
+  trước khi coi yêu cầu đa dạng loài đã hoàn tất tuyệt đối.
 
 ## 6. Quy tắc tích hợp
 

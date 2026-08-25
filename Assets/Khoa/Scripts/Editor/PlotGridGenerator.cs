@@ -1,25 +1,97 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Khoa.Farming.Editor
 {
     public class PlotGridGenerator : EditorWindow
     {
+        public const int ProductionRows = 100;
+        public const int ProductionColumns = 100;
+        public const float ProductionSpacing = 0.08f;
+        public const int ProductionTerrainSamplesPerAxis = 5;
+
         private GameObject plotPrefab;
         private Transform gridOrigin;
-        private int rows = 100;
-        private int columns = 100;
-        private float spacingX = 1.0f;
-        private float spacingZ = 1.0f;
+        private int rows = ProductionRows;
+        private int columns = ProductionColumns;
+        private float spacingX = ProductionSpacing;
+        private float spacingZ = ProductionSpacing;
         private float maxHeight = 100f; // Ngưỡng độ cao mặc định
         private float yOffset = 0.08f; // Độ nổi của ô đất so với mặt đất
-        private int terrainSamplesPerAxis = TerrainPlotPlacement.DefaultSamplesPerAxis;
+        private int terrainSamplesPerAxis = ProductionTerrainSamplesPerAxis;
         
         [MenuItem("Khoa/Farming/Generate Plot Grid")]
         public static void ShowWindow()
         {
             GetWindow<PlotGridGenerator>("Grid Generator");
+        }
+
+        [MenuItem("Khoa/Farming/Generate Production Grid 100x100")]
+        public static void GenerateProductionGridInMainScene()
+        {
+            Scene scene = FarmingSceneIntegrator.OpenOrUseMainScene();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+                "Assets/Khoa/Prefabs/Plot_Prefab.prefab");
+            if (prefab == null)
+            {
+                throw new InvalidOperationException("Missing production plot prefab.");
+            }
+
+            CropPlot[] existingPlots = UnityEngine.Object.FindObjectsByType<CropPlot>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            Transform currentGridRoot = FindPrimaryGridRoot(existingPlots);
+            if (currentGridRoot == null)
+            {
+                throw new InvalidOperationException(
+                    "Cannot determine the existing farming-grid origin in the main scene.");
+            }
+
+            if (existingPlots.Length == ProductionRows * ProductionColumns &&
+                currentGridRoot.name == "Farm_Grid_Production_100x100")
+            {
+                Debug.Log("[Khoa Farming] Production grid is already 100x100; refreshing integration only.");
+                FarmingSceneIntegrator.ApplyMainSceneSetup();
+                return;
+            }
+
+            Vector3 productionOrigin = currentGridRoot.position;
+            GameObject generatedRoot = GenerateGridRoot(
+                prefab,
+                productionOrigin,
+                ProductionRows,
+                ProductionColumns,
+                ProductionSpacing,
+                ProductionSpacing,
+                100f,
+                0.08f,
+                ProductionTerrainSamplesPerAxis,
+                "Farm_Grid_Production_100x100",
+                out int generatedCount);
+
+            int expectedCount = ProductionRows * ProductionColumns;
+            if (generatedCount != expectedCount)
+            {
+                UnityEngine.Object.DestroyImmediate(generatedRoot);
+                throw new InvalidOperationException(
+                    $"Production grid validation failed: generated {generatedCount}/{expectedCount} plots. " +
+                    "The previous grid was preserved.");
+            }
+
+            foreach (Transform oldRoot in FindGridRoots().Where(root => root != generatedRoot.transform))
+            {
+                UnityEngine.Object.DestroyImmediate(oldRoot.gameObject);
+            }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            FarmingSceneIntegrator.ApplyMainSceneSetup();
+            Debug.Log($"[Khoa Farming] Production grid locked at {ProductionColumns}x{ProductionRows} " +
+                      $"({generatedCount} terrain-mapped plots).");
         }
 
         private void OnEnable()
@@ -69,97 +141,159 @@ namespace Khoa.Farming.Editor
                 return;
             }
 
-            // Tự động xoá các Grid cũ (để tránh đè lên nhau nếu user quên xoá)
-            GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
-            foreach (var obj in allObjects)
+            GameObject generatedRoot = GenerateGridRoot(
+                plotPrefab,
+                gridOrigin.position,
+                rows,
+                columns,
+                spacingX,
+                spacingZ,
+                maxHeight,
+                yOffset,
+                terrainSamplesPerAxis,
+                "Farm_Grid_" + DateTime.Now.ToString("HHmmss"),
+                out int count);
+
+            foreach (Transform oldRoot in FindGridRoots().Where(root => root != generatedRoot.transform))
             {
-                if (obj.name.StartsWith("Farm_Grid_"))
+                Undo.DestroyObjectImmediate(oldRoot.gameObject);
+            }
+
+            Undo.RegisterCreatedObjectUndo(generatedRoot, "Generate Farm Grid");
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+            Debug.Log($"<color=green>Đã sinh ra {count} ô đất thành công dọc theo vùng ngập nước!</color>");
+        }
+
+        private static GameObject GenerateGridRoot(
+            GameObject prefab,
+            Vector3 origin,
+            int rowCount,
+            int columnCount,
+            float horizontalSpacing,
+            float verticalSpacing,
+            float maximumTerrainHeight,
+            float clearance,
+            int samplesPerAxis,
+            string rootName,
+            out int generatedCount)
+        {
+            GameObject group = new GameObject(rootName);
+            group.transform.position = origin;
+            generatedCount = 0;
+
+            BoxCollider plotCollider = prefab.GetComponent<BoxCollider>();
+            float plotSizeX = plotCollider != null
+                ? plotCollider.size.x * Mathf.Abs(prefab.transform.localScale.x)
+                : Mathf.Abs(prefab.transform.localScale.x);
+            float plotSizeZ = plotCollider != null
+                ? plotCollider.size.z * Mathf.Abs(prefab.transform.localScale.z)
+                : Mathf.Abs(prefab.transform.localScale.z);
+            float stepX = plotSizeX + Mathf.Max(0f, horizontalSpacing);
+            float stepZ = plotSizeZ + Mathf.Max(0f, verticalSpacing);
+            float totalWidth = columnCount * plotSizeX + (columnCount - 1) * Mathf.Max(0f, horizontalSpacing);
+            float totalLength = rowCount * plotSizeZ + (rowCount - 1) * Mathf.Max(0f, verticalSpacing);
+            Vector3 startPosition = origin - new Vector3(totalWidth * 0.5f, 0f, totalLength * 0.5f) +
+                                    new Vector3(plotSizeX * 0.5f, 0f, plotSizeZ * 0.5f);
+            Terrain[] terrains = UnityEngine.Object.FindObjectsByType<Terrain>(
+                FindObjectsInactive.Exclude,
+                FindObjectsSortMode.None);
+
+            try
+            {
+                for (int x = 0; x < columnCount; x++)
                 {
-                    Undo.DestroyObjectImmediate(obj);
-                }
-            }
-
-            // Tạo một group để chứa toàn bộ grid cho gọn Hierarchy
-            GameObject group = new GameObject("Farm_Grid_" + System.DateTime.Now.ToString("HHmmss"));
-            group.transform.position = gridOrigin.position;
-            Undo.RegisterCreatedObjectUndo(group, "Generate Farm Grid");
-
-            int count = 0;
-            
-            // Tính kích thước thực tế của 1 ô (D)
-            float plotSizeX = 1f;
-            float plotSizeZ = 1f;
-            
-            BoxCollider col = plotPrefab.GetComponent<BoxCollider>();
-            if (col != null)
-            {
-                plotSizeX = col.size.x * plotPrefab.transform.localScale.x;
-                plotSizeZ = col.size.z * plotPrefab.transform.localScale.z;
-            }
-            else
-            {
-                plotSizeX = plotPrefab.transform.localScale.x;
-                plotSizeZ = plotPrefab.transform.localScale.z;
-            }
-
-            // Khoảng cách thực tế giữa tâm ô này đến tâm ô kia
-            float stepX = plotSizeX + spacingX;
-            float stepZ = plotSizeZ + spacingZ;
-
-            // Tổng chiều dài và rộng của toàn bộ lưới Grid
-            float totalWidth = (columns * plotSizeX) + ((columns - 1) * spacingX);
-            float totalLength = (rows * plotSizeZ) + ((rows - 1) * spacingZ);
-
-            // Tìm điểm xuất phát (Góc dưới cùng bên trái của Grid)
-            Vector3 gridBottomLeft = gridOrigin.position - new Vector3(totalWidth / 2f, 0, totalLength / 2f);
-            
-            // Toạ độ tâm của ô đất đầu tiên (phải cộng thêm nửa kích thước của ô đó)
-            Vector3 startPos = gridBottomLeft + new Vector3(plotSizeX / 2f, 0, plotSizeZ / 2f);
-
-            for (int x = 0; x < columns; x++)
-            {
-                for (int z = 0; z < rows; z++)
-                {
-                    // Đặt điểm bắt đầu bắn tia Laser ở tít trên cao (Y + 1000)
-                    Vector3 rayStart = new Vector3(startPos.x + x * stepX, gridOrigin.position.y + 1000f, startPos.z + z * stepZ);
-                    
-                    // Bắn xuyên qua mọi thứ (RaycastAll) để tìm đúng mặt đất (Terrain) kể cả khi có lớp nước che phủ
-                    RaycastHit[] hits = Physics.RaycastAll(rayStart, Vector3.down, 2000f);
-                    Array.Sort(hits, (left, right) => left.distance.CompareTo(right.distance));
-                    foreach (var hit in hits)
+                    if (!Application.isBatchMode)
                     {
-                        // Kiểm tra xem tia raycast có trúng Terrain không (bỏ qua mặt nước)
-                        if (hit.collider is TerrainCollider || hit.collider.gameObject.name.Contains("Terrain"))
-                        {
-                            // Kiểm tra xem mặt đất ở đó có bị nhô cao quá không (có phải là bờ ruộng không)
-                            if (hit.point.y <= maxHeight)
-                            {
-                                GameObject newPlot = (GameObject)PrefabUtility.InstantiatePrefab(plotPrefab);
-                                Terrain terrain = hit.collider.GetComponent<Terrain>() ?? hit.collider.GetComponentInParent<Terrain>();
-                                Vector3 plotCenter = new Vector3(rayStart.x, hit.point.y, rayStart.z);
+                        EditorUtility.DisplayProgressBar(
+                            "Generate farming grid",
+                            $"Column {x + 1}/{columnCount}",
+                            (x + 1f) / columnCount);
+                    }
 
-                                if (TerrainPlotPlacement.TryPlaceOnTerrain(
-                                        newPlot,
-                                        terrain,
-                                        plotCenter,
-                                        yOffset,
-                                        terrainSamplesPerAxis))
-                                {
-                                    newPlot.transform.SetParent(group.transform);
-                                    count++;
-                                }
-                                else
-                                {
-                                    DestroyImmediate(newPlot);
-                                }
-                            }
-                            break; // Đã tìm thấy Terrain ở tọa độ X,Z này rồi thì không xét các hit khác nữa
+                    for (int z = 0; z < rowCount; z++)
+                    {
+                        Vector3 center = new Vector3(
+                            startPosition.x + x * stepX,
+                            origin.y,
+                            startPosition.z + z * stepZ);
+                        Terrain terrain = FindTerrainContaining(terrains, center);
+                        if (terrain == null || SampleTerrainHeight(terrain, center) > maximumTerrainHeight)
+                        {
+                            continue;
+                        }
+
+                        GameObject plot = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+                        if (TerrainPlotPlacement.TryPlaceOnTerrain(
+                                plot,
+                                terrain,
+                                center,
+                                clearance,
+                                samplesPerAxis))
+                        {
+                            plot.transform.SetParent(group.transform, true);
+                            generatedCount++;
+                        }
+                        else
+                        {
+                            UnityEngine.Object.DestroyImmediate(plot);
                         }
                     }
                 }
             }
+            catch
+            {
+                UnityEngine.Object.DestroyImmediate(group);
+                throw;
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
 
-            Debug.Log($"<color=green>Đã sinh ra {count} ô đất thành công dọc theo vùng ngập nước!</color>");
+            return group;
+        }
+
+        private static Transform FindPrimaryGridRoot(IEnumerable<CropPlot> plots)
+        {
+            return plots
+                .Where(plot => plot != null && plot.transform.parent != null)
+                .GroupBy(plot => plot.transform.parent)
+                .OrderByDescending(group => group.Count())
+                .Select(group => group.Key)
+                .FirstOrDefault();
+        }
+
+        private static IEnumerable<Transform> FindGridRoots()
+        {
+            return UnityEngine.Object.FindObjectsByType<Transform>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None)
+                .Where(transform => transform != null && transform.name.StartsWith("Farm_Grid_"));
+        }
+
+        private static Terrain FindTerrainContaining(IEnumerable<Terrain> terrains, Vector3 worldPosition)
+        {
+            return terrains.FirstOrDefault(terrain =>
+            {
+                if (terrain == null || terrain.terrainData == null)
+                {
+                    return false;
+                }
+
+                Vector3 terrainOrigin = terrain.transform.position;
+                Vector3 size = terrain.terrainData.size;
+                return worldPosition.x >= terrainOrigin.x && worldPosition.x <= terrainOrigin.x + size.x &&
+                       worldPosition.z >= terrainOrigin.z && worldPosition.z <= terrainOrigin.z + size.z;
+            });
+        }
+
+        private static float SampleTerrainHeight(Terrain terrain, Vector3 worldPosition)
+        {
+            TerrainData data = terrain.terrainData;
+            Vector3 localPosition = worldPosition - terrain.transform.position;
+            return terrain.transform.position.y + data.GetInterpolatedHeight(
+                Mathf.Clamp01(localPosition.x / data.size.x),
+                Mathf.Clamp01(localPosition.z / data.size.z));
         }
     }
 }

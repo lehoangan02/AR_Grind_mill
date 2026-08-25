@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using System;
 using System.Collections.Generic;
 
 namespace Khoa.Farming.Editor
@@ -185,37 +186,56 @@ namespace Khoa.Farming.Editor
             EnsureFolder(folderPath);
             string gatePath = folderPath + "/Sluice_Gate_Prefab.prefab";
 
-            // Tạo khung van nước
             GameObject gateGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
             gateGO.name = "Sluice_Gate_Prefab";
             gateGO.transform.localScale = new Vector3(1.2f, 2.0f, 0.3f);
 
             MeshRenderer frameRenderer = gateGO.GetComponent<MeshRenderer>();
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-            Material woodMat = new Material(shader) { color = new Color(0.4f, 0.25f, 0.15f) };
-            frameRenderer.material = woodMat;
+            frameRenderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(
+                "Assets/ALP_Assets/NikolayFedorov/PBR_Tiled/MaterialsPBR/Wood_planks_02.mat");
 
-            // Tạo cần gạt van
-            GameObject leverGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            leverGO.name = "Lever_Handle";
-            leverGO.transform.SetParent(gateGO.transform);
-            leverGO.transform.localPosition = new Vector3(0f, 0.5f, -0.2f);
-            leverGO.transform.localScale = new Vector3(0.15f, 0.4f, 0.15f);
-            leverGO.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
+            // The pivot owns rotation. The visible handle stays offset from it so the motion
+            // reads as a real hinged lever instead of a cylinder spinning around its center.
+            GameObject pivotGO = new GameObject("Lever_Pivot");
+            pivotGO.transform.SetParent(gateGO.transform, false);
+            pivotGO.transform.localPosition = new Vector3(0f, 0.1f, -0.65f);
+            pivotGO.transform.localEulerAngles = new Vector3(90f, 0f, 0f);
 
-            Material leverMat = new Material(shader) { color = Color.red };
-            leverGO.GetComponent<MeshRenderer>().material = leverMat;
+            GameObject handleGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            handleGO.name = "Lever_Handle";
+            handleGO.transform.SetParent(pivotGO.transform, false);
+            handleGO.transform.localPosition = new Vector3(0f, 0.3f, 0f);
+            handleGO.transform.localScale = new Vector3(0.12f, 0.3f, 0.12f);
+            handleGO.GetComponent<MeshRenderer>().sharedMaterial = GetOrCreateLeverMaterial();
 
-            // Component SluiceGate
+            Rigidbody handleBody = handleGO.AddComponent<Rigidbody>();
+            handleBody.isKinematic = true;
+            handleBody.useGravity = false;
+            handleBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+
+            XRGrabInteractable handleGrab = handleGO.AddComponent<XRGrabInteractable>();
+            handleGrab.interactionLayers = InteractionLayerMask.GetMask("Default");
+            handleGrab.trackPosition = false;
+            handleGrab.trackRotation = false;
+            handleGrab.trackScale = false;
+            handleGrab.throwOnDetach = false;
+
             SluiceGate sluice = gateGO.AddComponent<SluiceGate>();
-            sluice.leverTransform = leverGO.transform;
+            sluice.leverTransform = pivotGO.transform;
             sluice.leverClosedRotation = new Vector3(90f, 0f, 0f);
             sluice.leverOpenRotation = new Vector3(45f, 0f, 0f);
             sluice.waterFlowRate = 25f;
 
-            // XR Interactable cho cần gạt
-            XRSimpleInteractable interactable = gateGO.AddComponent<XRSimpleInteractable>();
-            sluice.xrInteractable = interactable;
+            SluiceGateLever physicalLever = pivotGO.AddComponent<SluiceGateLever>();
+            physicalLever.sluiceGate = sluice;
+            physicalLever.grabInteractable = handleGrab;
+
+            // Selecting the wooden frame remains a desktop/test fallback. Restricting its
+            // collider prevents it from competing with the physical handle for the same grab.
+            XRSimpleInteractable fallbackInteractable = gateGO.AddComponent<XRSimpleInteractable>();
+            fallbackInteractable.colliders.Clear();
+            fallbackInteractable.colliders.Add(gateGO.GetComponent<BoxCollider>());
+            sluice.xrInteractable = fallbackInteractable;
 
             GameObject savedPrefab = PrefabUtility.SaveAsPrefabAsset(gateGO, gatePath);
             DestroyImmediate(gateGO);
@@ -225,6 +245,37 @@ namespace Khoa.Farming.Editor
 
             Debug.Log("<color=green>Đã tạo thành công Prefab Van Nước Kênh Mương tại: " + gatePath + "</color>");
             return savedPrefab;
+        }
+
+        private static Material GetOrCreateLeverMaterial()
+        {
+            const string materialFolder = "Assets/Khoa/Materials";
+            const string materialPath = materialFolder + "/Sluice_Gate_Lever.mat";
+            EnsureFolder(materialFolder);
+
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+            if (material == null)
+            {
+                Shader shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
+                if (shader == null)
+                {
+                    throw new InvalidOperationException("No supported shader is available for the sluice lever.");
+                }
+
+                material = new Material(shader)
+                {
+                    name = "Sluice_Gate_Lever",
+                    color = new Color(0.7f, 0.08f, 0.04f)
+                };
+                AssetDatabase.CreateAsset(material, materialPath);
+            }
+            else
+            {
+                material.color = new Color(0.7f, 0.08f, 0.04f);
+                EditorUtility.SetDirty(material);
+            }
+
+            return material;
         }
 
         public static GameObject CreateRiceDryingYardPrefab()

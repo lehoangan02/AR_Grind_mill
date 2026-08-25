@@ -3,6 +3,7 @@ using Khoa.Farming;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using System.Reflection;
 
 namespace Khoa.Farming.PlayModeTests
 {
@@ -109,6 +110,42 @@ namespace Khoa.Farming.PlayModeTests
 
             Object.Destroy(gateObject);
             Object.Destroy(plotObject);
+        }
+
+        [UnityTest]
+        public IEnumerator SluiceGate_PartialOpeningScalesRealIrrigationFlow()
+        {
+            GameObject partialPlotObject = new GameObject("PartialFlowPlot");
+            CropPlot partialPlot = partialPlotObject.AddComponent<CropPlot>();
+            GameObject fullPlotObject = new GameObject("FullFlowPlot");
+            CropPlot fullPlot = fullPlotObject.AddComponent<CropPlot>();
+            GameObject partialGateObject = new GameObject("PartialFlowGate");
+            SluiceGate partialGate = partialGateObject.AddComponent<SluiceGate>();
+            GameObject fullGateObject = new GameObject("FullFlowGate");
+            SluiceGate fullGate = fullGateObject.AddComponent<SluiceGate>();
+            MethodInfo setOpenAmount = typeof(SluiceGate).GetMethod("SetOpenAmount");
+
+            partialGate.autoFindNearbyPlotsOnStart = false;
+            fullGate.autoFindNearbyPlotsOnStart = false;
+            partialGate.connectedPlots.Add(partialPlot);
+            fullGate.connectedPlots.Add(fullPlot);
+            partialGate.waterFlowRate = fullGate.waterFlowRate = 100f;
+            partialGate.irrigationTickInterval = fullGate.irrigationTickInterval = 0.05f;
+
+            Assert.IsNotNull(setOpenAmount);
+            yield return null;
+            setOpenAmount.Invoke(partialGate, new object[] { 0.25f });
+            setOpenAmount.Invoke(fullGate, new object[] { 1f });
+            yield return new WaitForSeconds(0.12f);
+
+            Assert.Greater(fullPlot.currentMoisture, 0f);
+            Assert.AreEqual(0.25f, partialPlot.currentMoisture / fullPlot.currentMoisture, 0.04f,
+                "A quarter-open gate should deliver one quarter of the real irrigation flow.");
+
+            Object.Destroy(partialGateObject);
+            Object.Destroy(fullGateObject);
+            Object.Destroy(partialPlotObject);
+            Object.Destroy(fullPlotObject);
         }
     }
 }

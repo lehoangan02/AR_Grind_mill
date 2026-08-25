@@ -18,7 +18,8 @@
 
 &#x09;	**- Nhà bà Tư, có bà Tư có mechanic trigger**
 
-&#x09;**- Thêm cây cối (cây ở miền tây: chuối, dừa, bạch đàn) (Khoa) xong**
+&#x09;**- Thêm cây cối miền Tây (Khoa): vegetation v2 đã rải chuối, dừa, chanh,
+tre, tràm và palm; còn thay model cau placeholder, thêm bạch đàn thật và QA visual**
 
 &#x09;**- Thêm van nước, có trigger hoạt động**
 

@@ -7,8 +7,12 @@ namespace `Khoa.Farming`; scene mẫu đang dùng là
 ## Bắt đầu nhanh
 
 Scene chính đã có sẵn playable farming slice gồm grid do designer chọn, van nước,
-sân phơi, máy tuốt, giỏ thóc, thời tiết, mái che và lưỡi bừa trên trâu. Grid thử
-hiện tại là 80 x 80; có thể generate lại 100 x 100 khi chốt map.
+sân phơi, máy tuốt, giỏ thóc, thời tiết, mái che và lưỡi bừa trên trâu. Grid
+production đã chốt **100 x 100**, gồm đúng 10.000 plot map theo Terrain.
+
+Cảnh quan Terrain dùng vegetation generator v2 riêng với gameplay lúa. Bản đã áp
+dụng có **20.999** `TreeInstance` trên bốn Terrain; `RicePlant` và `Vegetable`
+không được dùng làm cây trang trí.
 
 Nếu scene bị merge hoặc cần tái tạo setup, mở Unity và chọn:
 
@@ -42,8 +46,12 @@ tool sẽ hỏi lưu; batch mode sẽ dừng an toàn.
 
 - Plot không còn cho phép generic XR Select tự đổi trạng thái. Gameplay chuẩn phải
   dùng collider/tag của đúng nông cụ.
-- Cống dùng `XRSimpleInteractable`: thao tác select/grip toggle mở/đóng và đổi góc
-  lever hiển thị. Nó chưa mô phỏng kéo cần liên tục bằng physics joint.
+- Handle của cống dùng `XRGrabInteractable`. Khi nắm, vị trí tay được chiếu lên cung
+  quay giới hạn 90° (đóng) đến 45° (mở); handle không thể bị kéo rời khỏi pivot.
+- Góc cần điều khiển mức mở liên tục 0–100%. Lưu lượng tưới và âm lượng nước thay
+  đổi theo đúng mức mở; thả gần hai đầu cung sẽ snap đóng/mở hoàn toàn.
+- Chọn vào khung gỗ vẫn gọi `ToggleGate()` làm fallback cho desktop/test. Collider
+  khung và collider handle được tách để hai interactable không tranh cùng thao tác.
 - Integration nối đủ Left Select, Right Select và Left Move cho `BuffaloRider`.
 - Lưỡi bừa có trigger collider cùng kinematic Rigidbody; vì vậy việc xới ruộng dùng
   đúng physics trigger thay vì chỉ hoạt động khi gọi hàm trực tiếp trong test.
@@ -91,6 +99,35 @@ tool sẽ hỏi lưu; batch mode sẽ dừng an toàn.
   mọi điểm mẫu. `3 x 3` nghĩa là 9 điểm trên mỗi plot; `5 x 5` là 25 điểm, chính
   xác hơn nhưng generate chậm hơn. Sampling tự chuyển sang Terrain tile kế bên khi
   footprint nằm trên đường seam.
+- `Khoa/Farming/Generate Production Grid 100x100`: dùng tâm ruộng hiện tại, spacing
+  0,08 m và sampling 5 x 5. Tool chỉ xóa grid cũ sau khi tạo đủ 10.000 plot, sau đó
+  tự chạy Main Scene Integration.
+- `Khoa/Vegetation/Preview Vietnamese Countryside Plan`: tạo plan và thống kê nhưng
+  không thay đổi `TerrainData`.
+- `Khoa/Vegetation/Apply Vietnamese Countryside Plan`: hiện confirm rồi thay bộ cây
+  trang trí trên cả bốn Terrain bằng plan deterministic đã preview.
+- Menu cũ `Tools/Generate Vietnamese Countryside Landscape` chỉ còn là alias an toàn
+  sang generator v2; không còn chạy thuật toán jittered-grid cũ.
+
+Vegetation v2 dùng Poisson-disc sampling, khoảng cách riêng theo kích thước tán,
+phân vùng vườn nhà / ven nước / bờ ruộng / đồng mở, vùng cấm theo từng renderer và
+collider thay vì gộp một hộp lớn cho cả root. Prototype được nhận diện bằng tên asset,
+không phụ thuộc index 0..51. Scale được tính từ bounds prefab và kích thước mục tiêu
+theo mét.
+
+Có thể preview hoặc apply bằng Unity CLI:
+
+```powershell
+unity run . -- -executeMethod Khoa.Farming.Editor.VietnameseCountrysideVegetatorV2.CreatePreviewReportForMainScene
+unity run . -- -executeMethod Khoa.Farming.Editor.VietnameseCountrysideVegetatorV2.ApplyBatch
+```
+
+CLI preview ghi report vào `Library/KhoaReports/VietnameseVegetationPreview.txt`;
+thư mục này được Unity/Git bỏ qua và không làm bẩn working tree.
+
+`ArecaPalm` hiện là nhóm palm gần hình dáng cây cau từ asset có sẵn, chưa phải model
+cau thực. Project cũng chưa có prefab bạch đàn; nhóm `Melaleuca` là tràm và không được
+coi là bạch đàn. Khi có đúng asset, cần cập nhật classifier/test trước khi apply lại.
 
 ## Chạy kiểm thử
 
@@ -99,7 +136,14 @@ unity test . --mode EditMode --filter Khoa.Farming.Tests --output TestResults/Kh
 unity test . --mode PlayMode --filter Khoa.Farming.PlayModeTests --output TestResults/KhoaPlayMode.xml
 ```
 
-Mốc xác nhận 2026-08-24: **38/38 EditMode** và **4/4 PlayMode** passed.
+Mốc xác nhận 2026-08-25 bằng Unity CLI:
+
+- **4/4** EditMode test mục tiêu cho continuous gate, mapping góc, prefab XR và cấu hình grid;
+- **1/1** validation scene production 100 x 100;
+- **5/5** PlayMode farming, gồm kiểm tra tưới thực tế theo tỷ lệ mức mở.
+
+Toàn bộ EditMode suite không chạy lại trong đợt này để tránh test nặng không liên
+quan; mốc full-suite gần nhất vẫn là 38/38 ngày 2026-08-24.
 
 ## Khi có lỗi
 
