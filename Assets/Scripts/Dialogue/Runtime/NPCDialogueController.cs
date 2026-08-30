@@ -172,8 +172,9 @@ namespace AR_Grind_mill.Dialogue.Runtime
             EndDialogue();
         }
 
-        private void OnProximityChanged(bool isInRange)
+        private void OnProximityChanged(Transform source, bool isInRange)
         {
+            if (proximityTrigger == null || source != proximityTrigger.transform) return;
             if (startAction == null || startAction.action == null) return;
 
             if (isInRange)

@@ -50,7 +50,7 @@ namespace AR_Grind_mill.Dialogue.Runtime
             if (!IsPlayerCollider(other)) return;
 
             IsPlayerInRange = true;
-            AR_Grind_mill.Dialogue.Data.DialogueEvents.RaiseProximityChanged(true);
+            AR_Grind_mill.Dialogue.Data.DialogueEvents.RaiseProximityChanged(transform, true);
         }
 
         private void OnTriggerExit(Collider other)
@@ -58,7 +58,7 @@ namespace AR_Grind_mill.Dialogue.Runtime
             if (!IsPlayerCollider(other)) return;
 
             IsPlayerInRange = false;
-            AR_Grind_mill.Dialogue.Data.DialogueEvents.RaiseProximityChanged(false);
+            AR_Grind_mill.Dialogue.Data.DialogueEvents.RaiseProximityChanged(transform, false);
         }
 
         /// <summary>

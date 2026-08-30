@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AR_Grind_mill.Dialogue.Data
 {
@@ -22,8 +23,13 @@ namespace AR_Grind_mill.Dialogue.Data
         /// <summary>Raised when the player makes a choice. Carries the choice index into the last presented list.</summary>
         public static event Action<int> OnChoiceSelected;
 
-        /// <summary>Raised when the player enters or exits an NPC's proximity sphere.</summary>
-        public static event Action<bool> OnProximityChanged;
+        /// <summary>
+        /// Raised when the player enters or exits an NPC's proximity sphere.
+        /// The first argument is the NPC's <c>Transform</c> (the source) so subscribers
+        /// that are bound to a specific NPC can filter for their own NPC instead of
+        /// reacting to every NPC in the scene.
+        /// </summary>
+        public static event Action<Transform, bool> OnProximityChanged;
 
         public static void RaiseDialogueStarted(DialogueGraph graph)
             => OnDialogueStarted?.Invoke(graph);
@@ -37,8 +43,8 @@ namespace AR_Grind_mill.Dialogue.Data
         public static void RaiseChoiceSelected(int index)
             => OnChoiceSelected?.Invoke(index);
 
-        public static void RaiseProximityChanged(bool isInRange)
-            => OnProximityChanged?.Invoke(isInRange);
+        public static void RaiseProximityChanged(Transform npc, bool isInRange)
+            => OnProximityChanged?.Invoke(npc, isInRange);
 
         /// <summary>Wipes all subscribers. Call from domain-reload tests or scene shutdown if needed.</summary>
         public static void ClearAllSubscribers()

@@ -69,16 +69,18 @@ namespace AR_Grind_mill.Dialogue.UI
             }
             else
             {
-                // The canvas must be world-space for VR billboarding. Force it so a
-                // misconfigured inspector doesn't silently render in screen-space.
                 canvas.renderMode = RenderMode.WorldSpace;
 
-                // Re-apply the chosen scale on every Awake so runtime tweaks from the
-                // inspector stick even after a hot reload.
                 canvas.transform.localScale = Vector3.one * canvasScale;
 
-                // Start hidden — OnDialogueStarted / OnNodePresented will reveal it.
-                canvas.enabled = false;
+                // Canvas stays enabled at all times so children (prompt + content) can
+                // independently toggle their own visibility. The world-space canvas
+                // itself is invisible when all its children are inactive.
+            }
+
+            if (contentRoot != null)
+            {
+                contentRoot.gameObject.SetActive(false);
             }
         }
 
@@ -157,7 +159,9 @@ namespace AR_Grind_mill.Dialogue.UI
                 return;
             }
 
-            transform.rotation = Quaternion.LookRotation(lookDir.normalized, Vector3.up);
+            // World-space canvases render their visible face on the canvas's -Z side;
+            // negate the look direction so that face points at the player.
+            transform.rotation = Quaternion.LookRotation(-lookDir.normalized, Vector3.up);
         }
 
         /// <summary>
@@ -168,9 +172,9 @@ namespace AR_Grind_mill.Dialogue.UI
         /// </summary>
         private void HandleDialogueStarted(DialogueGraph graph)
         {
-            if (canvas != null)
+            if (contentRoot != null)
             {
-                canvas.enabled = true;
+                contentRoot.gameObject.SetActive(true);
             }
         }
 
@@ -181,9 +185,9 @@ namespace AR_Grind_mill.Dialogue.UI
         /// </summary>
         private void HandleNodePresented(DialogueLine line, IReadOnlyList<DialogueChoice> choices)
         {
-            if (canvas != null)
+            if (contentRoot != null)
             {
-                canvas.enabled = true;
+                contentRoot.gameObject.SetActive(true);
             }
 
             // Speaker label — show only when the line provides a non-empty name.
@@ -215,20 +219,20 @@ namespace AR_Grind_mill.Dialogue.UI
                     button.SetData(i, choice.choiceText, DialogueEvents.RaiseChoiceSelected);
                 }
             }
-            // Empty choices list = auto-end node. Canvas stays visible briefly showing
-            // the line; the runtime will fire OnDialogueEnded on the next tick.
         }
 
         /// <summary>
-        /// Hides the canvas and clears any choice buttons when the conversation ends.
+        /// Hides the dialogue content and clears any choice buttons when the
+        /// conversation ends. The world-space canvas itself stays enabled so the
+        /// NPC's prompt can still render.
         /// </summary>
         private void HandleDialogueEnded()
         {
             ClearChoiceButtons();
 
-            if (canvas != null)
+            if (contentRoot != null)
             {
-                canvas.enabled = false;
+                contentRoot.gameObject.SetActive(false);
             }
         }
 

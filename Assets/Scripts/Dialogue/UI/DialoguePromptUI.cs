@@ -1,4 +1,5 @@
 using AR_Grind_mill.Dialogue.Data;
+using AR_Grind_mill.Dialogue.Runtime;
 using TMPro;
 using UnityEngine;
 
@@ -28,6 +29,11 @@ namespace AR_Grind_mill.Dialogue.UI
         private bool lastKnownProximity;
         private bool isDialogueActive;
 
+        // The NPC we belong to. Proximity events raised by any other NPC are ignored.
+        // Auto-resolved in Awake from the sibling NPCProximityTrigger (or the
+        // nearest one up the hierarchy) when the inspector leaves it null.
+        private Transform myNpc;
+
         private void Awake()
         {
             if (promptRoot != null)
@@ -40,11 +46,16 @@ namespace AR_Grind_mill.Dialogue.UI
                     "[DialoguePromptUI] promptRoot is not assigned. Prompt will never appear.",
                     this);
             }
+
+            if (myNpc == null)
+            {
+                var trig = GetComponentInParent<NPCProximityTrigger>(true);
+                if (trig != null) myNpc = trig.transform;
+            }
         }
 
         private void OnEnable()
         {
-            // Seed the label only if the inspector didn't already provide one.
             if (promptLabel != null && string.IsNullOrEmpty(promptLabel.text))
             {
                 promptLabel.text = promptText;
@@ -67,8 +78,10 @@ namespace AR_Grind_mill.Dialogue.UI
         /// hides it when the player leaves. Idempotent — repeated calls with the same
         /// value just re-assert the current state.
         /// </summary>
-        private void HandleProximityChanged(bool isInRange)
+        private void HandleProximityChanged(Transform source, bool isInRange)
         {
+            if (myNpc != null && source != myNpc) return;
+
             lastKnownProximity = isInRange;
 
             if (isInRange && !isDialogueActive)
