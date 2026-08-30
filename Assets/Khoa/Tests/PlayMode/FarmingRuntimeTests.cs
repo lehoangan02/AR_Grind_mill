@@ -147,5 +147,112 @@ namespace Khoa.Farming.PlayModeTests
             Object.Destroy(partialPlotObject);
             Object.Destroy(fullPlotObject);
         }
+
+        // ---------- FISHING: mô phỏng gameplay thực (physics trigger, coroutine) ----------
+
+        /// Helper: tạo cần câu sẵn sàng với Phao + Dây trong runtime
+        private VRFishingController CreateFishingRodRuntime()
+        {
+            GameObject rodGO = new GameObject("RuntimeFishingRod");
+            Rigidbody rodBody = rodGO.AddComponent<Rigidbody>();
+            rodBody.isKinematic = true;
+            rodBody.useGravity = false;
+
+            VRFishingController rod = rodGO.AddComponent<VRFishingController>();
+
+            GameObject lineGO = new GameObject("HookWithLine");
+            lineGO.transform.SetParent(rodGO.transform, false);
+            Transform line = lineGO.transform;
+
+            GameObject meshGO = new GameObject("HookMesh");
+            meshGO.transform.SetParent(line, false);
+            Transform mesh = meshGO.transform;
+
+            rod.hookWithLine = line;
+            rod.hookMesh = mesh;
+            rod.idleScaleY = 0.1f;
+            rod.waterScaleY = 2.0f;
+            rod.pullThreshold = 1.0f;
+
+            GameObject dummyFish = new GameObject("DummyFish");
+            dummyFish.transform.SetParent(rodGO.transform);
+            rod.fishPrefab = dummyFish;
+
+            return rod;
+        }
+
+        /// Helper: tạo vùng nước/câu thật sự có physics (trigger + kinematic Rigidbody)
+        private FishingZone CreateWaterFishingZoneRuntime(Vector3 position, float size)
+        {
+            GameObject zoneGO = new GameObject("RuntimeFishingZone");
+            zoneGO.transform.position = position;
+            Rigidbody zoneBody = zoneGO.AddComponent<Rigidbody>();
+            zoneBody.isKinematic = true;
+            zoneBody.useGravity = false;
+
+            BoxCollider box = zoneGO.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.size = new Vector3(size, size, size);
+
+            FishingZone zone = zoneGO.AddComponent<FishingZone>();
+            zone.minBiteDelay = 2.0f;
+            zone.maxBiteDelay = 2.0f;   // cố định để dự đoán thời điểm cắn câu
+            return zone;
+        }
+
+        [UnityTest]
+        public IEnumerator Fishing_BobberPhysicsTrigger_StartsCasting()
+        {
+            VRFishingController rod = CreateFishingRodRuntime();
+            rod.transform.position = Vector3.zero;
+            FishingZone zone = CreateWaterFishingZoneRuntime(new Vector3(0f, -1.5f, 0f), 4f);
+
+            rod.EquipRod();
+
+            // Đưa PHAO (HookMesh) vào trong vùng nước để kích hoạt trigger thật
+            rod.hookMesh.position = new Vector3(0f, -1f, 0f);
+            Physics.SyncTransforms();
+            yield return new WaitForFixedUpdate();
+            yield return null;
+
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState,
+                "Phao chạm mặt nước qua physics trigger thật phải bắt đầu thả dây (DroppingLine).");
+
+            Assert.AreEqual(zone, rod.currentZone, "Cần câu phải nhớ vùng nước đang thả.");
+
+            Object.Destroy(rod.gameObject);
+            Object.Destroy(zone.gameObject);
+        }
+
+        [UnityTest]
+        public IEnumerator Fishing_AfterCasting_ReachesWaitingForFishThenBite()
+        {
+            VRFishingController rod = CreateFishingRodRuntime();
+            rod.transform.position = Vector3.zero;
+            CreateWaterFishingZoneRuntime(new Vector3(0f, -1.5f, 0f), 4f);
+
+            rod.EquipRod();
+            rod.hookMesh.position = new Vector3(0f, -1f, 0f);
+            Physics.SyncTransforms();
+            yield return new WaitForFixedUpdate();
+            yield return null;
+
+            // Đợi qua giai đoạn "thả dây" 1s -> vào chờ cá cắn
+            yield return new WaitForSeconds(1.2f);
+            Assert.AreEqual(VRFishingController.FishingState.WaitingForFish, rod.currentState,
+                "Sau khi thả xong dây, cần phải ở trạng thái chờ cá cắn (WaitingForFish).");
+
+            // Cá cắn mồi tại t≈3.0s (1s thả dây + 2s chờ), và cá xổng tại t≈5.5s (2.5s escape).
+            // Poll có timeout ở giữa cửa sổ đó để tránh lệch do jitter của game loop.
+            float deadline = Time.time + 3.0f;
+            while (Time.time < deadline && rod.currentState != VRFishingController.FishingState.FishBiting)
+            {
+                yield return null;
+            }
+            Assert.AreEqual(VRFishingController.FishingState.FishBiting, rod.currentState,
+                "Sau khi hết thời gian chờ, cá phải cắn mồi (FishBiting).");
+
+            Object.Destroy(rod.gameObject);
+        }
     }
 }
