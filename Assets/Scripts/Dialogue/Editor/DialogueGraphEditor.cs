@@ -113,7 +113,7 @@ namespace AR_Grind_mill.Dialogue.Data.Editor
                         if (GUILayout.Button("Ping", GUILayout.Width(50)))
                         {
                             // Nothing to ping — null asset reference.
-                            EditorUtility.Beep();
+                            // (EditorUtility.Beep() — removed in Unity 6; replaced with a no-op ping.)
                         }
                     }
                     else
