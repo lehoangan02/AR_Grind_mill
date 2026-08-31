@@ -152,7 +152,7 @@ namespace Khoa.Farming
             if (other == null) return;
 
             // Chạm vào chum nước hoặc nguồn nước
-            if (other.name.Contains("Water") || other.name.Contains("Jar") || other.CompareTag("Water"))
+            if (other.name.Contains("Water") || other.name.Contains("Jar"))
             {
                 ScoopWater();
             }

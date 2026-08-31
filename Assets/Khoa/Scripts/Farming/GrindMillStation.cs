@@ -304,8 +304,8 @@ namespace Khoa.Farming
         {
             if (other == null) return;
 
-            // Nhận diện giỏ thóc mang tag RiceBasket hoặc RiceBasketController
-            if (other.CompareTag("RiceBasket") || other.name.Contains("Basket"))
+            // Nhận diện giỏ thóc
+            if (other.name.Contains("Basket") || other.name.Contains("Rice") || other.name.Contains("Paddy"))
             {
                 PourPaddyIntoMill();
             }

@@ -46,17 +46,6 @@ namespace Khoa.Farming
             }
 
             audioSource = GetComponent<AudioSource>();
-            if (!gameObject.CompareTag("Firewood"))
-            {
-                try
-                {
-                    gameObject.tag = "Firewood";
-                }
-                catch
-                {
-                    // Tag fallback
-                }
-            }
         }
     }
 }

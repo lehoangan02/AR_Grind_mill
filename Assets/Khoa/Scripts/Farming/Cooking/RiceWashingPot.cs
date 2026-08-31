@@ -291,7 +291,7 @@ namespace Khoa.Farming
             {
                 AddRice(rice);
             }
-            else if (other.CompareTag("Hand") || other.name.Contains("Hand") || other.name.Contains("Controller"))
+            else if (other.name.Contains("Hand") || other.name.Contains("Controller") || other.name.Contains("Finger"))
             {
                 StirRice(20f);
             }

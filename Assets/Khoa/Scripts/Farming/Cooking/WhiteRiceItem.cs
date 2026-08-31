@@ -10,9 +10,9 @@ namespace Khoa.Farming
     /// Dùng làm nguyên liệu cho khâu Vo Gạo và Nấu Cơm bếp củi.
     /// Hỗ trợ cầm nắm bằng XRGrabInteractable trong VR, tương tác vật lý và bỏ vào thau/nồi vo gạo.
     /// </summary>
+    [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(XRGrabInteractable))]
-    [RequireComponent(typeof(Collider))]
     public class WhiteRiceItem : MonoBehaviour
     {
         [Header("Rice Properties")]
@@ -64,18 +64,6 @@ namespace Khoa.Farming
                 audioSource = gameObject.AddComponent<AudioSource>();
                 audioSource.spatialBlend = 1f;
                 audioSource.playOnAwake = false;
-            }
-
-            if (!gameObject.CompareTag("WhiteRice"))
-            {
-                try
-                {
-                    gameObject.tag = "WhiteRice";
-                }
-                catch
-                {
-                    // Tag fallback
-                }
             }
         }
 

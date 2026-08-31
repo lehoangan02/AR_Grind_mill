@@ -100,7 +100,7 @@ namespace Khoa.Farming
             if (other == null) return;
 
             // Quẹt vào bao diêm hoặc vật cứng để đánh lửa
-            if (!isLit && (other.name.Contains("Box") || other.name.Contains("Striker") || other.CompareTag("Interactable")))
+            if (!isLit && (other.name.Contains("Box") || other.name.Contains("Striker") || other.name.Contains("Match") || other.name.Contains("Table") || other.name.Contains("Stove")))
             {
                 StrikeMatch();
             }
