@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
+  m_Name: MrSix_Greeting
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
+  editorNotes: 
+  line:
+    speakerName: Mr. Six
+    text: Hello there, traveler. Welcome to my little mill.
+    animationTag: 
+    voiceClip: {fileID: 0}
+    autoAdvanceAfter: 0
+  choices:
+  - choiceText: Tell me about the mill
+    nextNode: {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
+    animationTag: 
+  - choiceText: Goodbye
+    nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
+    animationTag: 
+  isEndNode: 0

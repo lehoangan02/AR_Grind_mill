@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
+  m_Name: MrsFour_Greeting
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
+  editorNotes: 
+  line:
+    speakerName: Mrs. Four
+    text: Oh, a visitor! How lovely.
+    animationTag: 
+    voiceClip: {fileID: 0}
+    autoAdvanceAfter: 0
+  choices:
+  - choiceText: How is the weather today?
+    nextNode: {fileID: 11400000, guid: 0d7cf71589b608f6696ff702b20989e6, type: 2}
+    animationTag: 
+  - choiceText: I should go
+    nextNode: {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
+    animationTag: 
+  isEndNode: 0
