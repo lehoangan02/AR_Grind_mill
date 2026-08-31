@@ -55,6 +55,7 @@ namespace Khoa.Farming.Editor
             CreateWeatherSystem(setupRoot.transform);
             CreateShelterZone(setupRoot.transform);
             AttachPlowToBuffalo();
+            FishingSetupEditor.SetupFishingInScene();
 
             EditorUtility.SetDirty(gate);
             EditorUtility.SetDirty(yard);
