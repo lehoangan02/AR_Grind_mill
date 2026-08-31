@@ -51,6 +51,46 @@ namespace Khoa.Farming.Editor
 
             GameObject rodObj = fishingController.gameObject;
 
+            // 1b. Tự gán tay phải/controller cho cần câu:
+            //     - Ưu tiên VRControllerManager.rightControllerTransform (dùng với XR Origin Hands + Simulator)
+            //     - Dự phòng: các object có tên RightHand / Right Controller / XR Origin
+            if (fishingController.rightHandController == null)
+            {
+                var mgrs = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+                foreach (var mgr in mgrs)
+                {
+                    if (mgr == null) continue;
+                    var t = mgr.GetType();
+                    var f = t.GetField("rightControllerTransform");
+                    if (f != null)
+                    {
+                        var val = f.GetValue(mgr);
+                        if (val is Transform rt && rt != null && rt.gameObject != null)
+                        {
+                            fishingController.rightHandController = rt.gameObject;
+                            Debug.Log($"<b>[FISHING SETUP]</b> Gán rightHandController từ {t.Name}.rightControllerTransform.");
+                            break;
+                        }
+                    }
+                }
+
+                if (fishingController.rightHandController == null)
+                {
+                    string[] candidates = { "RightHand Controller", "RightController", "RightHand",
+                                            "Right Controller", "LeftHand Controller" };
+                    foreach (string name in candidates)
+                    {
+                        GameObject go = GameObject.Find(name);
+                        if (go != null)
+                        {
+                            fishingController.rightHandController = go;
+                            Debug.Log($"<b>[FISHING SETUP]</b> Gán rightHandController từ GameObject '{name}'.");
+                            break;
+                        }
+                    }
+                }
+            }
+
             // 2. Tạo / Căn chỉnh TopAnchor (Điểm Anchor cao nhất của ngọn cần câu)
             Transform tipTrans = rodObj.transform.Find("TopAnchor");
             if (tipTrans == null)

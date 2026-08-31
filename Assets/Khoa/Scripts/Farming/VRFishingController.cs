@@ -282,34 +282,97 @@ public class VRFishingController : MonoBehaviour
 
         if (rightHandController == null)
         {
-            GameObject hand = GameObject.Find("RightHand Controller") 
-                           ?? GameObject.Find("RightHand Direct Interactor") 
-                           ?? GameObject.Find("Right Controller") 
-                           ?? GameObject.Find("RightHand")
-                           ?? GameObject.Find("RightHand Controller (XR Interaction Toolkit)");
-
-            if (hand == null)
-            {
-                var interactors = Object.FindObjectsByType<UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor>(FindObjectsSortMode.None);
-                foreach (var interactor in interactors)
-                {
-                    if (interactor != null && interactor.name.ToLower().Contains("right"))
-                    {
-                        hand = interactor.gameObject;
-                        break;
-                    }
-                }
-                if (hand == null && interactors != null && interactors.Length > 0 && interactors[0] != null)
-                {
-                    hand = interactors[0].gameObject;
-                }
-            }
+            GameObject hand = FindRightHandController();
 
             if (hand != null)
             {
                 rightHandController = hand;
             }
+            else if (rightHandController == null)
+            {
+                // Dự phòng cho Simulator / rig không nhận diện được tay:
+                // gắn mặc định vào Camera.main (luôn tồn tại, rod luôn nhìn thấy phía trước).
+                Camera cam = Camera.main;
+                if (cam != null)
+                {
+                    rightHandController = cam.gameObject;
+                }
+            }
         }
+    }
+
+    /// <summary>
+    /// Dò tìm controller/tay PHẢI một cách robust, hoạt động cả trên XR Device Simulator lẫn thiết bị thật.
+    /// Vì XR Interaction Toolkit dùng chung cấu trúc rig cho cả hai, ta dò theo:
+    ///   1. Tên chuẩn XRI (RightHand Controller / Right Controller / ...).
+    ///   2. Interactor có tên gợi ý tay/controller + nằm ở BÊN PHẢI so với camera (phân biệt trái/phải
+    ///      theo vị trí, không phụ thuộc tên — robust trên mọi rig hands/controller).
+    ///   3. Bất kỳ interactor tay/controller nào có scale hợp lệ (chặn object scale ~0 gây "biến mất").
+    /// </summary>
+    private GameObject FindRightHandController()
+    {
+        // Bước 1: tên chuẩn XRI
+        string[] names = {
+            "RightHand Controller", "RightHand Direct Interactor", "Right Controller",
+            "RightHand", "RightHand Controller (XR Interaction Toolkit)", "Right Hand",
+            "RightController"
+        };
+        foreach (string n in names)
+        {
+            GameObject go = GameObject.Find(n);
+            if (go != null && go.transform.lossyScale.sqrMagnitude > 0.0001f)
+            {
+                return go;
+            }
+        }
+
+        Camera cam = Camera.main;
+        Vector3 camPos = cam != null ? cam.transform.position : Vector3.zero;
+        Vector3 camRight = cam != null ? cam.transform.right : Vector3.right;
+
+        var interactors = Object.FindObjectsByType<UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor>(FindObjectsSortMode.None);
+        if (interactors == null) return null;
+
+        bool IsHandLike(UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor it)
+            => it != null && it.name.ToLower().Contains("hand")
+                          && it.transform.lossyScale.sqrMagnitude > 0.0001f;
+
+        bool IsControllerLike(UnityEngine.XR.Interaction.Toolkit.Interactors.XRBaseInteractor it)
+            => it != null && (it.name.ToLower().Contains("hand")
+                          || it.name.ToLower().Contains("controller")
+                          || it.name.ToLower().Contains("interactor"))
+                          && it.transform.lossyScale.sqrMagnitude > 0.0001f;
+
+        // Bước 2: tiêu chí phần “PHẢI” theo tên => ưu tiên rồi mới đến vị trí bên phải
+        // Ưu tiên 2a: interactor “hand-like” ở bên phải camera (chắc chắn là tay phải)
+        foreach (var it in interactors)
+        {
+            if (!IsHandLike(it)) continue;
+            if (Vector3.Dot(it.transform.position - camPos, camRight) > 0f)
+            {
+                return it.gameObject;
+            }
+        }
+
+        // Ưu tiên 2b: interactor có tên chứa "right"
+        foreach (var it in interactors)
+        {
+            if (IsControllerLike(it) && it.name.ToLower().Contains("right"))
+            {
+                return it.gameObject;
+            }
+        }
+
+        // Bước 3: bất kỳ interactor tay/controller nào có scale hợp lệ (không dùng object scale ~0)
+        foreach (var it in interactors)
+        {
+            if (IsControllerLike(it))
+            {
+                return it.gameObject;
+            }
+        }
+
+        return null;
     }
 
     private void SetState(FishingState newState)
@@ -366,24 +429,47 @@ public class VRFishingController : MonoBehaviour
             rodOriginalScale = Vector3.one;
         }
 
+        // Helper: giữ nguyên KÍCH THƯỚC world của cần câu khi gắn vào node có scale nhỏ hơn 1,
+        // tránh việc cần câu bị co về ~0 (gây "biến mất").
+        Vector3 PreserveWorldScale(Transform parent)
+        {
+            if (parent == null) return rodOriginalScale;
+            Vector3 ps = parent.lossyScale;
+            return new Vector3(
+                (ps.x != 0f) ? Mathf.Abs(rodOriginalScale.x / ps.x) : rodOriginalScale.x,
+                (ps.y != 0f) ? Mathf.Abs(rodOriginalScale.y / ps.y) : rodOriginalScale.y,
+                (ps.z != 0f) ? Mathf.Abs(rodOriginalScale.z / ps.z) : rodOriginalScale.z);
+        }
+
+        // Nếu tay/controller tìm thấy có scale gần 0 thì không dùng — chuyển sang góc camera
+        if (rightHandController != null && rightHandController.transform.lossyScale.sqrMagnitude < 0.0001f)
+        {
+            Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Controller có scale gần 0, dùng góc camera thay thế.");
+            rightHandController = null;
+        }
+
         if (rightHandController != null)
         {
             transform.SetParent(rightHandController.transform, false);
             transform.localPosition = (holdPosition != Vector3.zero) ? holdPosition : new Vector3(0f, -0.05f, 0.25f);
             transform.localEulerAngles = (holdRotation != Vector3.zero) ? holdRotation : new Vector3(10f, 0f, 0f);
-            transform.localScale = rodOriginalScale;
+            transform.localScale = PreserveWorldScale(rightHandController.transform);
             Debug.Log($"<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [{rightHandController.name}]!");
         }
         else
         {
-            Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không tìm thấy rightHandController! Gắn tạm phía trước Main Camera...");
             Camera mainCam = Camera.main;
             if (mainCam != null)
             {
+                Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có tay/controller hợp lệ, gắn phía trước Main Camera.");
                 transform.SetParent(mainCam.transform, false);
                 transform.localPosition = new Vector3(0.2f, -0.2f, 0.5f);
                 transform.localEulerAngles = new Vector3(10f, -15f, 0f);
-                transform.localScale = rodOriginalScale;
+                transform.localScale = PreserveWorldScale(mainCam.transform);
+            }
+            else
+            {
+                Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có Controller lẫn Camera.main! Giữ cần câu tại vị trí hiện tại.");
             }
         }
 
