@@ -129,17 +129,19 @@ namespace Khoa.Farming
                 audioSource.PlayOneShot(pourSound);
             }
 
-            // Raycast kiểm tra phía dưới dòng nước rót
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 1.2f))
+            // Nhận diện nồi / thau ở phía dưới dòng nước rót
+            Collider[] colliders = Physics.OverlapSphere(transform.position + Vector3.down * 0.35f, 0.65f);
+            foreach (Collider col in colliders)
             {
-                if (hit.collider.TryGetComponent<RiceWashingPot>(out var washingPot))
+                if (col.TryGetComponent<RiceWashingPot>(out var washingPot) || (col.transform.parent != null && col.transform.parent.TryGetComponent(out washingPot)))
                 {
                     washingPot.AddWater(waterAmount);
+                    break;
                 }
-                else if (hit.collider.TryGetComponent<CookingPot>(out var cookingPot))
+                else if (col.TryGetComponent<CookingPot>(out var cookingPot) || (col.transform.parent != null && col.transform.parent.TryGetComponent(out cookingPot)))
                 {
                     cookingPot.AddWater(waterAmount);
+                    break;
                 }
             }
 

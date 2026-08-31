@@ -164,18 +164,18 @@ namespace Khoa.Farming
         {
             if (other == null) return;
 
-            if (other.TryGetComponent<FirewoodItem>(out var wood))
+            if (other.TryGetComponent<FirewoodItem>(out var wood) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out wood)))
             {
                 AddFirewood(wood);
             }
-            else if (other.TryGetComponent<MatchItem>(out var match))
+            else if (other.TryGetComponent<MatchItem>(out var match) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out match)))
             {
                 if (match.isLit)
                 {
                     Ignite(match);
                 }
             }
-            else if (other.TryGetComponent<CookingPot>(out var pot))
+            else if (other.TryGetComponent<CookingPot>(out var pot) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out pot)))
             {
                 placedPot = pot;
                 if (isBurning)
@@ -189,7 +189,7 @@ namespace Khoa.Farming
         {
             if (other == null) return;
 
-            if (other.TryGetComponent<CookingPot>(out var pot))
+            if (other.TryGetComponent<CookingPot>(out var pot) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out pot)))
             {
                 if (placedPot == pot)
                 {

@@ -57,6 +57,12 @@ namespace Khoa.Farming
 
         private void OnLidGrabbed(SelectEnterEventArgs args)
         {
+            transform.SetParent(null);
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+            }
+
             if (attachedPot != null)
             {
                 attachedPot.isLidClosed = false;
@@ -73,10 +79,11 @@ namespace Khoa.Farming
         private void OnLidReleased(SelectExitEventArgs args)
         {
             // Kiểm tra nếu thả gần miệng nồi thì tự động đậy nắp
-            if (attachedPot != null && attachedPot.lidSnapPoint != null)
+            if (attachedPot != null)
             {
-                float dist = Vector3.Distance(transform.position, attachedPot.lidSnapPoint.position);
-                if (dist <= 0.35f)
+                Vector3 snapPos = attachedPot.lidSnapPoint != null ? attachedPot.lidSnapPoint.position : attachedPot.transform.position + Vector3.up * 0.25f;
+                float dist = Vector3.Distance(transform.position, snapPos);
+                if (dist <= 0.4f)
                 {
                     SnapToPot(attachedPot);
                 }
@@ -86,14 +93,26 @@ namespace Khoa.Farming
         public void SnapToPot(CookingPot pot)
         {
             attachedPot = pot;
-            if (pot != null && pot.lidSnapPoint != null)
+            if (pot != null)
             {
-                transform.position = pot.lidSnapPoint.position;
-                transform.rotation = pot.lidSnapPoint.rotation;
+                transform.SetParent(pot.transform);
+
+                if (pot.lidSnapPoint != null)
+                {
+                    transform.position = pot.lidSnapPoint.position;
+                    transform.rotation = pot.lidSnapPoint.rotation;
+                }
+                else
+                {
+                    transform.localPosition = new Vector3(0f, 0.25f, 0f);
+                    transform.localRotation = Quaternion.identity;
+                }
+
                 pot.isLidClosed = true;
 
                 if (rb != null)
                 {
+                    rb.isKinematic = true;
                     rb.linearVelocity = Vector3.zero;
                     rb.angularVelocity = Vector3.zero;
                 }

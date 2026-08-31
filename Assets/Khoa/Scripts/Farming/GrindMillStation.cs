@@ -296,6 +296,10 @@ namespace Khoa.Farming
 
             if (spawnedRiceInstance != null)
             {
+                spawnedRiceInstance.OnGrabbed += (rice) =>
+                {
+                    if (milledRiceVisual != null) milledRiceVisual.SetActive(false);
+                };
                 OnMillingCompleted?.Invoke(spawnedRiceInstance);
             }
         }
