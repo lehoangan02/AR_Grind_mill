@@ -96,6 +96,7 @@ namespace Khoa.Farming.Tests
             Assert.AreEqual(CookingState.Cooked, pot.currentState);
 
             // 7. Xới cơm ra bát
+            pot.isLidClosed = false;
             CookedRiceBowl bowl = pot.ServeRiceBowl();
             Assert.IsNotNull(bowl);
             Assert.IsFalse(bowl.isBurnt);

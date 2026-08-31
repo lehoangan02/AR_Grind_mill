@@ -115,6 +115,7 @@ namespace Khoa.Farming.PlayModeTests
 
             Assert.AreEqual(CookingState.Cooked, pot.currentState);
 
+            pot.isLidClosed = false;
             CookedRiceBowl bowl = pot.ServeRiceBowl();
             Assert.IsNotNull(bowl);
 
@@ -122,6 +123,62 @@ namespace Khoa.Farming.PlayModeTests
             Object.Destroy(matchGO);
             Object.Destroy(potGO);
             Object.Destroy(stoveGO);
+        }
+
+        [UnityTest]
+        public IEnumerator CookingPot_OpenLid_PausesCookingProgress()
+        {
+            GameObject potGO = new GameObject("Runtime_OpenLidPot");
+            potGO.AddComponent<BoxCollider>();
+            potGO.AddComponent<Rigidbody>();
+            CookingPot pot = potGO.AddComponent<CookingPot>();
+            pot.timeToCook = 0.05f;
+            pot.isLidClosed = false;
+
+            GameObject riceGO = new GameObject("Runtime_WashedRice");
+            riceGO.AddComponent<BoxCollider>();
+            riceGO.AddComponent<Rigidbody>();
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+
+            pot.AddRice(rice);
+            pot.AddWater(1f);
+            pot.SetHeatSource(true);
+
+            yield return new WaitForSeconds(0.12f);
+
+            Assert.AreEqual(CookingState.ReadyToCook, pot.currentState);
+            Assert.AreEqual(0f, pot.cookingTimer, 0.001f);
+
+            Object.Destroy(potGO);
+        }
+
+        [UnityTest]
+        public IEnumerator CookingPot_ContinuedHeatAfterCooking_BurnsRice()
+        {
+            GameObject potGO = new GameObject("Runtime_BurningPot");
+            potGO.AddComponent<BoxCollider>();
+            potGO.AddComponent<Rigidbody>();
+            CookingPot pot = potGO.AddComponent<CookingPot>();
+            pot.timeToCook = 0.05f;
+            pot.timeToBurn = 0.12f;
+            pot.isLidClosed = true;
+
+            GameObject riceGO = new GameObject("Runtime_WashedRice");
+            riceGO.AddComponent<BoxCollider>();
+            riceGO.AddComponent<Rigidbody>();
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+
+            pot.AddRice(rice);
+            pot.AddWater(1f);
+            pot.SetHeatSource(true);
+
+            yield return new WaitForSeconds(0.2f);
+
+            Assert.AreEqual(CookingState.Burnt, pot.currentState);
+
+            Object.Destroy(potGO);
         }
     }
 }

@@ -32,6 +32,8 @@ namespace Khoa.Farming
     [RequireComponent(typeof(XRGrabInteractable))]
     public class CookingPot : MonoBehaviour
     {
+        public const float RequiredWaterAmount = 1f;
+
         [Header("State")]
         public CookingState currentState = CookingState.Empty;
 
@@ -123,10 +125,12 @@ namespace Khoa.Farming
 
         private void Update()
         {
-            if (isOnFire && (currentState == CookingState.ReadyToCook || currentState == CookingState.Boiling))
+            bool canCook = isOnFire && isLidClosed;
+
+            if (canCook && (currentState == CookingState.ReadyToCook || currentState == CookingState.Boiling))
             {
                 cookingTimer += Time.deltaTime;
-                float progressRatio = Mathf.Clamp01(cookingTimer / timeToCook);
+                float progressRatio = Mathf.Clamp01(cookingTimer / Mathf.Max(0.01f, timeToCook));
                 OnCookingProgressChanged?.Invoke(progressRatio);
 
                 if (currentState != CookingState.Boiling && cookingTimer >= 3f)
@@ -147,16 +151,20 @@ namespace Khoa.Farming
                     }
                 }
 
-                if (cookingTimer >= timeToCook && currentState != CookingState.Cooked && currentState != CookingState.Burnt)
+                if (cookingTimer >= timeToCook)
                 {
                     CompleteCooking();
                 }
-                else if (cookingTimer >= timeToBurn && currentState == CookingState.Cooked)
+            }
+            else if (canCook && currentState == CookingState.Cooked)
+            {
+                cookingTimer += Time.deltaTime;
+                if (cookingTimer >= timeToBurn)
                 {
                     BurnRice();
                 }
             }
-            else if (!isOnFire && currentState == CookingState.Boiling)
+            else if (!canCook && currentState == CookingState.Boiling)
             {
                 if (audioSource != null && audioSource.isPlaying)
                 {
@@ -175,13 +183,18 @@ namespace Khoa.Farming
         public bool AddRice(WhiteRiceItem rice)
         {
             if (rice == null) return false;
+            if (!rice.isWashed)
+            {
+                Debug.LogWarning("[CookingPot] Chỉ nhận gạo đã vo sạch.");
+                return false;
+            }
             if (currentState != CookingState.Empty && currentState != CookingState.HasRice)
             {
                 return false;
             }
 
             currentRiceAmount += rice.riceAmount;
-            if (currentWaterAmount >= 1.0f)
+            if (currentWaterAmount >= RequiredWaterAmount)
             {
                 currentState = CookingState.ReadyToCook;
             }
@@ -210,7 +223,7 @@ namespace Khoa.Farming
 
             if (currentRiceAmount > 0)
             {
-                if (currentWaterAmount >= 0.8f && currentState == CookingState.HasRice)
+                if (currentWaterAmount >= RequiredWaterAmount && currentState == CookingState.HasRice)
                 {
                     currentState = CookingState.ReadyToCook;
                     OnCookingStateChanged?.Invoke(currentState);
@@ -235,7 +248,13 @@ namespace Khoa.Farming
         /// </summary>
         public void CompleteCooking()
         {
+            if (currentState != CookingState.ReadyToCook && currentState != CookingState.Boiling)
+            {
+                return;
+            }
+
             currentState = CookingState.Cooked;
+            cookingTimer = Mathf.Max(cookingTimer, timeToCook);
             currentWaterAmount = 0f; // Nước đã ngấm hết vào cơm
 
             if (audioSource != null)
@@ -257,6 +276,11 @@ namespace Khoa.Farming
         /// </summary>
         public void BurnRice()
         {
+            if (currentState != CookingState.Cooked)
+            {
+                return;
+            }
+
             currentState = CookingState.Burnt;
             UpdateVisuals();
             OnCookingStateChanged?.Invoke(currentState);
@@ -273,6 +297,17 @@ namespace Khoa.Farming
                 Debug.LogWarning("[CookingPot] Cơm chưa chín, chưa thể xới cơm!");
                 return null;
             }
+            if (isLidClosed)
+            {
+                Debug.LogWarning("[CookingPot] Hãy mở nắp nồi trước khi xới cơm.");
+                return null;
+            }
+            if (currentRiceAmount <= 0)
+            {
+                return null;
+            }
+
+            bool servedBurntRice = currentState == CookingState.Burnt;
 
             Vector3 spawnPos = transform.position + Vector3.up * 0.25f + transform.right * 0.2f;
             CookedRiceBowl bowl = null;
@@ -303,9 +338,17 @@ namespace Khoa.Farming
 
             if (bowl != null)
             {
-                bowl.isBurnt = (currentState == CookingState.Burnt);
+                bowl.isBurnt = servedBurntRice;
+                currentRiceAmount = 0;
+                currentWaterAmount = 0f;
+                cookingTimer = 0f;
+                currentState = CookingState.Empty;
+                UpdateVisuals();
+                OnCookingStateChanged?.Invoke(currentState);
                 OnRiceServed?.Invoke(bowl);
-                Debug.Log("<color=yellow>[CookingPot] 🍲 Đã xới ra 1 bát cơm trắng thơm dẻo!</color>");
+                Debug.Log(servedBurntRice
+                    ? "<color=red>[CookingPot] Đã xới ra một bát cơm bị cháy khét.</color>"
+                    : "<color=yellow>[CookingPot] 🍲 Đã xới ra 1 bát cơm trắng thơm dẻo!</color>");
             }
 
             return bowl;
