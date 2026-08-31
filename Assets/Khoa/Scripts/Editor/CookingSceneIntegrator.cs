@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace Khoa.Farming.Editor
 
             // 1. Tạo Cối Xay Gạo hoàn chỉnh
             GameObject millGO = CreateGrindMill(setupRoot.transform, kitchenBasePos + new Vector3(-3f, 0f, 0f));
+            GrindMillStation millStation = millGO.GetComponent<GrindMillStation>();
 
             // 2. Tạo Chum Nước
             GameObject jarGO = CreateWaterJar(setupRoot.transform, kitchenBasePos + new Vector3(0f, 0f, 2f));
@@ -50,17 +52,23 @@ namespace Khoa.Farming.Editor
 
             // 4. Tạo Thau Vo Gạo & Gáo Múc Nước
             GameObject washingPotGO = CreateRiceWashingStation(setupRoot.transform, kitchenTableGO.transform.position + new Vector3(-0.5f, 0.85f, 0f));
+            RiceWashingPot washPot = washingPotGO.GetComponent<RiceWashingPot>();
             GameObject dipperGO = CreateWaterDipper(setupRoot.transform, jarGO.transform.position + new Vector3(0.3f, 0.9f, 0f));
 
             // 5. Tạo Bếp Củi
             GameObject stoveGO = CreateWoodStove(setupRoot.transform, kitchenBasePos + new Vector3(2.5f, 0f, 0f));
+            WoodStove stove = stoveGO.GetComponent<WoodStove>();
 
             // 6. Tạo Nồi Gang Nấu Cơm & Nắp Vung
             GameObject potGO = CreateCookingPot(setupRoot.transform, stoveGO.transform.position + new Vector3(0f, 0.45f, 0f));
+            CookingPot pot = potGO.GetComponent<CookingPot>();
 
             // 7. Tạo Củi Khô & Hộp Diêm
             CreateFirewoodPile(setupRoot.transform, stoveGO.transform.position + new Vector3(0.8f, 0f, -0.5f));
             CreateMatchItem(setupRoot.transform, kitchenTableGO.transform.position + new Vector3(0.5f, 0.85f, 0.2f));
+
+            // 8. Tạo Bảng Hướng Dẫn Nhiệm Vụ 3D (Quest Guide Billboard)
+            CreateQuestGuide(setupRoot.transform, kitchenTableGO.transform.position + new Vector3(0f, 1.8f, 0f), millStation, washPot, stove, pot);
 
             Debug.Log("<color=green>[CookingSceneIntegrator] ✅ Đã hoàn tất setup Cối Xay Gạo và Khu Bếp Miền Tây vào Scene chính!</color>");
 
@@ -149,31 +157,54 @@ namespace Khoa.Farming.Editor
 
         private static GameObject CreateWaterJar(Transform parent, Vector3 position)
         {
-            GameObject jarGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            jarGO.name = "WaterJar_Station";
-            jarGO.tag = "Water";
-            jarGO.transform.SetParent(parent, false);
-            jarGO.transform.position = position;
-            jarGO.transform.localScale = new Vector3(0.9f, 0.8f, 0.9f);
+            GameObject jarPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Environment/Water Jar/Prefab/WaterJar1.prefab");
+            GameObject jarGO;
 
-            // Mặt nước
-            GameObject waterPlane = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            waterPlane.name = "WaterSurface";
-            waterPlane.tag = "Water";
-            waterPlane.transform.SetParent(jarGO.transform, false);
-            waterPlane.transform.localPosition = new Vector3(0f, 0.4f, 0f);
-            waterPlane.transform.localScale = new Vector3(0.85f, 0.05f, 0.85f);
+            if (jarPrefab != null)
+            {
+                jarGO = (GameObject)PrefabUtility.InstantiatePrefab(jarPrefab, parent);
+                jarGO.transform.position = position;
+                jarGO.name = "WaterJar_Station";
+            }
+            else
+            {
+                jarGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                jarGO.name = "WaterJar_Station";
+                jarGO.transform.SetParent(parent, false);
+                jarGO.transform.position = position;
+                jarGO.transform.localScale = new Vector3(0.9f, 0.8f, 0.9f);
+
+                // Mặt nước
+                GameObject waterPlane = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                waterPlane.name = "WaterSurface";
+                waterPlane.transform.SetParent(jarGO.transform, false);
+                waterPlane.transform.localPosition = new Vector3(0f, 0.4f, 0f);
+                waterPlane.transform.localScale = new Vector3(0.85f, 0.05f, 0.85f);
+            }
 
             return jarGO;
         }
 
         private static GameObject CreateKitchenTable(Transform parent, Vector3 position)
         {
-            GameObject tableGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            tableGO.name = "KitchenTable";
-            tableGO.transform.SetParent(parent, false);
-            tableGO.transform.position = position + new Vector3(0f, 0.4f, 0f);
-            tableGO.transform.localScale = new Vector3(1.6f, 0.8f, 0.8f);
+            GameObject tablePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Cabin/Prefabs/Table.prefab");
+            GameObject tableGO;
+
+            if (tablePrefab != null)
+            {
+                tableGO = (GameObject)PrefabUtility.InstantiatePrefab(tablePrefab, parent);
+                tableGO.name = "KitchenTable";
+                tableGO.transform.position = position;
+            }
+            else
+            {
+                tableGO = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                tableGO.name = "KitchenTable";
+                tableGO.transform.SetParent(parent, false);
+                tableGO.transform.position = position + new Vector3(0f, 0.4f, 0f);
+                tableGO.transform.localScale = new Vector3(1.6f, 0.8f, 0.8f);
+            }
+
             return tableGO;
         }
 
@@ -327,6 +358,42 @@ namespace Khoa.Farming.Editor
             matchGO.transform.localScale = new Vector3(0.1f, 0.04f, 0.06f);
 
             matchGO.AddComponent<MatchItem>();
+        }
+
+        private static void CreateQuestGuide(Transform parent, Vector3 position, GrindMillStation mill, RiceWashingPot wash, WoodStove stove, CookingPot pot)
+        {
+            GameObject guideGO = new GameObject("Cooking_Quest_Guide_Billboard");
+            guideGO.transform.SetParent(parent, false);
+            guideGO.transform.position = position;
+            guideGO.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Quay mặt về phía người chơi
+
+            // Text tiêu đề bước
+            GameObject titleGO = new GameObject("StepTitleText");
+            titleGO.transform.SetParent(guideGO.transform, false);
+            titleGO.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+            TextMeshPro stepTmp = titleGO.AddComponent<TextMeshPro>();
+            stepTmp.text = "🌾 <b>Bước 1:</b> Đổ giỏ thóc vàng vào phễu cối xay gạo.";
+            stepTmp.fontSize = 4.5f;
+            stepTmp.alignment = TextAlignmentOptions.Center;
+            stepTmp.color = new Color(1f, 0.95f, 0.6f);
+
+            // Text tiến độ phụ
+            GameObject subGO = new GameObject("ProgressSubText");
+            subGO.transform.SetParent(guideGO.transform, false);
+            subGO.transform.localPosition = new Vector3(0f, -0.2f, 0f);
+            TextMeshPro subTmp = subGO.AddComponent<TextMeshPro>();
+            subTmp.text = "Chờ đổ thóc...";
+            subTmp.fontSize = 3.5f;
+            subTmp.alignment = TextAlignmentOptions.Center;
+            subTmp.color = Color.white;
+
+            CookingQuestGuide guide = guideGO.AddComponent<CookingQuestGuide>();
+            guide.stepText = stepTmp;
+            guide.progressText = subTmp;
+            guide.grindMill = mill;
+            guide.washingPot = wash;
+            guide.woodStove = stove;
+            guide.cookingPot = pot;
         }
 
         private static Scene OpenOrUseMainScene()

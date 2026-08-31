@@ -396,11 +396,11 @@ namespace Khoa.Farming
         private void TriggerHapticFeedback(float speed)
         {
             hapticTimer += Time.deltaTime;
-            if (hapticTimer >= 0.1f && grabbingInteractor is XRBaseControllerInteractor controllerInteractor)
+            if (hapticTimer >= 0.1f && grabbingInteractor is XRBaseInputInteractor inputInteractor)
             {
                 hapticTimer = 0f;
                 float amplitude = Mathf.Clamp01(speed / 360f) * 0.5f;
-                controllerInteractor.xrController?.SendHapticImpulse(amplitude, 0.08f);
+                inputInteractor.SendHapticImpulse(amplitude, 0.08f);
             }
         }
     }
