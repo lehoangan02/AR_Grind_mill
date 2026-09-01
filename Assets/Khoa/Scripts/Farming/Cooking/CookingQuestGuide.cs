@@ -30,6 +30,7 @@ namespace Khoa.Farming
         [Header("References")]
         public GrindMillStation grindMill;
         public RiceWashingPot washingPot;
+        public WaterDipper waterDipper;
         public WoodStove woodStove;
         public CookingPot cookingPot;
 
@@ -88,11 +89,18 @@ namespace Khoa.Farming
                 washingPot.OnStateChanged += HandleWashingStateChanged;
                 washingPot.OnWashProgressChanged += HandleWashProgressChanged;
                 washingPot.OnRiceWashedCompleted += HandleRiceWashedCompleted;
+                washingPot.OnFeedback += HandleFeedback;
+            }
+
+            if (waterDipper != null)
+            {
+                waterDipper.OnWaterSpilled += HandleWaterSpilled;
             }
 
             if (woodStove != null)
             {
                 woodStove.OnFireStateChanged += HandleStoveFireChanged;
+                woodStove.OnFeedback += HandleFeedback;
             }
 
             if (cookingPot != null)
@@ -100,6 +108,7 @@ namespace Khoa.Farming
                 cookingPot.OnCookingStateChanged += HandleCookingStateChanged;
                 cookingPot.OnCookingProgressChanged += HandleCookingProgressChanged;
                 cookingPot.OnRiceServed += HandleRiceServed;
+                cookingPot.OnFeedback += HandleFeedback;
             }
         }
 
@@ -119,11 +128,18 @@ namespace Khoa.Farming
                 washingPot.OnStateChanged -= HandleWashingStateChanged;
                 washingPot.OnWashProgressChanged -= HandleWashProgressChanged;
                 washingPot.OnRiceWashedCompleted -= HandleRiceWashedCompleted;
+                washingPot.OnFeedback -= HandleFeedback;
+            }
+
+            if (waterDipper != null)
+            {
+                waterDipper.OnWaterSpilled -= HandleWaterSpilled;
             }
 
             if (woodStove != null)
             {
                 woodStove.OnFireStateChanged -= HandleStoveFireChanged;
+                woodStove.OnFeedback -= HandleFeedback;
             }
 
             if (cookingPot != null)
@@ -131,11 +147,19 @@ namespace Khoa.Farming
                 cookingPot.OnCookingStateChanged -= HandleCookingStateChanged;
                 cookingPot.OnCookingProgressChanged -= HandleCookingProgressChanged;
                 cookingPot.OnRiceServed -= HandleRiceServed;
+                cookingPot.OnFeedback -= HandleFeedback;
             }
         }
 
         public void SetStep(CookingQuestStep newStep)
         {
+            if (newStep == currentStep) return;
+            if (currentStep == CookingQuestStep.Completed || (int)newStep != (int)currentStep + 1)
+            {
+                Debug.LogWarning($"[CookingQuestGuide] Bỏ qua chuyển bước không hợp lệ: {currentStep} -> {newStep}.");
+                return;
+            }
+
             currentStep = newStep;
             UpdateGuideUI();
             OnStepChanged?.Invoke(currentStep);
@@ -220,7 +244,20 @@ namespace Khoa.Farming
 
         private void HandleRiceServed(CookedRiceBowl bowl)
         {
-            SetStep(CookingQuestStep.Completed);
+            if (bowl != null) SetStep(CookingQuestStep.Completed);
+        }
+
+        private void HandleFeedback(string message)
+        {
+            if (progressText != null && !string.IsNullOrWhiteSpace(message))
+            {
+                progressText.text = $"Gợi ý: {message}";
+            }
+        }
+
+        private void HandleWaterSpilled(float amount)
+        {
+            HandleFeedback("Nước đã đổ ra ngoài; hãy múc lại và hướng miệng gáo vào thau hoặc nồi.");
         }
 
         public void UpdateGuideUI()

@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Reflection;
 using UnityEngine;
 using Khoa.Farming;
 
@@ -123,6 +124,48 @@ namespace Khoa.Farming.Tests
             Assert.IsFalse(repeated);
             Assert.AreEqual(1, outputs);
             if (output != null) Object.DestroyImmediate(output.gameObject);
+        }
+
+        [Test]
+        public void RegrabbingCollectedOutputCannotResetANewerCompletedBatch()
+        {
+            WhiteRiceItem first = CompleteCurrentBatch();
+            InvokeGrab(first);
+            Assert.AreEqual(GrindMillState.Empty, millStation.currentState);
+
+            Assert.IsTrue(millStation.PourPaddyIntoMill());
+            WhiteRiceItem second = CompleteCurrentBatch();
+            Assert.AreEqual(GrindMillState.Completed, millStation.currentState);
+
+            InvokeGrab(first);
+
+            Assert.AreEqual(GrindMillState.Completed, millStation.currentState);
+            Assert.IsFalse(millStation.PourPaddyIntoMill());
+            Object.DestroyImmediate(first.gameObject);
+            Object.DestroyImmediate(second.gameObject);
+        }
+
+        private WhiteRiceItem CompleteCurrentBatch()
+        {
+            if (millStation.currentState == GrindMillState.Empty)
+            {
+                Assert.IsTrue(millStation.PourPaddyIntoMill());
+            }
+
+            WhiteRiceItem output = null;
+            void Capture(WhiteRiceItem rice) => output = rice;
+            millStation.OnMillingCompleted += Capture;
+            for (int i = 0; i < 16; i++) millStation.ProcessRotation(45f);
+            millStation.OnMillingCompleted -= Capture;
+            Assert.IsNotNull(output);
+            return output;
+        }
+
+        private static void InvokeGrab(WhiteRiceItem rice)
+        {
+            MethodInfo onGrab = typeof(WhiteRiceItem).GetMethod("OnGrab", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(onGrab);
+            onGrab.Invoke(rice, new object[] { null });
         }
     }
 }

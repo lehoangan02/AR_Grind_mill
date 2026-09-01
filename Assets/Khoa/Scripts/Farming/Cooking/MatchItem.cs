@@ -51,6 +51,11 @@ namespace Khoa.Farming
             {
                 audioSource = GetComponent<AudioSource>();
             }
+            if (audioSource != null)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1f;
+            }
 
             UpdateVisuals();
         }

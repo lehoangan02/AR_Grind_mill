@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Khoa.Farming;
@@ -63,6 +64,17 @@ namespace Khoa.Farming.Tests
             Assert.IsTrue(added);
             Assert.AreEqual(1, woodStove.currentFirewoodCount);
             Assert.AreEqual(20f, woodStove.remainingFuelTime);
+        }
+
+        [Test]
+        public void Firewood_CanOnlyBeConsumedByStoveOnceAcrossMultipleColliders()
+        {
+            GameObject woodGO = new GameObject("Test_MultiColliderFirewood");
+            FirewoodItem wood = woodGO.AddComponent<FirewoodItem>();
+
+            Assert.IsTrue(wood.TryConsumeForStove());
+            Assert.IsFalse(wood.TryConsumeForStove());
+            Object.DestroyImmediate(woodGO);
         }
 
         [Test]
@@ -176,7 +188,7 @@ namespace Khoa.Farming.Tests
             riceGO.AddComponent<BoxCollider>();
             riceGO.AddComponent<Rigidbody>();
             WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
-            rice.riceAmount = 5;
+            rice.riceAmount = CookingPot.RequiredRiceAmount;
             rice.isWashed = true;
 
             cookingPot.AddRice(rice);
@@ -184,6 +196,137 @@ namespace Khoa.Farming.Tests
 
             cookingPot.AddWater(1.0f);
             Assert.AreEqual(CookingState.ReadyToCook, cookingPot.currentState);
+        }
+
+        [Test]
+        public void CookingPot_RejectsWrongSizedOrDuplicateRiceBatchWithoutDestroyingInput()
+        {
+            GameObject wrongGO = new GameObject("Test_WrongRiceBatch");
+            WhiteRiceItem wrong = wrongGO.AddComponent<WhiteRiceItem>();
+            wrong.isWashed = true;
+            wrong.riceAmount = CookingPot.RequiredRiceAmount - 1;
+
+            Assert.IsFalse(cookingPot.AddRice(wrong));
+            Assert.IsNotNull(wrong);
+
+            GameObject firstGO = new GameObject("Test_FirstRiceBatch");
+            WhiteRiceItem first = firstGO.AddComponent<WhiteRiceItem>();
+            first.isWashed = true;
+            first.riceAmount = CookingPot.RequiredRiceAmount;
+            Assert.IsTrue(cookingPot.AddRice(first));
+
+            GameObject duplicateGO = new GameObject("Test_DuplicateRiceBatch");
+            WhiteRiceItem duplicate = duplicateGO.AddComponent<WhiteRiceItem>();
+            duplicate.isWashed = true;
+            duplicate.riceAmount = CookingPot.RequiredRiceAmount;
+            Assert.IsFalse(cookingPot.AddRice(duplicate));
+            Assert.IsNotNull(duplicate);
+            Assert.AreEqual(CookingPot.RequiredRiceAmount, cookingPot.currentRiceAmount);
+
+            Object.DestroyImmediate(wrongGO);
+            Object.DestroyImmediate(duplicateGO);
+        }
+
+        [Test]
+        public void CookingPot_RejectsExcessRecipeWaterWithoutChangingThePot()
+        {
+            GameObject riceGO = new GameObject("Test_WashedRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+            rice.riceAmount = CookingPot.RequiredRiceAmount;
+            Assert.IsTrue(cookingPot.AddRice(rice));
+
+            Assert.IsFalse(cookingPot.TryAddWater(CookingPot.RequiredWaterAmount + 0.1f));
+            Assert.AreEqual(0f, cookingPot.currentWaterAmount);
+            Assert.AreEqual(CookingState.HasRice, cookingPot.currentState);
+            Assert.IsTrue(cookingPot.TryAddWater(CookingPot.RequiredWaterAmount));
+            Assert.AreEqual(CookingState.ReadyToCook, cookingPot.currentState);
+        }
+
+        [Test]
+        public void CookingPot_CompleteCookingRequiresHeatClosedLidAndElapsedTime()
+        {
+            GameObject riceGO = new GameObject("Test_WashedRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+            rice.riceAmount = CookingPot.RequiredRiceAmount;
+            cookingPot.AddRice(rice);
+            cookingPot.AddWater(CookingPot.RequiredWaterAmount);
+            cookingPot.cookingTimer = cookingPot.timeToCook;
+
+            cookingPot.CompleteCooking();
+            Assert.AreEqual(CookingState.ReadyToCook, cookingPot.currentState);
+
+            cookingPot.SetHeatSource(true);
+            cookingPot.isLidClosed = false;
+            cookingPot.CompleteCooking();
+            Assert.AreEqual(CookingState.ReadyToCook, cookingPot.currentState);
+
+            cookingPot.isLidClosed = true;
+            cookingPot.CompleteCooking();
+            Assert.AreEqual(CookingState.Cooked, cookingPot.currentState);
+        }
+
+        [Test]
+        public void CookingPot_RepeatedHeatContactReportsMissingWaterOnlyOnce()
+        {
+            GameObject riceGO = new GameObject("Test_WashedRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+            rice.riceAmount = CookingPot.RequiredRiceAmount;
+            cookingPot.AddRice(rice);
+            int feedbackCount = 0;
+            string feedback = null;
+            cookingPot.OnFeedback += message =>
+            {
+                feedbackCount++;
+                feedback = message;
+            };
+
+            cookingPot.SetHeatSource(true);
+            cookingPot.SetHeatSource(true);
+
+            Assert.AreEqual(1, feedbackCount);
+            StringAssert.Contains("thiếu nước", feedback);
+        }
+
+        [Test]
+        public void QuestGuide_RejectsSkippedAndBackwardSteps()
+        {
+            GameObject guideGO = new GameObject("Test_QuestGuide");
+            CookingQuestGuide guide = guideGO.AddComponent<CookingQuestGuide>();
+
+            guide.SetStep(CookingQuestStep.Step9_ServeCookedRice);
+            Assert.AreEqual(CookingQuestStep.Step1_PourPaddy, guide.currentStep);
+            guide.SetStep(CookingQuestStep.Step2_GrindMill);
+            Assert.AreEqual(CookingQuestStep.Step2_GrindMill, guide.currentStep);
+            guide.SetStep(CookingQuestStep.Step1_PourPaddy);
+            Assert.AreEqual(CookingQuestStep.Step2_GrindMill, guide.currentStep);
+
+            Object.DestroyImmediate(guideGO);
+        }
+
+        [Test]
+        public void ServingLadle_KeepsPotTrackedUntilAllPotCollidersExit()
+        {
+            GameObject ladleGO = new GameObject("Test_ServingLadle");
+            RiceServingLadle ladle = ladleGO.AddComponent<RiceServingLadle>();
+            GameObject childGO = new GameObject("PotChildCollider");
+            childGO.transform.SetParent(potGO.transform, false);
+            BoxCollider childCollider = childGO.AddComponent<BoxCollider>();
+            Collider rootCollider = potGO.GetComponent<Collider>();
+            MethodInfo track = typeof(RiceServingLadle).GetMethod("TrackPot", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo clear = typeof(RiceServingLadle).GetMethod("ClearPot", BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo overlapping = typeof(RiceServingLadle).GetField("overlappingPot", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            track.Invoke(ladle, new object[] { rootCollider });
+            track.Invoke(ladle, new object[] { childCollider });
+            clear.Invoke(ladle, new object[] { rootCollider });
+
+            Assert.AreEqual(cookingPot, overlapping.GetValue(ladle));
+            clear.Invoke(ladle, new object[] { childCollider });
+            Assert.IsNull(overlapping.GetValue(ladle));
+            Object.DestroyImmediate(ladleGO);
         }
 
         [Test]
@@ -203,6 +346,36 @@ namespace Khoa.Farming.Tests
             Assert.IsNotNull(rice);
 
             Object.DestroyImmediate(riceGO);
+        }
+
+        [Test]
+        public void CookingPot_InvalidIngredientRaisesPlayerFacingFeedback()
+        {
+            string feedback = null;
+            cookingPot.OnFeedback += message => feedback = message;
+            GameObject riceGO = new GameObject("Test_UnwashedRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+
+            Assert.IsFalse(cookingPot.AddRice(rice));
+            Assert.IsNotNull(feedback);
+            StringAssert.Contains("chưa vo sạch", feedback);
+            Object.DestroyImmediate(riceGO);
+        }
+
+        [Test]
+        public void CookedRiceBowl_BurntStateUpdatesVisibleColor()
+        {
+            GameObject bowlGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            CookedRiceBowl bowl = bowlGO.AddComponent<CookedRiceBowl>();
+
+            bowl.SetBurnt(true);
+
+            MaterialPropertyBlock block = new MaterialPropertyBlock();
+            bowl.riceRenderer.GetPropertyBlock(block);
+            Assert.IsTrue(bowl.isBurnt);
+            Color actualColor = block.GetColor(Shader.PropertyToID("_BaseColor"));
+            Assert.Less(Vector4.Distance(bowl.burntRiceColor, actualColor), 0.001f);
+            Object.DestroyImmediate(bowlGO);
         }
 
         [Test]
@@ -227,12 +400,14 @@ namespace Khoa.Farming.Tests
             riceGO.AddComponent<BoxCollider>();
             riceGO.AddComponent<Rigidbody>();
             WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
-            rice.riceAmount = 5;
+            rice.riceAmount = CookingPot.RequiredRiceAmount;
             rice.isWashed = true;
 
             cookingPot.AddRice(rice);
             cookingPot.AddWater(1.0f);
 
+            cookingPot.SetHeatSource(true);
+            cookingPot.cookingTimer = cookingPot.timeToCook;
             cookingPot.CompleteCooking();
             Assert.AreEqual(CookingState.Cooked, cookingPot.currentState);
 
@@ -255,6 +430,8 @@ namespace Khoa.Farming.Tests
 
             cookingPot.AddRice(rice);
             cookingPot.AddWater(1f);
+            cookingPot.SetHeatSource(true);
+            cookingPot.cookingTimer = cookingPot.timeToCook;
             cookingPot.CompleteCooking();
 
             CookedRiceBowl closedLidResult = cookingPot.ServeRiceBowl();
@@ -284,6 +461,8 @@ namespace Khoa.Farming.Tests
             rice.isWashed = true;
             cookingPot.AddRice(rice);
             cookingPot.AddWater(1f);
+            cookingPot.SetHeatSource(true);
+            cookingPot.cookingTimer = cookingPot.timeToCook;
             cookingPot.CompleteCooking();
             cookingPot.isLidClosed = false;
 

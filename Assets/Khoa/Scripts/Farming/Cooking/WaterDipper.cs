@@ -46,6 +46,7 @@ namespace Khoa.Farming
         // Events
         public event Action OnWaterScooped;
         public event Action<float> OnWaterPoured;
+        public event Action<float> OnWaterSpilled;
 
         private Rigidbody rb;
         private XRGrabInteractable grabInteractable;
@@ -77,6 +78,11 @@ namespace Khoa.Farming
                     audioSource.spatialBlend = 1f;
                     audioSource.playOnAwake = false;
                 }
+            }
+            if (audioSource != null)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1f;
             }
 
             UpdateVisuals();
@@ -132,6 +138,7 @@ namespace Khoa.Farming
                 }
             }
 
+            SpillWater();
             return false;
         }
 
@@ -157,6 +164,19 @@ namespace Khoa.Farming
 
             OnWaterPoured?.Invoke(waterAmount);
             Debug.Log("<color=cyan>[WaterDipper] Đã rót nước ra khỏi gáo.</color>");
+            return true;
+        }
+
+        public bool SpillWater()
+        {
+            if (!hasWater) return false;
+
+            hasWater = false;
+            UpdateVisuals();
+            if (pourWaterFX != null) pourWaterFX.Play();
+            if (audioSource != null && pourSound != null) audioSource.PlayOneShot(pourSound);
+            OnWaterSpilled?.Invoke(waterAmount);
+            Debug.Log("[WaterDipper] Nước đã đổ ra ngoài, không có dụng cụ nào nhận nước.");
             return true;
         }
 

@@ -121,6 +121,14 @@ namespace Khoa.Farming
             grabbingInteractor = null;
         }
 
+        private void OnDestroy()
+        {
+            if (spawnedRiceInstance != null)
+            {
+                spawnedRiceInstance.OnGrabbed -= HandleMilledRiceGrabbed;
+            }
+        }
+
         private void Update()
         {
             float rotationDelta = 0f;
@@ -326,19 +334,24 @@ namespace Khoa.Farming
 
             if (spawnedRiceInstance != null)
             {
-                spawnedRiceInstance.OnGrabbed += (rice) =>
-                {
-                    if (milledRiceVisual != null) milledRiceVisual.SetActive(false);
-                    spawnedRiceInstance = null;
-                    currentState = GrindMillState.Empty;
-                    progress = 0f;
-                    UpdateVisuals();
-                    OnStateChanged?.Invoke(currentState);
-                    OnProgressChanged?.Invoke(progress);
-                    OnMilledRiceCollected?.Invoke();
-                };
+                spawnedRiceInstance.OnGrabbed += HandleMilledRiceGrabbed;
                 OnMillingCompleted?.Invoke(spawnedRiceInstance);
             }
+        }
+
+        private void HandleMilledRiceGrabbed(WhiteRiceItem rice)
+        {
+            if (rice == null || rice != spawnedRiceInstance || currentState != GrindMillState.Completed) return;
+
+            rice.OnGrabbed -= HandleMilledRiceGrabbed;
+            if (milledRiceVisual != null) milledRiceVisual.SetActive(false);
+            spawnedRiceInstance = null;
+            currentState = GrindMillState.Empty;
+            progress = 0f;
+            UpdateVisuals();
+            OnStateChanged?.Invoke(currentState);
+            OnProgressChanged?.Invoke(progress);
+            OnMilledRiceCollected?.Invoke();
         }
 
         private void OnHandleGrabbed(SelectEnterEventArgs args)

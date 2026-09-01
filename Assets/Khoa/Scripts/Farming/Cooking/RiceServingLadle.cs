@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -14,6 +15,7 @@ namespace Khoa.Farming
     {
         private XRGrabInteractable grabInteractable;
         private CookingPot overlappingPot;
+        private readonly Dictionary<CookingPot, HashSet<int>> potContacts = new Dictionary<CookingPot, HashSet<int>>();
 
         private void Awake()
         {
@@ -28,6 +30,12 @@ namespace Khoa.Farming
         private void OnDestroy()
         {
             if (grabInteractable != null) grabInteractable.activated.RemoveListener(OnActivated);
+        }
+
+        private void OnDisable()
+        {
+            potContacts.Clear();
+            overlappingPot = null;
         }
 
         private void Update()
@@ -62,7 +70,14 @@ namespace Khoa.Farming
         {
             if (other == null) return;
             CookingPot pot = other.GetComponentInParent<CookingPot>();
-            if (pot != null) overlappingPot = pot;
+            if (pot == null) return;
+            if (!potContacts.TryGetValue(pot, out HashSet<int> contacts))
+            {
+                contacts = new HashSet<int>();
+                potContacts.Add(pot, contacts);
+            }
+            contacts.Add(other.GetInstanceID());
+            overlappingPot = pot;
         }
 
         private void OnTriggerExit(Collider other)
@@ -78,7 +93,20 @@ namespace Khoa.Farming
         private void ClearPot(Collider other)
         {
             CookingPot pot = other != null ? other.GetComponentInParent<CookingPot>() : null;
-            if (pot != null && pot == overlappingPot) overlappingPot = null;
+            if (pot == null || !potContacts.TryGetValue(pot, out HashSet<int> contacts)) return;
+            contacts.Remove(other.GetInstanceID());
+            if (contacts.Count > 0) return;
+            potContacts.Remove(pot);
+            if (pot != overlappingPot) return;
+            overlappingPot = null;
+            foreach (CookingPot remaining in potContacts.Keys)
+            {
+                if (remaining != null)
+                {
+                    overlappingPot = remaining;
+                    break;
+                }
+            }
         }
     }
 }

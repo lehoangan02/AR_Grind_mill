@@ -23,6 +23,9 @@ namespace Khoa.Farming
 
         public AudioClip grabSound;
         public AudioClip eatSound;
+        public Renderer riceRenderer;
+        public Color normalRiceColor = new Color(0.98f, 0.98f, 0.95f, 1f);
+        public Color burntRiceColor = new Color(0.22f, 0.08f, 0.03f, 1f);
 
         private Rigidbody rb;
         private XRGrabInteractable grabInteractable;
@@ -47,11 +50,31 @@ namespace Khoa.Farming
             }
 
             audioSource = GetComponent<AudioSource>();
+            if (riceRenderer == null) riceRenderer = GetComponentInChildren<Renderer>();
+            ApplyAppearance();
 
             if (warmSteamFX != null && !warmSteamFX.isPlaying)
             {
                 warmSteamFX.Play();
             }
+        }
+
+        public void SetBurnt(bool burnt)
+        {
+            isBurnt = burnt;
+            ApplyAppearance();
+        }
+
+        private void ApplyAppearance()
+        {
+            if (riceRenderer == null) riceRenderer = GetComponentInChildren<Renderer>();
+            if (riceRenderer == null) return;
+            MaterialPropertyBlock block = new MaterialPropertyBlock();
+            riceRenderer.GetPropertyBlock(block);
+            Color color = isBurnt ? burntRiceColor : normalRiceColor;
+            block.SetColor("_BaseColor", color);
+            block.SetColor("_Color", color);
+            riceRenderer.SetPropertyBlock(block);
         }
     }
 }

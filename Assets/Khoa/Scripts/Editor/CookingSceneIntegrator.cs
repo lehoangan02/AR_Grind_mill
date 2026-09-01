@@ -78,7 +78,7 @@ namespace Khoa.Farming.Editor
             CreateServingLadle(setupRoot.transform, potGO.transform.position + new Vector3(0.65f, 0.25f, 0f));
 
             // 8. Tạo Bảng Hướng Dẫn Nhiệm Vụ 3D (Quest Guide Billboard)
-            CreateQuestGuide(setupRoot.transform, kitchenTableGO.transform.position + new Vector3(0f, 1.8f, 0f), millStation, washPot, stove, pot);
+            CreateQuestGuide(setupRoot.transform, kitchenTableGO.transform.position + new Vector3(0f, 1.8f, 0f), millStation, washPot, dipperGO.GetComponent<WaterDipper>(), stove, pot);
 
             ValidateSetupOrThrow(setupRoot);
             ValidateMainSceneSetup();
@@ -340,6 +340,11 @@ namespace Khoa.Farming.Editor
             washPot.riceMeshVisual = riceVisual;
             washPot.waterSurfaceRenderer = waterVisual.GetComponent<Renderer>();
             washPot.drainWaterFX = CreateParticleSystem("DrainWaterFX", potGO.transform, new Vector3(0.45f, 0.25f, 0f), new Color(0.82f, 0.88f, 0.9f), 0.05f);
+            washPot.washedRicePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WhiteRicePrefabPath);
+            GameObject outputPoint = new GameObject("WashedRiceOutputPoint");
+            outputPoint.transform.SetParent(potGO.transform, false);
+            outputPoint.transform.localPosition = new Vector3(0.55f, 0.45f, 0f);
+            washPot.washedRiceOutputPoint = outputPoint.transform;
 
             GameObject washVolume = new GameObject("RiceWashingInteractionVolume");
             washVolume.transform.SetParent(potGO.transform, false);
@@ -537,7 +542,7 @@ namespace Khoa.Farming.Editor
             ladleGO.AddComponent<RiceServingLadle>();
         }
 
-        private static void CreateQuestGuide(Transform parent, Vector3 position, GrindMillStation mill, RiceWashingPot wash, WoodStove stove, CookingPot pot)
+        private static void CreateQuestGuide(Transform parent, Vector3 position, GrindMillStation mill, RiceWashingPot wash, WaterDipper dipper, WoodStove stove, CookingPot pot)
         {
             GameObject guideGO = new GameObject("Cooking_Quest_Guide_Billboard");
             guideGO.transform.SetParent(parent, false);
@@ -549,7 +554,7 @@ namespace Khoa.Farming.Editor
             titleGO.transform.SetParent(guideGO.transform, false);
             titleGO.transform.localPosition = new Vector3(0f, 0.2f, 0f);
             TextMeshPro stepTmp = titleGO.AddComponent<TextMeshPro>();
-            stepTmp.text = "🌾 <b>Bước 1:</b> Đổ giỏ thóc vàng vào phễu cối xay gạo.";
+            stepTmp.text = "<b>Bước 1:</b> Đổ giỏ thóc vàng vào phễu cối xay gạo.";
             stepTmp.fontSize = 4.5f;
             stepTmp.alignment = TextAlignmentOptions.Center;
             stepTmp.color = new Color(1f, 0.95f, 0.6f);
@@ -569,6 +574,7 @@ namespace Khoa.Farming.Editor
             guide.progressText = subTmp;
             guide.grindMill = mill;
             guide.washingPot = wash;
+            guide.waterDipper = dipper;
             guide.woodStove = stove;
             guide.cookingPot = pot;
         }
@@ -667,16 +673,23 @@ namespace Khoa.Farming.Editor
             RiceWashingPot wash = setupRoot.GetComponentInChildren<RiceWashingPot>(true);
             WoodStove stove = setupRoot.GetComponentInChildren<WoodStove>(true);
             CookingPot pot = setupRoot.GetComponentInChildren<CookingPot>(true);
-            if (mill == null || mill.hopperTrigger == null || mill.whiteRicePrefab == null || mill.riceOutputPoint == null)
+            CookingQuestGuide guide = setupRoot.GetComponentInChildren<CookingQuestGuide>(true);
+            if (mill == null || mill.hopperTrigger == null || mill.whiteRicePrefab == null ||
+                mill.whiteRicePrefab.GetComponent<WhiteRiceItem>() == null || mill.riceOutputPoint == null)
                 throw new InvalidOperationException("Grind mill has missing required references.");
             if (dipper == null || dipper.pourOrigin == null || dipper.pourWaterFX == null)
                 throw new InvalidOperationException("Water dipper has missing required references.");
-            if (wash == null || wash.waterSurfaceRenderer == null || wash.drainWaterFX == null)
+            if (wash == null || wash.waterSurfaceRenderer == null || wash.drainWaterFX == null ||
+                wash.washedRicePrefab == null || wash.washedRicePrefab.GetComponent<WhiteRiceItem>() == null)
                 throw new InvalidOperationException("Washing station has missing required references.");
             if (stove == null || stove.fireParticles == null || stove.smokeParticles == null || stove.potPlacementPoint == null)
                 throw new InvalidOperationException("Wood stove has missing required references.");
-            if (pot == null || pot.waterSurfaceVisual == null || pot.steamParticleFX == null || pot.cookedRiceBowlPrefab == null)
+            if (pot == null || pot.waterSurfaceVisual == null || pot.steamParticleFX == null ||
+                pot.cookedRiceBowlPrefab == null || pot.cookedRiceBowlPrefab.GetComponent<CookedRiceBowl>() == null || pot.lidSnapPoint == null)
                 throw new InvalidOperationException("Cooking pot has missing required references.");
+            if (guide == null || guide.grindMill != mill || guide.washingPot != wash || guide.waterDipper != dipper ||
+                guide.woodStove != stove || guide.cookingPot != pot || guide.stepText == null || guide.progressText == null)
+                throw new InvalidOperationException("Cooking quest guide has missing required references.");
             if (setupRoot.GetComponentsInChildren<GrindMillHopperReceiver>(true).Length != 1)
                 throw new InvalidOperationException("Cooking setup must contain exactly one hopper receiver.");
         }

@@ -32,7 +32,9 @@ namespace Khoa.Farming
     [RequireComponent(typeof(XRGrabInteractable))]
     public class CookingPot : MonoBehaviour, IWaterReceiver
     {
+        public const int RequiredRiceAmount = 10;
         public const float RequiredWaterAmount = 1f;
+        public const float WaterTolerance = 0.05f;
 
         [Header("State")]
         public CookingState currentState = CookingState.Empty;
@@ -87,6 +89,7 @@ namespace Khoa.Farming
         public event Action<CookingState> OnCookingStateChanged;
         public event Action<float> OnCookingProgressChanged;
         public event Action<CookedRiceBowl> OnRiceServed;
+        public event Action<string> OnFeedback;
 
         private Rigidbody rb;
         private XRGrabInteractable grabInteractable;
@@ -119,6 +122,11 @@ namespace Khoa.Farming
                     audioSource.spatialBlend = 1f;
                     audioSource.playOnAwake = false;
                 }
+            }
+            if (audioSource != null)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1f;
             }
 
             UpdateVisuals();
@@ -183,19 +191,39 @@ namespace Khoa.Farming
         /// </summary>
         public bool AddRice(WhiteRiceItem rice)
         {
-            if (rice == null) return false;
+            if (rice == null)
+            {
+                ReportFeedback("Chưa có gạo để cho vào nồi.");
+                return false;
+            }
             if (!rice.isWashed)
             {
                 Debug.LogWarning("[CookingPot] Chỉ nhận gạo đã vo sạch.");
+                ReportFeedback("Gạo chưa vo sạch nên chưa thể nấu.");
                 return false;
             }
-            if (currentState != CookingState.Empty && currentState != CookingState.HasRice)
+            if (rice.riceAmount != RequiredRiceAmount)
             {
+                Debug.LogWarning($"[CookingPot] Một mẻ cần đúng {RequiredRiceAmount} phần gạo.");
+                ReportFeedback($"Một mẻ cần đúng {RequiredRiceAmount} phần gạo.");
+                return false;
+            }
+            if (currentState != CookingState.Empty || currentRiceAmount != 0)
+            {
+                Debug.LogWarning("[CookingPot] Nồi đã có một mẻ gạo; không thể thêm mẻ thứ hai.");
+                ReportFeedback("Nồi đã có đủ một mẻ gạo.");
                 return false;
             }
 
-            currentRiceAmount += rice.riceAmount;
-            if (currentWaterAmount >= RequiredWaterAmount)
+            if (currentWaterAmount > RequiredWaterAmount + WaterTolerance)
+            {
+                Debug.LogWarning("[CookingPot] Nồi đang có quá nhiều nước cho một mẻ gạo.");
+                ReportFeedback("Nồi đang có quá nhiều nước cho mẻ gạo này.");
+                return false;
+            }
+
+            currentRiceAmount = rice.riceAmount;
+            if (HasValidRecipe())
             {
                 currentState = CookingState.ReadyToCook;
             }
@@ -225,18 +253,29 @@ namespace Khoa.Farming
 
         public bool TryAddWater(float amount)
         {
-            if (amount <= 0f || currentWaterAmount >= maxWaterCapacity || currentState == CookingState.Cooked || currentState == CookingState.Burnt)
+            if (amount <= 0f ||
+                (currentState != CookingState.Empty && currentState != CookingState.HasRice && currentState != CookingState.ReadyToCook))
             {
                 return false;
             }
 
-            currentWaterAmount = Mathf.Min(maxWaterCapacity, currentWaterAmount + amount);
+            float recipeCapacity = Mathf.Min(maxWaterCapacity, RequiredWaterAmount + WaterTolerance);
+            float proposedAmount = currentWaterAmount + amount;
+            if (proposedAmount > recipeCapacity + Mathf.Epsilon)
+            {
+                Debug.LogWarning($"[CookingPot] Một mẻ chỉ nhận {RequiredWaterAmount:F1} nước; nước không được rót vào nồi.");
+                ReportFeedback($"Một mẻ chỉ cần {RequiredWaterAmount:F1} gáo nước.");
+                return false;
+            }
+
+            currentWaterAmount = proposedAmount;
 
             if (currentRiceAmount > 0)
             {
-                if (currentWaterAmount >= RequiredWaterAmount && currentState == CookingState.HasRice)
+                CookingState nextState = HasValidRecipe() ? CookingState.ReadyToCook : CookingState.HasRice;
+                if (currentState != nextState)
                 {
-                    currentState = CookingState.ReadyToCook;
+                    currentState = nextState;
                     OnCookingStateChanged?.Invoke(currentState);
                 }
             }
@@ -251,8 +290,23 @@ namespace Khoa.Farming
         /// </summary>
         public void SetHeatSource(bool onFire)
         {
+            if (isOnFire == onFire) return;
             isOnFire = onFire;
             Debug.Log($"[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: {isOnFire}");
+            if (!isOnFire) return;
+
+            if (currentRiceAmount <= 0)
+            {
+                ReportFeedback("Nồi chưa có gạo đã vo.");
+            }
+            else if (currentWaterAmount < RequiredWaterAmount)
+            {
+                ReportFeedback("Nồi còn thiếu nước để nấu cơm.");
+            }
+            else if (!isLidClosed)
+            {
+                ReportFeedback("Hãy đậy nắp nồi để bắt đầu nấu.");
+            }
         }
 
         /// <summary>
@@ -260,7 +314,8 @@ namespace Khoa.Farming
         /// </summary>
         public void CompleteCooking()
         {
-            if (currentState != CookingState.ReadyToCook && currentState != CookingState.Boiling)
+            if ((currentState != CookingState.ReadyToCook && currentState != CookingState.Boiling) ||
+                !isOnFire || !isLidClosed || !HasValidRecipe() || cookingTimer < timeToCook)
             {
                 return;
             }
@@ -288,7 +343,7 @@ namespace Khoa.Farming
         /// </summary>
         public void BurnRice()
         {
-            if (currentState != CookingState.Cooked)
+            if (currentState != CookingState.Cooked || !isOnFire || !isLidClosed || cookingTimer < timeToBurn)
             {
                 return;
             }
@@ -307,11 +362,13 @@ namespace Khoa.Farming
             if (currentState != CookingState.Cooked && currentState != CookingState.Burnt)
             {
                 Debug.LogWarning("[CookingPot] Cơm chưa chín, chưa thể xới cơm!");
+                ReportFeedback("Cơm chưa chín nên chưa thể xới.");
                 return null;
             }
             if (isLidClosed)
             {
                 Debug.LogWarning("[CookingPot] Hãy mở nắp nồi trước khi xới cơm.");
+                ReportFeedback("Hãy mở nắp nồi trước khi xới cơm.");
                 return null;
             }
             if (currentRiceAmount <= 0)
@@ -350,7 +407,7 @@ namespace Khoa.Farming
 
             if (bowl != null)
             {
-                bowl.isBurnt = servedBurntRice;
+                bowl.SetBurnt(servedBurntRice);
                 currentRiceAmount = 0;
                 currentWaterAmount = 0f;
                 cookingTimer = 0f;
@@ -384,7 +441,7 @@ namespace Khoa.Farming
                 Renderer rRen = riceMeshVisual.GetComponent<Renderer>();
                 if (rRen != null)
                 {
-                    if (currentState == CookingState.Cooked && cookedRiceMaterial != null)
+                    if ((currentState == CookingState.Cooked || currentState == CookingState.Burnt) && cookedRiceMaterial != null)
                     {
                         rRen.sharedMaterial = cookedRiceMaterial;
                     }
@@ -399,6 +456,18 @@ namespace Khoa.Farming
             {
                 waterSurfaceVisual.SetActive(currentWaterAmount > 0.05f);
             }
+        }
+
+        private bool HasValidRecipe()
+        {
+            return currentRiceAmount == RequiredRiceAmount &&
+                   currentWaterAmount >= RequiredWaterAmount &&
+                   currentWaterAmount <= RequiredWaterAmount + WaterTolerance;
+        }
+
+        private void ReportFeedback(string message)
+        {
+            OnFeedback?.Invoke(message);
         }
     }
 }

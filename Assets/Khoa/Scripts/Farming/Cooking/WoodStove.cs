@@ -52,6 +52,7 @@ namespace Khoa.Farming
         // Events
         public event Action<bool> OnFireStateChanged;
         public event Action<int> OnFirewoodAdded;
+        public event Action<string> OnFeedback;
 
         private void Awake()
         {
@@ -59,6 +60,12 @@ namespace Khoa.Farming
             if (col != null)
             {
                 col.isTrigger = true;
+            }
+
+            if (fireAudioSource != null)
+            {
+                fireAudioSource.playOnAwake = false;
+                fireAudioSource.spatialBlend = 1f;
             }
 
             UpdateVisuals();
@@ -105,8 +112,10 @@ namespace Khoa.Farming
             if (currentFirewoodCount >= MaxFirewoodCapacity)
             {
                 Debug.LogWarning("[WoodStove] Buồng đốt đã đầy củi!");
+                OnFeedback?.Invoke("Bếp đã đủ củi, không cần thêm nữa.");
                 return false;
             }
+            if (!wood.TryConsumeForStove()) return false;
 
             currentFirewoodCount++;
             remainingFuelTime += wood.fuelValue;
@@ -131,11 +140,13 @@ namespace Khoa.Farming
             if (match == null || !match.isLit)
             {
                 Debug.LogWarning("[WoodStove] Cần một que diêm đang cháy để nhóm bếp.");
+                OnFeedback?.Invoke("Hãy quẹt diêm trên striker trước khi châm bếp.");
                 return false;
             }
             if (currentFirewoodCount == 0)
             {
                 Debug.LogWarning("[WoodStove] Chưa có củi trong bếp, không thể nhóm lửa!");
+                OnFeedback?.Invoke("Hãy cho củi vào bếp trước khi châm lửa.");
                 return false;
             }
 
@@ -257,7 +268,7 @@ namespace Khoa.Farming
 
             if (fireAudioSource != null)
             {
-                if (isBurning && !fireAudioSource.isPlaying) fireAudioSource.Play();
+                if (isBurning && fireAudioSource.clip != null && !fireAudioSource.isPlaying) fireAudioSource.Play();
                 else if (!isBurning && fireAudioSource.isPlaying) fireAudioSource.Stop();
             }
 

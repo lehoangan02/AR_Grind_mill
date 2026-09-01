@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -11,6 +12,7 @@ namespace Khoa.Farming
     {
         private XRGrabInteractable grabInteractable;
         private RiceWashingPot overlappingPot;
+        private readonly Dictionary<RiceWashingPot, HashSet<int>> potContacts = new Dictionary<RiceWashingPot, HashSet<int>>();
 
         private void Awake()
         {
@@ -25,6 +27,12 @@ namespace Khoa.Farming
         private void OnDestroy()
         {
             if (grabInteractable != null) grabInteractable.activated.RemoveListener(OnActivated);
+        }
+
+        private void OnDisable()
+        {
+            potContacts.Clear();
+            overlappingPot = null;
         }
 
         private void Update()
@@ -51,7 +59,14 @@ namespace Khoa.Farming
         private void Track(Collider other)
         {
             RiceWashingPot pot = other != null ? other.GetComponentInParent<RiceWashingPot>() : null;
-            if (pot != null) overlappingPot = pot;
+            if (pot == null) return;
+            if (!potContacts.TryGetValue(pot, out HashSet<int> contacts))
+            {
+                contacts = new HashSet<int>();
+                potContacts.Add(pot, contacts);
+            }
+            contacts.Add(other.GetInstanceID());
+            overlappingPot = pot;
         }
 
         private void OnTriggerExit(Collider other) => Clear(other);
@@ -60,7 +75,20 @@ namespace Khoa.Farming
         private void Clear(Collider other)
         {
             RiceWashingPot pot = other != null ? other.GetComponentInParent<RiceWashingPot>() : null;
-            if (pot != null && pot == overlappingPot) overlappingPot = null;
+            if (pot == null || !potContacts.TryGetValue(pot, out HashSet<int> contacts)) return;
+            contacts.Remove(other.GetInstanceID());
+            if (contacts.Count > 0) return;
+            potContacts.Remove(pot);
+            if (pot != overlappingPot) return;
+            overlappingPot = null;
+            foreach (RiceWashingPot remaining in potContacts.Keys)
+            {
+                if (remaining != null)
+                {
+                    overlappingPot = remaining;
+                    break;
+                }
+            }
         }
     }
 }

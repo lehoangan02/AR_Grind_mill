@@ -19,6 +19,7 @@ namespace Khoa.Farming
 
         [Tooltip("Củi đã bị đốt cháy hết hay chưa")]
         public bool isBurntOut = false;
+        private bool isConsumedByStove;
 
         public AudioClip grabSound;
         public AudioClip dropSound;
@@ -46,6 +47,13 @@ namespace Khoa.Farming
             }
 
             audioSource = GetComponent<AudioSource>();
+        }
+
+        public bool TryConsumeForStove()
+        {
+            if (isConsumedByStove || isBurntOut) return false;
+            isConsumedByStove = true;
+            return true;
         }
     }
 }

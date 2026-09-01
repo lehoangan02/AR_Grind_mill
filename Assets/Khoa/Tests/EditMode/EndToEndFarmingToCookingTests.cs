@@ -92,6 +92,7 @@ namespace Khoa.Farming.Tests
             Assert.AreEqual(CookingState.ReadyToCook, pot.currentState);
 
             pot.SetHeatSource(true);
+            pot.cookingTimer = pot.timeToCook;
             pot.CompleteCooking();
             Assert.AreEqual(CookingState.Cooked, pot.currentState);
 

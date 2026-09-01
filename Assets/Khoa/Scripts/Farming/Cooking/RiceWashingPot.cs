@@ -71,6 +71,10 @@ namespace Khoa.Farming
         [Tooltip("Hiệu ứng nước đục chảy ra khi chắt nước")]
         public ParticleSystem drainWaterFX;
 
+        [Header("Washed Rice Output")]
+        public GameObject washedRicePrefab;
+        public Transform washedRiceOutputPoint;
+
         [Header("Audio & Settings")]
         public AudioSource audioSource;
         public AudioClip washSound;
@@ -84,6 +88,7 @@ namespace Khoa.Farming
         public event Action<RiceWashingState> OnStateChanged;
         public event Action<float> OnWashProgressChanged;
         public event Action<WhiteRiceItem> OnRiceWashedCompleted;
+        public event Action<string> OnFeedback;
 
         private Rigidbody rb;
         private XRGrabInteractable grabInteractable;
@@ -122,6 +127,11 @@ namespace Khoa.Farming
                     audioSource.playOnAwake = false;
                 }
             }
+            if (audioSource != null)
+            {
+                audioSource.playOnAwake = false;
+                audioSource.spatialBlend = 1f;
+            }
 
             mpb = new MaterialPropertyBlock();
             UpdateVisuals();
@@ -145,9 +155,14 @@ namespace Khoa.Farming
         /// </summary>
         public bool AddRice(WhiteRiceItem riceItem)
         {
-            if (riceItem == null) return false;
-            if (currentState == RiceWashingState.HasRice || currentState == RiceWashingState.HasRiceAndWater || currentState == RiceWashingState.WashedRiceReady)
+            if (riceItem == null)
             {
+                OnFeedback?.Invoke("Chưa có gạo để cho vào thau.");
+                return false;
+            }
+            if (currentState != RiceWashingState.Empty || currentRiceAmount != 0)
+            {
+                OnFeedback?.Invoke("Thau đã có một mẻ gạo; hãy vo và lấy ra trước.");
                 return false;
             }
 
@@ -187,7 +202,14 @@ namespace Khoa.Farming
                 return false;
             }
 
-            currentWater = Mathf.Min(maxWaterCapacity, currentWater + amount);
+            float proposedWater = currentWater + amount;
+            if (proposedWater > maxWaterCapacity + Mathf.Epsilon)
+            {
+                OnFeedback?.Invoke("Thau không còn đủ chỗ cho cả lượng nước trong gáo.");
+                return false;
+            }
+
+            currentWater = proposedWater;
 
             if (currentRiceAmount > 0)
             {
@@ -301,6 +323,7 @@ namespace Khoa.Farming
             else if (currentRiceAmount > 0)
             {
                 currentState = RiceWashingState.HasRice;
+                OnFeedback?.Invoke("Gạo chưa sạch 100%; hãy thêm nước và vo tiếp.");
                 Debug.Log("<color=yellow>[RiceWashingPot] Đã chắt nước. Gạo chưa vo đủ kỹ, bạn có thể thêm nước vo tiếp.</color>");
             }
             else
@@ -319,24 +342,33 @@ namespace Khoa.Farming
         {
             if (currentState != RiceWashingState.WashedRiceReady || currentWater > 0.05f || washProgress < RequiredWashProgress)
             {
+                OnFeedback?.Invoke("Chỉ lấy gạo khi đã sạch 100% và chắt hết nước.");
                 return null;
             }
 
-            GameObject riceGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            riceGO.name = "Washed_Rice_Item";
-            riceGO.transform.position = transform.position + Vector3.up * 0.2f;
-            riceGO.transform.localScale = new Vector3(0.3f, 0.12f, 0.3f);
-
-            Renderer ren = riceGO.GetComponent<Renderer>();
-            if (ren != null)
+            Vector3 spawnPosition = washedRiceOutputPoint != null
+                ? washedRiceOutputPoint.position
+                : transform.position + transform.right * 0.55f + Vector3.up * 0.45f;
+            GameObject riceGO;
+            if (washedRicePrefab != null)
             {
-                if (Application.isPlaying) ren.material.color = new Color(0.98f, 0.98f, 0.98f);
-                else if (ren.sharedMaterial != null) ren.sharedMaterial.color = new Color(0.98f, 0.98f, 0.98f);
+                riceGO = Instantiate(washedRicePrefab, spawnPosition, Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning("[RiceWashingPot] Thiếu washedRicePrefab; đang dùng primitive debug fallback.");
+                riceGO = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                riceGO.name = "Washed_Rice_Item_DEBUG_FALLBACK";
+                riceGO.transform.position = spawnPosition;
+                riceGO.transform.localScale = new Vector3(0.3f, 0.12f, 0.3f);
             }
 
-            riceGO.AddComponent<Rigidbody>();
-            riceGO.AddComponent<XRGrabInteractable>();
-            WhiteRiceItem washedRice = riceGO.AddComponent<WhiteRiceItem>();
+            WhiteRiceItem washedRice = riceGO.GetComponent<WhiteRiceItem>();
+            if (washedRice == null)
+            {
+                washedRice = riceGO.AddComponent<WhiteRiceItem>();
+            }
+
             washedRice.riceAmount = currentRiceAmount;
             washedRice.isWashed = true;
 

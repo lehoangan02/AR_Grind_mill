@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Reflection;
 using UnityEngine;
 using Khoa.Farming;
 
@@ -137,12 +138,30 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
-        public void AddWater_RejectsNonPositiveAmount_AndCapsCapacity()
+        public void WaterDipper_PhysicalMissSpillsWaterAndDoesNotCreditAReceiver()
+        {
+            waterDipper.transform.position = Vector3.up * 100f;
+            waterDipper.ScoopWater();
+            int acceptedPours = 0;
+            waterDipper.OnWaterPoured += _ => acceptedPours++;
+
+            bool accepted = waterDipper.PourWater();
+
+            Assert.IsFalse(accepted);
+            Assert.IsFalse(waterDipper.hasWater);
+            Assert.AreEqual(0, acceptedPours);
+            Assert.AreEqual(0f, washingPot.currentWater);
+        }
+
+        [Test]
+        public void AddWater_RejectsNonPositiveAmountAndOverflowWithoutPartialTransfer()
         {
             washingPot.maxWaterCapacity = 2f;
 
             Assert.IsFalse(washingPot.TryAddWater(-1f));
-            Assert.IsTrue(washingPot.TryAddWater(3f));
+            Assert.IsFalse(washingPot.TryAddWater(3f));
+            Assert.AreEqual(0f, washingPot.currentWater);
+            Assert.IsTrue(washingPot.TryAddWater(2f));
             Assert.AreEqual(2f, washingPot.currentWater);
         }
 
@@ -197,6 +216,51 @@ namespace Khoa.Farming.Tests
             Assert.AreEqual(RiceWashingState.Empty, washingPot.currentState);
             if (output != null) Object.DestroyImmediate(output.gameObject);
             Object.DestroyImmediate(scoopGO);
+        }
+
+        [Test]
+        public void WashingPot_RejectsSecondRiceBatchWhileWashingAndPreservesIt()
+        {
+            GameObject firstGO = new GameObject("Test_FirstRice");
+            WhiteRiceItem first = firstGO.AddComponent<WhiteRiceItem>();
+            first.riceAmount = 10;
+            washingPot.AddRice(first);
+            washingPot.AddWater(1f);
+            washingPot.StirRice(20f);
+
+            GameObject secondGO = new GameObject("Test_SecondRice");
+            WhiteRiceItem second = secondGO.AddComponent<WhiteRiceItem>();
+            second.riceAmount = 99;
+            bool accepted = washingPot.AddRice(second);
+
+            Assert.IsFalse(accepted);
+            Assert.IsNotNull(second);
+            Assert.AreEqual(10, washingPot.currentRiceAmount);
+            Assert.AreEqual(RiceWashingState.Washing, washingPot.currentState);
+            Object.DestroyImmediate(secondGO);
+        }
+
+        [Test]
+        public void WashingPot_UsesConfiguredPrefabForWashedRiceOutput()
+        {
+            FieldInfo prefabField = typeof(RiceWashingPot).GetField("washedRicePrefab");
+            Assert.IsNotNull(prefabField, "RiceWashingPot must expose a configured washed-rice prefab reference.");
+
+            GameObject template = new GameObject("ConfiguredWashedRiceTemplate");
+            template.AddComponent<WhiteRiceItem>();
+            prefabField.SetValue(washingPot, template);
+            GameObject riceGO = new GameObject("Test_WhiteRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            washingPot.AddRice(rice);
+            washingPot.AddWater(1f);
+            washingPot.StirRice(100f);
+            washingPot.DrainWater();
+
+            WhiteRiceItem output = washingPot.TakeOutWashedRice();
+
+            StringAssert.StartsWith(template.name, output.gameObject.name);
+            Object.DestroyImmediate(output.gameObject);
+            Object.DestroyImmediate(template);
         }
     }
 }
