@@ -190,13 +190,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2482760140610719821}
   - component: {fileID: 6026283982283229650}
-  - component: {fileID: 7576593965556942528}
-  - component: {fileID: 7662384864672040494}
   - component: {fileID: 3836025836667132045}
-  - component: {fileID: 5142745875819897043}
   - component: {fileID: 4457391110332708127}
   - component: {fileID: 1013372589024235305}
-  - component: {fileID: 1299750149839595440}
   m_Layer: 0
   m_Name: MrsFour
   m_TagString: Untagged
@@ -243,125 +239,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!95 &7576593965556942528
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6711396400624521605}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 80137a0e6456cfef2964e89edbc387f7, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!82 &7662384864672040494
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6711396400624521605}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 0.5
-  MaxDistance: 8
-  Pan2D: 0
-  rolloffMode: 1
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &3836025836667132045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,23 +255,6 @@ MonoBehaviour:
   playerLayers:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5142745875819897043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6711396400624521605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948a1ec39859e1d2abba88cfe068c743, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Runtime.NPCAnimatorDriver
-  animator: {fileID: 7576593965556942528}
-  isTalkingBool: IsTalking
-  gestureTrigger: GestureTrigger
-  gestureMappings: []
-  voiceSource: {fileID: 7662384864672040494}
 --- !u!114 &4457391110332708127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,25 +287,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Runtime.NPCDialogueController
   graph: {fileID: 11400000, guid: 8eb54858dd618f94abecd3e18ed314ba, type: 2}
   proximityTrigger: {fileID: 3836025836667132045}
-  animatorDriver: {fileID: 5142745875819897043}
   headLook: {fileID: 4457391110332708127}
   startAction: {fileID: 11400000, guid: 93ef8874d7fb980b0906e10b111e3d6a, type: 2}
   endAction: {fileID: 0}
---- !u!114 &1299750149839595440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6711396400624521605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6f1886f60e0549b0a378fcaea0d3cd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.UI.DialoguePromptUI
-  promptRoot: {fileID: 0}
-  promptLabel: {fileID: 0}
-  promptText: Press [Trigger] to talk
 --- !u!1001 &7514568587002444926
 PrefabInstance:
   m_ObjectHideFlags: 0

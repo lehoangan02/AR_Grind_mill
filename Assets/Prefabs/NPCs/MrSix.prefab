@@ -770,6 +770,7 @@ MonoBehaviour:
   smoothTime: 0.15
   maxYawDegrees: 70
   maxPitchDegrees: 30
+  maxDistance: 8
 --- !u!114 &9015288045589111617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,7 +801,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Runtime.NPCDialogueController
   graph: {fileID: 11400000, guid: 5bccdfa8a0cf66d47b3a566656816a42, type: 2}
   proximityTrigger: {fileID: 9015288045589111617}
-  animatorDriver: {fileID: 0}
   headLook: {fileID: 9184493672101967057}
   startAction: {fileID: 11400000, guid: 93ef8874d7fb980b0906e10b111e3d6a, type: 2}
   endAction: {fileID: 0}

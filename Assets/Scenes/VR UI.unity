@@ -1589,7 +1589,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Runtime.NPCDialogueController
   graph: {fileID: 11400000, guid: 5bccdfa8a0cf66d47b3a566656816a42, type: 2}
   proximityTrigger: {fileID: 676879343}
-  animatorDriver: {fileID: 0}
   headLook: {fileID: 676879344}
   startAction: {fileID: 11400000, guid: 93ef8874d7fb980b0906e10b111e3d6a, type: 2}
   endAction: {fileID: 0}
@@ -1627,6 +1626,7 @@ MonoBehaviour:
   smoothTime: 0.15
   maxYawDegrees: 70
   maxPitchDegrees: 30
+  maxDistance: 8
 --- !u!1 &692129320
 GameObject:
   m_ObjectHideFlags: 0
@@ -2008,7 +2008,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MrsFour
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1299750149839595440, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
+    - {fileID: 5142745875819897043, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
+    - {fileID: 7662384864672040494, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
+    - {fileID: 7576593965556942528, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

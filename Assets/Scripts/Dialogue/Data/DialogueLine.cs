@@ -18,7 +18,7 @@ namespace AR_Grind_mill.Dialogue.Data
         public string text;
 
         [Tooltip("Optional animation tag triggered when this line is presented. " +
-                 "Empty string = no gesture. Resolved via NPCAnimatorDriver mappings.")]
+                 "Empty string = no gesture.")]
         public string animationTag;
 
         [Tooltip("Optional voice clip played when this line is presented.")]

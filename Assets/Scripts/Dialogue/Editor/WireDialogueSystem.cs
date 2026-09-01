@@ -20,10 +20,9 @@ namespace AR_Grind_mill.Dialogue.EditorTools
 {
     /// <summary>
     /// One-shot editor builder that wires the entire NPC Dialogue System:
-    ///   - Animator Controllers for MrSix and MrsFour (Idle/Talking + parameters)
-    ///   - Primitive NPC prefabs (Body/Head + proximity trigger + animator driver
-    ///     + head look + controller + dialogue UI + prompt UI)
-    ///   - World-space UI prefabs (DialogueCanvas, ChoiceButton, Prompt)
+    ///   - Primitive NPC prefabs (Body/Head + proximity trigger
+    ///     + head look + controller + dialogue UI)
+    ///   - World-space UI prefabs (DialogueCanvas, ChoiceButton)
     ///   - DialogueNode + DialogueGraph ScriptableObject assets
     ///   - Re-opens each NPC prefab to wire graph + UI prefabs + canvas anchor
     ///   - Drops MrSix/MrsFour instances into "VR UI.unity"
@@ -35,7 +34,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
     public static class WireDialogueSystem
     {
         // ─── Asset paths ────────────────────────────────────────────────
-        private const string AnimationsDir  = "Assets/Animations/NPC";
         private const string NpcPrefabDir   = "Assets/Prefabs/NPCs";
         private const string UiPrefabDir    = "Assets/Prefabs/UI/Dialogue";
         private const string DialogueDir    = "Assets/Dialogue";
@@ -52,14 +50,12 @@ namespace AR_Grind_mill.Dialogue.EditorTools
         // UI prefab names
         private const string UiCanvasName        = "DialogueCanvas.prefab";
         private const string UiChoiceButtonName  = "DialogueChoiceButton.prefab";
-        private const string UiPromptName        = "DialoguePrompt.prefab";
 
         // NPC scene positions (scene-space, root transform)
         private static readonly Vector3 MrSixScenePos   = new Vector3( 2f, 0f, 3f);
         private static readonly Vector3 MrsFourScenePos = new Vector3(-2f, 0f, 3f);
 
         // ─── Tally counters (for summary) ──────────────────────────────
-        private static int s_animatorsCreated;
         private static int s_npcPrefabsCreated;
         private static int s_uiPrefabsCreated;
         private static int s_nodesCreated;
@@ -114,7 +110,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             ResetTally();
             Log("=== WireDialogueSystem starting ===");
 
-            EnsureFolder(AnimationsDir);
             EnsureFolder(NpcPrefabDir);
             EnsureFolder(UiPrefabDir);
             EnsureFolder(DialogueDir);
@@ -123,15 +118,10 @@ namespace AR_Grind_mill.Dialogue.EditorTools
 
             s_attackActionRef = TryFindAttackActionReference();
 
-            // A. Animator Controllers
-            BuildAnimatorController(MrSixName);
-            BuildAnimatorController(MrsFourName);
-
             // C. World-space UI prefabs (build BEFORE NPC prefabs so we can
-            // reference the canvas / prompt / button prefabs from the NPC).
+            // reference the canvas / button prefabs from the NPC).
             BuildDialogueCanvasPrefab();
             s_choiceButtonComponent = BuildDialogueChoiceButtonPrefab();
-            BuildDialoguePromptPrefab();
 
             // B. Primitive NPC prefabs (graph not yet assigned — D handles that).
             BuildNpcPrefab(MrSixName,   new Color(0.2f,  0.4f,  0.9f, 1f), new Color(0.45f, 0.65f, 1.0f, 1f));
@@ -156,53 +146,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
         }
 
         // ═════════════════════════════════════════════════════════════════
-        // A. Animator Controllers
-        // ═════════════════════════════════════════════════════════════════
-        private static void BuildAnimatorController(string npcName)
-        {
-            string path = $"{AnimationsDir}/{npcName}.controller";
-            if (AssetDatabase.LoadAssetAtPath<AnimatorController>(path) != null)
-            {
-                Log($"[A] Animator controller already exists: {path} — skipping.");
-                return;
-            }
-
-            AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(path);
-            if (controller == null)
-            {
-                Warn($"[A] Failed to create AnimatorController at {path}");
-                return;
-            }
-
-            // Parameters
-            controller.AddParameter("IsTalking",      AnimatorControllerParameterType.Bool);
-            controller.AddParameter("GestureTrigger", AnimatorControllerParameterType.Trigger);
-
-            // Default layer + state machine
-            AnimatorControllerLayer layer = controller.layers[0];
-            AnimatorStateMachine stateMachine = layer.stateMachine;
-
-            AnimatorState idleState    = stateMachine.AddState("Idle");
-            AnimatorState talkingState = stateMachine.AddState("Talking");
-            stateMachine.defaultState = idleState;
-
-            // Transitions: Idle ↔ Talking driven by IsTalking bool
-            AnimatorStateTransition idleToTalking = idleState.AddTransition(talkingState);
-            idleToTalking.hasExitTime       = false;
-            idleToTalking.duration          = 0f;
-            idleToTalking.AddCondition(AnimatorConditionMode.If, 0f, "IsTalking");
-
-            AnimatorStateTransition talkingToIdle = talkingState.AddTransition(idleState);
-            talkingToIdle.hasExitTime       = false;
-            talkingToIdle.duration          = 0f;
-            talkingToIdle.AddCondition(AnimatorConditionMode.IfNot, 0f, "IsTalking");
-
-            EditorUtility.SetDirty(controller);
-            s_animatorsCreated++;
-            Log($"[A] Created Animator controller: {path}");
-        }
-
-        // ═════════════════════════════════════════════════════════════════
         // B. Primitive NPC prefabs
         // ═════════════════════════════════════════════════════════════════
         private static void BuildNpcPrefab(string npcName, Color bodyColor, Color headColor)
@@ -212,13 +155,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             {
                 Log($"[B] NPC prefab already exists: {path} — skipping.");
                 return;
-            }
-
-            AnimatorController controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(
-                $"{AnimationsDir}/{npcName}.controller");
-            if (controller == null)
-            {
-                Warn($"[B] Animator controller missing for {npcName}; NPC prefab will be created without it.");
             }
 
             Shader urpLit = Shader.Find("Universal Render Pipeline/Lit");
@@ -244,26 +180,10 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             sphere.radius    = 2f;
             sphere.center    = Vector3.zero;
 
-            Animator animator = root.AddComponent<Animator>();
-            if (controller != null)
-            {
-                animator.runtimeAnimatorController = controller;
-            }
-            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-
-            AudioSource voice = root.AddComponent<AudioSource>();
-            voice.playOnAwake   = false;
-            voice.spatialBlend  = 1f;       // 3D
-            voice.rolloffMode   = AudioRolloffMode.Linear;
-            voice.minDistance   = 0.5f;
-            voice.maxDistance   = 8f;
-
             NPCProximityTrigger proximity = root.AddComponent<NPCProximityTrigger>();
-            NPCAnimatorDriver   animDriver = root.AddComponent<NPCAnimatorDriver>();
             HeadLookAtPlayer    headLook = root.AddComponent<HeadLookAtPlayer>();
             NPCDialogueController controller2 = root.AddComponent<NPCDialogueController>();
             DialogueUIController dialogueUi = root.AddComponent<DialogueUIController>();
-            DialoguePromptUI     promptUi  = root.AddComponent<DialoguePromptUI>();
 
             // Body — capsule (strip its built-in collider)
             GameObject body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -297,17 +217,9 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             canvasAnchor.transform.SetParent(root.transform, worldPositionStays: false);
             canvasAnchor.transform.localPosition = new Vector3(0f, 1.7f, 0.6f);
 
-            // PromptRoot anchor (world-space prompt canvas target)
-            GameObject promptRoot = new GameObject("PromptRoot");
-            promptRoot.transform.SetParent(root.transform, worldPositionStays: false);
-            promptRoot.transform.localPosition = new Vector3(0f, 2.1f, 0.4f);
-
             // Wire component references (graph left null — assigned in RewireNpcPrefab)
-            ApplySerializedField(animDriver, "animator", animator);
-            animDriver.voiceSource       = voice;
             headLook.headBone            = head.transform;
             headLook.playerCamera        = null;
-            controller2.animatorDriver   = animDriver;
             controller2.headLook         = headLook;
             controller2.proximityTrigger = proximity;
 
@@ -498,72 +410,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             return leaf;
         }
 
-        private static void BuildDialoguePromptPrefab()
-        {
-            string path = $"{UiPrefabDir}/{UiPromptName}";
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
-            {
-                Log($"[C] UI prefab already exists: {path} — skipping.");
-                return;
-            }
-
-            GameObject root = new GameObject("DialoguePrompt", typeof(RectTransform));
-            Canvas canvas = root.AddComponent<Canvas>();
-            canvas.renderMode   = RenderMode.WorldSpace;
-            canvas.sortingOrder = 50;
-
-            root.AddComponent<CanvasScaler>();
-            root.AddComponent<TrackedDeviceGraphicRaycaster>();
-
-            RectTransform rootRect = root.GetComponent<RectTransform>();
-            rootRect.sizeDelta = new Vector2(200f, 50f);
-
-            // Background
-            GameObject bg = new GameObject("Background", typeof(RectTransform), typeof(Image));
-            bg.transform.SetParent(root.transform, worldPositionStays: false);
-            Image bgImage = bg.GetComponent<Image>();
-            bgImage.color = new Color(0f, 0f, 0f, 0.55f);
-            RectTransform bgRect = bg.GetComponent<RectTransform>();
-            bgRect.anchorMin = Vector2.zero;
-            bgRect.anchorMax = Vector2.one;
-            bgRect.pivot     = new Vector2(0.5f, 0.5f);
-            bgRect.anchoredPosition = Vector2.zero;
-            bgRect.sizeDelta        = Vector2.zero;
-
-            // PromptLabel
-            GameObject label = CreateTmpText("PromptLabel", root.transform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), 5, TextAlignmentOptions.Center, Vector2.zero);
-            TMP_Text labelTmp = label.GetComponent<TMP_Text>();
-            labelTmp.text = "Press [Trigger] to talk";
-            RectTransform labelRect = label.GetComponent<RectTransform>();
-            labelRect.anchorMin = Vector2.zero;
-            labelRect.anchorMax = Vector2.one;
-            labelRect.pivot     = new Vector2(0.5f, 0.5f);
-            labelRect.anchoredPosition = Vector2.zero;
-            labelRect.sizeDelta        = new Vector2(-12f, -8f);
-
-            DialoguePromptUI prompt = root.AddComponent<DialoguePromptUI>();
-            ApplySerializedField(prompt, "promptRoot",  root);
-            ApplySerializedField(prompt, "promptLabel", labelTmp);
-
-            try
-            {
-                GameObject saved = PrefabUtility.SaveAsPrefabAsset(root, path);
-                if (saved == null)
-                {
-                    Warn($"[C] SaveAsPrefabAsset returned null for {path}");
-                }
-                else
-                {
-                    s_uiPrefabsCreated++;
-                    Log($"[C] Created UI prefab: {path}");
-                }
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(root);
-            }
-        }
-
         // ═════════════════════════════════════════════════════════════════
         // D. Dialogue ScriptableObject assets
         // ═════════════════════════════════════════════════════════════════
@@ -735,23 +581,8 @@ namespace AR_Grind_mill.Dialogue.EditorTools
                     }
                 }
 
-                DialoguePromptUI prompt = instance.GetComponent<DialoguePromptUI>();
-                if (prompt != null)
-                {
-                    Transform promptRoot = instance.transform.Find("PromptRoot");
-                    if (promptRoot != null)
-                    {
-                        prompt.promptRoot = promptRoot.gameObject;
-                    }
-                    else
-                    {
-                        Warn($"[E] PromptRoot child missing on {npcName}");
-                    }
-                }
-
                 EditorUtility.SetDirty(controller);
                 EditorUtility.SetDirty(ui);
-                EditorUtility.SetDirty(prompt);
 
                 bool saved = PrefabUtility.SaveAsPrefabAsset(instance, npcPath);
                 if (!saved)
@@ -906,8 +737,8 @@ namespace AR_Grind_mill.Dialogue.EditorTools
 
         /// <summary>
         /// Assigns a private serialized field via <see cref="SerializedObject"/> on a
-        /// non-asset MonoBehaviour. Necessary because DialogueChoiceButton / DialoguePromptUI
-        /// declare those fields as <c>[SerializeField] private</c>.
+        /// non-asset MonoBehaviour. Necessary because <see cref="DialogueChoiceButton"/>
+        /// declares those fields as <c>[SerializeField] private</c>.
         /// </summary>
         private static void ApplySerializedField(MonoBehaviour target, string fieldName, object value)
         {
@@ -1008,7 +839,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
 
         private static void ResetTally()
         {
-            s_animatorsCreated   = 0;
             s_npcPrefabsCreated  = 0;
             s_uiPrefabsCreated   = 0;
             s_nodesCreated       = 0;
@@ -1035,13 +865,12 @@ namespace AR_Grind_mill.Dialogue.EditorTools
 
         private static void PrintSummary()
         {
-            int total = s_animatorsCreated + s_npcPrefabsCreated + s_uiPrefabsCreated + s_nodesCreated + s_graphsCreated + s_prefabsRewired + s_scenePlacements;
+            int total = s_npcPrefabsCreated + s_uiPrefabsCreated + s_nodesCreated + s_graphsCreated + s_prefabsRewired + s_scenePlacements;
 
             string banner = "\n" +
                 "════════════════════════════════════════════════════════════════════\n" +
                 " WireDialogueSystem — SUMMARY\n" +
                 "════════════════════════════════════════════════════════════════════\n" +
-                $" Animator controllers created  : {s_animatorsCreated}\n" +
                 $" NPC prefabs created          : {s_npcPrefabsCreated}\n" +
                 $" UI prefabs created           : {s_uiPrefabsCreated}\n" +
                 $" DialogueNode assets created  : {s_nodesCreated}\n" +

@@ -6,14 +6,13 @@ using AR_Grind_mill.Dialogue.Data;
 namespace AR_Grind_mill.Dialogue.Runtime
 {
     /// <summary>
-    /// Per-NPC orchestrator. Owns the dialogue graph, drives the animator + head look,
+    /// Per-NPC orchestrator. Owns the dialogue graph, drives the head look,
     /// listens for the player's start action while they are in proximity, and emits the
     /// shared <see cref="DialogueEvents"/> so the UI layer can render the conversation.
     ///
     /// Wiring (Inspector):
     ///   graph              — DialogueGraph ScriptableObject (assignable at runtime)
     ///   proximityTrigger   — NPCProximityTrigger on the same NPC root
-    ///   animatorDriver     — NPCAnimatorDriver on the same NPC root
     ///   headLook           — HeadLookAtPlayer on the head bone (or anywhere)
     ///   startAction        — InputActionReference, bind to &lt;XRController&gt;/{PrimaryAction}
     ///   endAction          — InputActionReference, optional, lets player dismiss early
@@ -27,9 +26,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
         [Header("Components")]
         [Tooltip("Proximity sphere that tells us whether the player can start a conversation.")]
         public NPCProximityTrigger proximityTrigger;
-
-        [Tooltip("Animator + voice wrapper. Talks / plays gestures / plays voice clips.")]
-        public NPCAnimatorDriver animatorDriver;
 
         [Tooltip("Head look-at-player rig. Enabled only while talking.")]
         public HeadLookAtPlayer headLook;
@@ -60,12 +56,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 Debug.LogError(
                     $"[{nameof(NPCDialogueController)}] '{name}' has no DialogueGraph assigned. " +
                     $"Drag a graph asset into the Inspector.",
-                    this);
-            }
-            if (animatorDriver == null)
-            {
-                Debug.LogError(
-                    $"[{nameof(NPCDialogueController)}] '{name}' has no NPCAnimatorDriver assigned.",
                     this);
             }
             if (proximityTrigger == null)
@@ -224,10 +214,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 return;
             }
 
-            if (animatorDriver != null)
-            {
-                animatorDriver.SetTalking(true);
-            }
             if (headLook != null)
             {
                 headLook.SetActive(true);
@@ -267,10 +253,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
         {
             if (!isTalking) return;
 
-            if (animatorDriver != null)
-            {
-                animatorDriver.SetTalking(false);
-            }
             if (headLook != null)
             {
                 headLook.SetActive(false);
@@ -295,18 +277,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 : (IReadOnlyList<DialogueChoice>)System.Array.Empty<DialogueChoice>();
 
             DialogueLine line = currentNode.line;
-
-            if (animatorDriver != null)
-            {
-                if (!string.IsNullOrEmpty(line.animationTag))
-                {
-                    animatorDriver.PlayGesture(line.animationTag);
-                }
-                if (line.voiceClip != null)
-                {
-                    animatorDriver.PlayVoice(line.voiceClip);
-                }
-            }
 
             DialogueEvents.RaiseNodePresented(line, currentChoices);
 
