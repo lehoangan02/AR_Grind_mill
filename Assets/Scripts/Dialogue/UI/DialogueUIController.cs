@@ -51,8 +51,7 @@ namespace AR_Grind_mill.Dialogue.UI
         public float forwardOffset = 0.6f;
 
         [Tooltip("Uniform local scale applied to the canvas. 0.005 ≈ 30 cm tall panel in world space.")]
-        [Range(0.1f, 5f)]
-        public float canvasScale = 0.005f;
+        public float canvasScale = 0.001f;
 
         [Header("Billboard")]
         [Tooltip("If true the canvas stays upright (no pitch) and only yaws toward the player — " +

@@ -1184,18 +1184,58 @@ PrefabInstance:
       propertyPath: m_Name
       value: MrSix
       objectReference: {fileID: 0}
-    - target: {fileID: 2092559080585436733, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
-      propertyPath: canvasScale
-      value: 0.1
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3457573378485884292, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 1598355376}
-    - target: {fileID: 5550389185447826504, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3980650184831174421, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5403175280584026913, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8049104919212677362, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1598355376}
     - target: {fileID: 8582788771834337982, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2
@@ -1234,6 +1274,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8582788771834337982, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051923740925199653, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051923740925199653, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051923740925199653, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051923740925199653, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051923740925199653, guid: c7ba77357355c1518bdb6f5f9816e3ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1473,6 +1533,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 25413386572861358, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1598355376}
     - target: {fileID: 2482760140610719821, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2
@@ -1513,14 +1577,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2688105331065617744, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166513517910162588, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 1598355376}
     - target: {fileID: 6711396400624521605, guid: 8ceed3a75f4de0cb2aae5055431835a6, type: 3}
       propertyPath: m_Name
       value: MrsFour
