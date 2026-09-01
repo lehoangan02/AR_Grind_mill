@@ -37,6 +37,8 @@ namespace AR_Grind_mill.Dialogue.Runtime
         [Tooltip("Optional action that ENDS a conversation early (e.g. right-hand grip).")]
         public InputActionReference endAction;
 
+        private const string TalkingParamName = "IsTalking";
+
         private DialogueNode currentNode;
         private IReadOnlyList<DialogueChoice> currentChoices;
         private bool isTalking;
@@ -44,6 +46,9 @@ namespace AR_Grind_mill.Dialogue.Runtime
 
         private bool startActionWasEnabled;
         private bool endActionWasEnabled;
+
+        private Animator animator;
+        private static readonly int TalkingParamHash = Animator.StringToHash(TalkingParamName);
 
         // ──────────────────────────────────────────────────────────────────────
         // Lifecycle
@@ -64,6 +69,30 @@ namespace AR_Grind_mill.Dialogue.Runtime
                     $"[{nameof(NPCDialogueController)}] '{name}' has no NPCProximityTrigger assigned.",
                     this);
             }
+
+            animator = GetComponentInChildren<Animator>(includeInactive: true);
+            if (animator == null)
+            {
+                Debug.LogWarning(
+                    $"[{nameof(NPCDialogueController)}] '{name}' has no Animator in children — talking animation will not switch.",
+                    this);
+            }
+            else if (!HasParameter(animator, TalkingParamName))
+            {
+                Debug.LogWarning(
+                    $"[{nameof(NPCDialogueController)}] '{name}' Animator on '{animator.name}' has no '{TalkingParamName}' bool parameter — talking animation will not switch.",
+                    animator);
+            }
+        }
+
+        private static bool HasParameter(Animator a, string paramName)
+        {
+            if (a == null || a.runtimeAnimatorController == null) return false;
+            foreach (var p in a.parameters)
+            {
+                if (p.name == paramName) return true;
+            }
+            return false;
         }
 
         private void OnEnable()
@@ -219,6 +248,11 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 headLook.SetActive(true);
             }
 
+            if (animator != null)
+            {
+                animator.SetBool(TalkingParamHash, true);
+            }
+
             DialogueEvents.RaiseDialogueStarted(graph);
             PresentCurrentNode();
         }
@@ -256,6 +290,11 @@ namespace AR_Grind_mill.Dialogue.Runtime
             if (headLook != null)
             {
                 headLook.SetActive(false);
+            }
+
+            if (animator != null)
+            {
+                animator.SetBool(TalkingParamHash, false);
             }
 
             DialogueEvents.RaiseDialogueEnded();

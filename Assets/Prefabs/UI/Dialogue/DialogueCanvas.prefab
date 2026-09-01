@@ -691,7 +691,7 @@ MonoBehaviour:
   choicesRoot: {fileID: 8807241992969989639}
   choiceButtonPrefab: {fileID: 4216555902118619430, guid: 6e1373189d25489c39cea4cc546142eb, type: 3}
   anchor: {fileID: 0}
-  headHeightOffset: 1.7
+  headHeightOffset: 0.7
   forwardOffset: 0.35
   canvasScale: 0.001
   lockPitchToHorizontal: 1
