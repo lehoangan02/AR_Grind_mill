@@ -1626,7 +1626,8 @@ MonoBehaviour:
   smoothTime: 0.15
   maxYawDegrees: 70
   maxPitchDegrees: 30
-  maxDistance: 8
+  maxDistance: 2
+  engageSmoothTime: 0.25
 --- !u!1 &692129320
 GameObject:
   m_ObjectHideFlags: 0

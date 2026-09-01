@@ -50,11 +50,18 @@ namespace AR_Grind_mill.Dialogue.Runtime
         [Min(0f)]
         public float maxDistance = 8f;
 
+        [Tooltip("Seconds to smoothly engage/disengage the look-at when the player crosses the maxDistance threshold. " +
+                 "0 = snap (no ramp).")]
+        [Min(0f)]
+        public float engageSmoothTime = 0.25f;
+
         // ---- Cached state ----
         private Animator animator;
         private bool useHumanoidIK;
         private Quaternion currentRotation;
         private Quaternion restRotation;
+        private float lookActivity;
+        private float lookActivityVelocity;
         private bool warnedMissingCamera;
 
         private void Awake()
@@ -120,13 +127,7 @@ namespace AR_Grind_mill.Dialogue.Runtime
 
             // Body=0.3 (slight upper-body lean), Head=1, Eyes=0 (face/eyes only).
             // clampWeight=0.5 limits how far past the cone the head can twist.
-            // Weight=0 returns the head to the controller's rest pose.
-            float w = Mathf.Clamp01(weight);
-            if (maxDistance > 0f &&
-                Vector3.Distance(transform.position, playerCamera.position) > maxDistance)
-            {
-                w = 0f;
-            }
+            float w = Mathf.Clamp01(weight) * lookActivity;
             animator.SetLookAtWeight(w, 0.3f, 1f, 0f, 0.5f);
             animator.SetLookAtPosition(playerCamera.position);
         }
@@ -135,23 +136,24 @@ namespace AR_Grind_mill.Dialogue.Runtime
 
         private void LateUpdate()
         {
+            UpdateLookActivity();
+
             if (useHumanoidIK) return; // Handled by OnAnimatorIK.
             if (headBone == null) return;
 
             if (playerCamera == null && !TryRecoverPlayerCamera()) return;
 
-            bool inRange = maxDistance <= 0f ||
-                Vector3.Distance(transform.position, playerCamera.position) <= maxDistance;
+            Quaternion lookAtWorld;
+            Transform restReference = headBone.parent != null ? headBone.parent : transform;
+            Vector3 restForward = restReference.forward;
+            Vector3 toPlayer = playerCamera.position - headBone.position;
 
-            Quaternion targetWorld;
-            if (inRange)
+            if (toPlayer.sqrMagnitude < 0.0001f)
             {
-                Transform restReference = headBone.parent != null ? headBone.parent : transform;
-                Vector3 restForward = restReference.forward;
-
-                Vector3 toPlayer = playerCamera.position - headBone.position;
-                if (toPlayer.sqrMagnitude < 0.0001f) return;
-
+                lookAtWorld = restRotation;
+            }
+            else
+            {
                 Quaternion desiredWorld = Quaternion.LookRotation(toPlayer.normalized, Vector3.up);
                 Quaternion restRot = Quaternion.LookRotation(restForward, Vector3.up);
 
@@ -167,14 +169,12 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 deltaEuler.y = Mathf.Clamp(deltaEuler.y, -maxYawDegrees, maxYawDegrees);
                 deltaEuler.x = Mathf.Clamp(deltaEuler.x, -maxPitchDegrees, maxPitchDegrees);
 
-                Quaternion clampedDelta = Quaternion.Euler(deltaEuler);
-                targetWorld = restRot * clampedDelta;
+                lookAtWorld = restRot * Quaternion.Euler(deltaEuler);
             }
-            else
-            {
-                // Out of range — ease the head back to its captured rest pose.
-                targetWorld = restRotation;
-            }
+
+            Quaternion targetWorld = lookActivity >= 1f
+                ? lookAtWorld
+                : Quaternion.Slerp(restRotation, lookAtWorld, lookActivity);
 
             if (smoothTime <= 0f)
             {
@@ -189,6 +189,43 @@ namespace AR_Grind_mill.Dialogue.Runtime
             }
 
             headBone.rotation = currentRotation;
+        }
+
+        private void UpdateLookActivity()
+        {
+            float target;
+            if (playerCamera == null && !TryRecoverPlayerCamera())
+            {
+                target = 0f;
+            }
+            else
+            {
+                bool inRange = maxDistance <= 0f ||
+                    Vector3.Distance(transform.position, playerCamera.position) <= maxDistance;
+                target = inRange ? 1f : 0f;
+            }
+
+            if (engageSmoothTime <= 0f)
+            {
+                lookActivity = target;
+                lookActivityVelocity = 0f;
+                return;
+            }
+
+            float dt = Mathf.Max(Time.deltaTime, 1e-4f);
+            lookActivity = Mathf.SmoothDamp(
+                lookActivity,
+                target,
+                ref lookActivityVelocity,
+                engageSmoothTime,
+                Mathf.Infinity,
+                dt);
+
+            if (Mathf.Abs(lookActivity - target) < 1e-3f)
+            {
+                lookActivity = target;
+                lookActivityVelocity = 0f;
+            }
         }
 
         // ----- Helpers -----
