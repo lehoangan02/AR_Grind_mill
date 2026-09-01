@@ -14,9 +14,10 @@ namespace Khoa.Farming
         Step3_TakeWhiteRice,    // Bước 3: Nhặt thúng gạo trắng mang sang thau vo gạo
         Step4_ScoopWater,       // Bước 4: Múc nước từ chum đổ vào thau gạo
         Step5_WashAndDrain,     // Bước 5: Dùng tay vo gạo và nghiêng thau chắt nước
-        Step6_IgniteStove,      // Bước 6: Xếp củi vào bếp và châm lửa
-        Step7_CookPot,          // Bước 7: Cho gạo vo + nước vào nồi gang, đậy nắp đặt lên bếp
-        Step8_ServeCookedRice,  // Bước 8: Cơm chín thơm dẻo! Mở nắp xới cơm ra bát
+        Step6_TakeWashedRice,   // Bước 6: Lấy gạo đã vo thật ra khỏi thau
+        Step7_IgniteStove,      // Bước 7: Xếp củi vào bếp và châm lửa
+        Step8_CookPot,          // Bước 8: Cho gạo vo + nước vào nồi gang, đậy nắp đặt lên bếp
+        Step9_ServeCookedRice,  // Bước 9: Mở nắp và dùng muôi xới cơm
         Completed               // Đã hoàn thành toàn bộ chuỗi ẩm thực
     }
 
@@ -41,23 +42,40 @@ namespace Khoa.Farming
 
         [Header("Current Progress")]
         public CookingQuestStep currentStep = CookingQuestStep.Step1_PourPaddy;
+        [Tooltip("Billboard yaw follows the active XR camera without tilting toward the player's head.")]
+        public bool faceActiveCamera = true;
 
         // Events
         public event Action<CookingQuestStep> OnStepChanged;
 
-        private void Start()
+        private bool isSubscribed;
+
+        private void OnEnable()
         {
             SubscribeEvents();
             UpdateGuideUI();
         }
 
-        private void OnDestroy()
+        private void OnDisable()
         {
             UnsubscribeEvents();
         }
 
+        private void LateUpdate()
+        {
+            if (!faceActiveCamera || Camera.main == null) return;
+            Vector3 direction = transform.position - Camera.main.transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                transform.rotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            }
+        }
+
         private void SubscribeEvents()
         {
+            if (isSubscribed) return;
+            isSubscribed = true;
             if (grindMill != null)
             {
                 grindMill.OnStateChanged += HandleMillStateChanged;
@@ -87,6 +105,8 @@ namespace Khoa.Farming
 
         private void UnsubscribeEvents()
         {
+            if (!isSubscribed) return;
+            isSubscribed = false;
             if (grindMill != null)
             {
                 grindMill.OnStateChanged -= HandleMillStateChanged;
@@ -154,7 +174,7 @@ namespace Khoa.Farming
             }
             else if (state == RiceWashingState.WashedRiceReady && currentStep == CookingQuestStep.Step5_WashAndDrain)
             {
-                SetStep(CookingQuestStep.Step6_IgniteStove);
+                SetStep(CookingQuestStep.Step6_TakeWashedRice);
             }
         }
 
@@ -168,17 +188,17 @@ namespace Khoa.Farming
 
         private void HandleRiceWashedCompleted(WhiteRiceItem washedRice)
         {
-            if (currentStep < CookingQuestStep.Step6_IgniteStove)
+            if (washedRice != null && washedRice.isWashed && currentStep == CookingQuestStep.Step6_TakeWashedRice)
             {
-                SetStep(CookingQuestStep.Step6_IgniteStove);
+                SetStep(CookingQuestStep.Step7_IgniteStove);
             }
         }
 
         private void HandleStoveFireChanged(bool isBurning)
         {
-            if (isBurning && (currentStep == CookingQuestStep.Step6_IgniteStove || currentStep < CookingQuestStep.Step7_CookPot))
+            if (isBurning && currentStep == CookingQuestStep.Step7_IgniteStove)
             {
-                SetStep(CookingQuestStep.Step7_CookPot);
+                SetStep(CookingQuestStep.Step8_CookPot);
             }
         }
 
@@ -186,13 +206,13 @@ namespace Khoa.Farming
         {
             if (state == CookingState.Cooked)
             {
-                SetStep(CookingQuestStep.Step8_ServeCookedRice);
+                SetStep(CookingQuestStep.Step9_ServeCookedRice);
             }
         }
 
         private void HandleCookingProgressChanged(float progressRatio)
         {
-            if (currentStep == CookingQuestStep.Step7_CookPot && progressText != null)
+            if (currentStep == CookingQuestStep.Step8_CookPot && progressText != null)
             {
                 progressText.text = $"Cơm đang sôi đun: {(progressRatio * 100f):F0}%";
             }
@@ -210,36 +230,40 @@ namespace Khoa.Farming
             switch (currentStep)
             {
                 case CookingQuestStep.Step1_PourPaddy:
-                    stepText.text = "🌾 <b>Bước 1:</b> Đổ giỏ thóc vàng vào phễu cối xay gạo.";
+                    stepText.text = "<b>Bước 1:</b> Đổ giỏ thóc đầy vào phễu cối xay.";
                     if (progressText != null) progressText.text = "Chờ đổ thóc...";
                     break;
                 case CookingQuestStep.Step2_GrindMill:
-                    stepText.text = "⚙️ <b>Bước 2:</b> Nắm cần quay cối xay lúa thành gạo trắng.";
+                    stepText.text = "<b>Bước 2:</b> Grip để nắm cần, quay đều quanh trục cối.";
                     break;
                 case CookingQuestStep.Step3_TakeWhiteRice:
-                    stepText.text = "🧺 <b>Bước 3:</b> Nhặt thúng gạo trắng sạch mang sang thau vo gạo.";
+                    stepText.text = "<b>Bước 3:</b> Grip nhặt gạo trắng và đổ vào thau vo.";
                     if (progressText != null) progressText.text = "Xay hoàn tất 100%!";
                     break;
                 case CookingQuestStep.Step4_ScoopWater:
-                    stepText.text = "🥥 <b>Bước 4:</b> Cầm gáo múc nước từ chum đổ vào thau gạo.";
+                    stepText.text = "<b>Bước 4:</b> Nhúng gáo vào chum, nghiêng miệng gáo về thau.";
                     if (progressText != null) progressText.text = "Cần thêm nước để vo gạo";
                     break;
                 case CookingQuestStep.Step5_WashAndDrain:
-                    stepText.text = "✋ <b>Bước 5:</b> Dùng tay khuấy vo gạo cho sạch rồi nghiêng thau chắt nước.";
+                    stepText.text = "<b>Bước 5:</b> Cầm que vo, khuấy vòng tròn đến 100%, rồi nghiêng thau chắt nước.";
                     break;
-                case CookingQuestStep.Step6_IgniteStove:
-                    stepText.text = "🪵 <b>Bước 6:</b> Xếp củi vào bếp củi và quẹt que diêm nhóm lửa.";
+                case CookingQuestStep.Step6_TakeWashedRice:
+                    stepText.text = "<b>Bước 6:</b> Grip cầm muôi chuyển gạo, Trigger để lấy gạo đã ráo.";
+                    if (progressText != null) progressText.text = "Dev simulator: chạm thau và nhấn Q";
+                    break;
+                case CookingQuestStep.Step7_IgniteStove:
+                    stepText.text = "<b>Bước 7:</b> Cho củi vào bếp, quẹt diêm đủ nhanh trên miếng striker.";
                     if (progressText != null) progressText.text = "Bếp củi chưa bén lửa";
                     break;
-                case CookingQuestStep.Step7_CookPot:
-                    stepText.text = "🍲 <b>Bước 7:</b> Cho gạo vo + nước vào nồi gang, đậy nắp đặt lên kiềng bếp.";
+                case CookingQuestStep.Step8_CookPot:
+                    stepText.text = "<b>Bước 8:</b> Cho gạo vo + đủ nước vào nồi, đậy nắp và đặt lên bếp.";
                     break;
-                case CookingQuestStep.Step8_ServeCookedRice:
-                    stepText.text = "🍚 <b>Bước 8:</b> Cơm gang đã chín tới! Mở nắp vung xới cơm ra bát.";
-                    if (progressText != null) progressText.text = "✨ Cơm dẻo thơm lừng!";
+                case CookingQuestStep.Step9_ServeCookedRice:
+                    stepText.text = "<b>Bước 9:</b> Mở nắp, Grip cầm muôi và Trigger để xới cơm.";
+                    if (progressText != null) progressText.text = "Dev simulator: đưa muôi vào nồi và nhấn E";
                     break;
                 case CookingQuestStep.Completed:
-                    stepText.text = "🎉 <b>HOÀN THÀNH:</b> Bát cơm trắng thơm dẻo miền Tây đã sẵn sàng!";
+                    stepText.text = "<b>HOÀN THÀNH:</b> Bát cơm đã được xới ra thật.";
                     if (progressText != null) progressText.text = "Thưởng thức thành quả nông nghiệp & ẩm thực!";
                     break;
             }

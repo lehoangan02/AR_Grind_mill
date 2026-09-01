@@ -21,6 +21,7 @@ namespace Khoa.Farming
 
         [Tooltip("Thời gian cháy của que diêm (giây)")]
         public float burnDuration = 15f;
+        [Min(0.01f)] public float minimumStrikeSpeed = 0.8f;
 
         [Header("Visual & FX")]
         [Tooltip("Đốm lửa trên đầu que diêm")]
@@ -85,6 +86,17 @@ namespace Khoa.Farming
             Debug.Log("<color=red>[MatchItem] 🔥 Đã quẹt que diêm bùng cháy!</color>");
         }
 
+        public bool TryStrike(MatchStriker striker, float relativeSpeed)
+        {
+            if (isLit || striker == null || relativeSpeed < minimumStrikeSpeed)
+            {
+                return false;
+            }
+
+            StrikeMatch();
+            return true;
+        }
+
         /// <summary>
         /// Dập tắt que diêm.
         /// </summary>
@@ -95,14 +107,19 @@ namespace Khoa.Farming
             Debug.Log("[MatchItem] Que diêm đã tàn.");
         }
 
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision == null) return;
+            MatchStriker striker = collision.collider.GetComponentInParent<MatchStriker>();
+            TryStrike(striker, collision.relativeVelocity.magnitude);
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            if (other == null) return;
-
-            // Quẹt vào bao diêm hoặc vật cứng để đánh lửa
-            if (!isLit && (other.name.Contains("Box") || other.name.Contains("Striker") || other.name.Contains("Match") || other.name.Contains("Table") || other.name.Contains("Stove")))
+            MatchStriker striker = other != null ? other.GetComponentInParent<MatchStriker>() : null;
+            if (striker != null && rb != null)
             {
-                StrikeMatch();
+                TryStrike(striker, rb.linearVelocity.magnitude);
             }
         }
 

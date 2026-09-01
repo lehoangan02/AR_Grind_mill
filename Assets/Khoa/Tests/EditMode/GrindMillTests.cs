@@ -64,7 +64,10 @@ namespace Khoa.Farming.Tests
                 spawnedRice = rice;
             };
 
-            millStation.CompleteMilling();
+            for (int i = 0; i < 16; i++)
+            {
+                millStation.ProcessRotation(45f);
+            }
 
             Assert.AreEqual(GrindMillState.Completed, millStation.currentState);
             Assert.AreEqual(100f, millStation.progress);
@@ -76,6 +79,50 @@ namespace Khoa.Farming.Tests
             {
                 Object.DestroyImmediate(spawnedRice.gameObject);
             }
+        }
+
+        [Test]
+        public void TryLoadPaddy_ConsumesValidSourceExactlyOnce()
+        {
+            GameObject sourceGO = new GameObject("SourceWithMultipleColliders");
+            PaddyBatchItem source = sourceGO.AddComponent<PaddyBatchItem>();
+
+            Assert.IsTrue(millStation.TryLoadPaddy(source));
+            Assert.IsFalse(source.HasPaddy);
+            Assert.IsFalse(millStation.TryLoadPaddy(source));
+            Assert.AreEqual(GrindMillState.ReadyToGrind, millStation.currentState);
+
+            Object.DestroyImmediate(sourceGO);
+        }
+
+        [Test]
+        public void TryLoadPaddy_RejectsEmptyAndUnrelatedObjects()
+        {
+            GameObject emptyGO = new GameObject("Paddy Rice Basket By Name Only");
+            PaddyBatchItem emptySource = emptyGO.AddComponent<PaddyBatchItem>();
+            emptySource.SetHasPaddy(false);
+
+            Assert.IsFalse(millStation.TryLoadPaddy(emptySource));
+            Assert.IsFalse(millStation.TryLoadPaddy(null));
+            Assert.AreEqual(GrindMillState.Empty, millStation.currentState);
+
+            Object.DestroyImmediate(emptyGO);
+        }
+
+        [Test]
+        public void CompleteMilling_CannotSpawnDuplicateOutput()
+        {
+            millStation.PourPaddyIntoMill();
+            int outputs = 0;
+            WhiteRiceItem output = null;
+            millStation.OnMillingCompleted += rice => { outputs++; output = rice; };
+            for (int i = 0; i < 16; i++) millStation.ProcessRotation(45f);
+
+            bool repeated = millStation.CompleteMilling();
+
+            Assert.IsFalse(repeated);
+            Assert.AreEqual(1, outputs);
+            if (output != null) Object.DestroyImmediate(output.gameObject);
         }
     }
 }

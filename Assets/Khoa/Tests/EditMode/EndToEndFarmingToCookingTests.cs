@@ -8,7 +8,7 @@ namespace Khoa.Farming.Tests
     public class EndToEndFarmingToCookingTests
     {
         [Test]
-        public void FullCycle_FromHarvestToCookedRice_SucceedsSeamlessly()
+        public void DomainFlow_FromHarvestToCookedRice_PreservesRequiredStateOrder()
         {
             // 1. Phơi lúa trên sân phơi
             GameObject bundleGO = new GameObject("Test_RiceBundle");
@@ -40,7 +40,7 @@ namespace Khoa.Farming.Tests
             WhiteRiceItem milledRice = null;
             mill.OnMillingCompleted += rice => milledRice = rice;
 
-            mill.CompleteMilling();
+            for (int i = 0; i < 32; i++) mill.ProcessRotation(45f);
             Assert.AreEqual(GrindMillState.Completed, mill.currentState);
             Assert.IsNotNull(milledRice);
 
@@ -54,7 +54,7 @@ namespace Khoa.Farming.Tests
             washPot.AddWater(1.0f);
             Assert.AreEqual(RiceWashingState.HasRiceAndWater, washPot.currentState);
 
-            washPot.StirRice(80f);
+            washPot.StirRice(100f);
             washPot.DrainWater();
             Assert.AreEqual(RiceWashingState.WashedRiceReady, washPot.currentState);
 

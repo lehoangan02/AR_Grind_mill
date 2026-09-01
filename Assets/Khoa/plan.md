@@ -34,8 +34,8 @@ Hệ thống chỉ được ghi `100%` khi đạt đủ tất cả điều kiệ
 
 - [ ] Chuỗi gameplay hoàn thành được bằng tay XR trong scene chính, không gọi trực tiếp các hàm `Complete...()`.
 - [ ] Mỗi bước có action, feedback và kết quả rõ ràng; quest guide không đi trước trạng thái gameplay thật.
-- [ ] Không thể bỏ qua bước vo gạo, nhóm lửa, đậy nắp hoặc đong đúng nguyên liệu.
-- [ ] Không thể nhân vô hạn gạo hoặc bát cơm từ một mẻ.
+- [x] Không thể bỏ qua bước vo gạo, nhóm lửa, đậy nắp hoặc đong đúng nguyên liệu.
+- [x] Không thể nhân vô hạn gạo hoặc bát cơm từ một mẻ.
 - [ ] Scene không còn reference bắt buộc bị `null` và không dựa vào primitive fallback trong bản hoàn thiện.
 - [ ] EditMode, PlayMode, scene validation và build mục tiêu đều pass.
 - [ ] Có PlayMode test đi qua collider/trigger/XR interaction thật, không chỉ gọi helper method.
@@ -55,20 +55,20 @@ Hiện trạng:
 
 Việc cần làm:
 
-- [ ] Tạo hopper trigger riêng có collider `isTrigger = true`, gắn receiver script đúng object nhận callback.
-- [ ] Dùng component/interface rõ ràng cho nguồn thóc; không dùng tên GameObject làm điều kiện chính.
-- [ ] Chỉ nhận giỏ/bó thóc hợp lệ và còn nguyên liệu.
-- [ ] Chỉ tiêu thụ đầu vào sau khi cối xác nhận đã nhận mẻ thành công.
-- [ ] Không nhận thêm thóc khi đang `ReadyToGrind` hoặc `Grinding`.
-- [ ] Quy định rõ khi nào được bắt đầu mẻ mới sau `Completed` và sau khi người chơi lấy output.
-- [ ] Bảo vệ `CompleteMilling()` để một mẻ chỉ sinh đúng một output.
+- [x] Tạo hopper trigger riêng có collider `isTrigger = true`, gắn receiver script đúng object nhận callback.
+- [x] Dùng component/interface rõ ràng cho nguồn thóc; không dùng tên GameObject làm điều kiện chính.
+- [x] Chỉ nhận giỏ/bó thóc hợp lệ và còn nguyên liệu.
+- [x] Chỉ tiêu thụ đầu vào sau khi cối xác nhận đã nhận mẻ thành công.
+- [x] Không nhận thêm thóc khi đang `ReadyToGrind` hoặc `Grinding`.
+- [x] Quy định rõ khi nào được bắt đầu mẻ mới sau `Completed` và sau khi người chơi lấy output.
+- [x] Bảo vệ `CompleteMilling()` để một mẻ chỉ sinh đúng một output.
 
 Acceptance tests:
 
-- [ ] Thả đúng giỏ thóc vào hopper làm cối chuyển `Empty -> ReadyToGrind` và trừ nguyên liệu đúng một lần.
-- [ ] Gạo trắng, giỏ rỗng và object chỉ có tên chứa `Rice` không nạp được cối.
-- [ ] Hai collider của cùng một giỏ không làm nạp hai lần.
-- [ ] Gọi hoàn thành lặp lại không sinh thêm output.
+- [x] Thả đúng giỏ thóc vào hopper làm cối chuyển `Empty -> ReadyToGrind` và trừ nguyên liệu đúng một lần (domain/transaction test; physics trigger PlayMode vẫn ở mục 8.2).
+- [x] Gạo trắng, giỏ rỗng và object chỉ có tên chứa `Rice` không nạp được cối.
+- [x] Hai collider của cùng một giỏ không làm nạp hai lần.
+- [x] Gọi hoàn thành lặp lại không sinh thêm output.
 
 ### 4.2. Tạo thao tác lấy gạo đã vo ra khỏi thau
 
@@ -79,17 +79,17 @@ Hiện trạng:
 
 Việc cần làm:
 
-- [ ] Chọn interaction thực tế: nhấc rá/thau để đổ sang nồi, dùng dụng cụ xúc, hoặc spawn/snap một phần gạo đã vo sau khi chắt.
-- [ ] Tạo đúng một `WhiteRiceItem` có `isWashed = true` và giữ đúng lượng gạo của mẻ.
-- [ ] Không cho lấy gạo khi chưa đạt ngưỡng sạch hoặc chưa chắt hết nước.
-- [ ] Sau khi lấy, reset thau đầy đủ: gạo, nước, wash progress, visual và state.
-- [ ] Chỉ chuyển quest sang bước bếp khi output gạo đã vo thực sự tồn tại hoặc đã được chuyển vào nồi.
+- [x] Chọn interaction thực tế: muôi chuyển gạo XR, Grip để cầm và Trigger để lấy từ thau.
+- [x] Tạo đúng một `WhiteRiceItem` có `isWashed = true` và giữ đúng lượng gạo của mẻ.
+- [x] Không cho lấy gạo khi chưa đạt ngưỡng sạch hoặc chưa chắt hết nước.
+- [x] Sau khi lấy, reset thau đầy đủ: gạo, nước, wash progress, visual và state.
+- [x] Chỉ chuyển quest sang bước bếp khi output gạo đã vo thực sự tồn tại hoặc đã được chuyển vào nồi.
 
 Acceptance tests:
 
 - [ ] Người chơi hoàn thành thao tác bằng XR mà không gọi `TakeOutWashedRice()` từ test/helper.
-- [ ] Một mẻ chỉ tạo một output.
-- [ ] Gạo chưa vo hoặc chưa chắt không thể trở thành `isWashed = true`.
+- [x] Một mẻ chỉ tạo một output.
+- [x] Gạo chưa vo hoặc chưa chắt không thể trở thành `isWashed = true`.
 
 ### 4.3. Tạo thao tác xới cơm thật và giới hạn output
 
@@ -100,11 +100,11 @@ Hiện trạng:
 
 Việc cần làm:
 
-- [ ] Chọn interaction: muôi xới XR, vùng scoop, hoặc select action có animation rõ ràng.
-- [ ] Thêm số khẩu phần còn lại hoặc quy tắc một nồi/một bát.
+- [x] Chọn interaction: muôi xới XR, Grip để cầm và Trigger/Activate để xới.
+- [x] Thêm số khẩu phần còn lại hoặc quy tắc một nồi/một bát.
 - [x] Mỗi thao tác hợp lệ chỉ sinh đúng một bát và trừ hết khẩu phần của mẻ một-bát hiện tại.
 - [x] Không cho xới khi nắp còn đóng, cơm chưa chín hoặc nồi đã hết.
-- [ ] Quest chỉ hoàn tất khi bát cơm thật được tạo từ thao tác của người chơi.
+- [x] Quest chỉ hoàn tất khi bát cơm thật được tạo từ thao tác của người chơi.
 
 Acceptance tests:
 
@@ -116,20 +116,20 @@ Acceptance tests:
 
 ### 5.1. Vo gạo phải dựa trên chuyển động thật
 
-- [ ] Thay cộng tiến độ một lần trong `OnTriggerEnter()` bằng theo dõi tay/dụng cụ khi nằm trong vùng vo.
-- [ ] Chỉ tăng tiến độ khi có quỹ đạo, khoảng cách và vận tốc hợp lệ; ưu tiên nhận diện chuyển động vòng/cọ xát thay vì đứng yên.
-- [ ] Có cooldown/rate limit để nhiều collider ngón tay không nhân tiến độ.
-- [ ] Chốt một ngưỡng sạch duy nhất; hiện comment/UI hướng tới 100% nhưng logic chấp nhận 60%.
-- [ ] Cho phép vo nhiều nước nếu thiết kế yêu cầu, đồng thời không reset sai tiến độ.
-- [ ] Visual độ đục phải khớp với wash progress thật.
+- [x] Thay cộng tiến độ một lần trong `OnTriggerEnter()` bằng theo dõi dụng cụ khi nằm trong vùng vo.
+- [x] Chỉ tăng tiến độ khi có bán kính, bước góc và khoảng thời gian mẫu hợp lệ; đứng yên không tăng.
+- [x] Có rate limit theo sample time/angle để callback trùng không nhân tiến độ.
+- [x] Chốt ngưỡng sạch duy nhất là 100%.
+- [x] Cho phép thêm nước vo tiếp mà không reset sai tiến độ.
+- [x] Visual độ đục khớp với wash progress thật.
 
 ### 5.2. Gáo nước và định lượng nước
 
-- [ ] Dùng spout/pour origin và hướng rót theo local transform, không dùng sphere cố định theo `Vector3.down`.
-- [ ] Chỉ trừ nước khi target hợp lệ nhận được nước.
+- [x] Dùng spout/pour origin và hướng rót theo local transform, không dùng sphere cố định theo `Vector3.down`.
+- [x] Chỉ trừ nước khi target hợp lệ nhận được nước.
 - [ ] Nếu rót trượt, thể hiện nước đổ ra đất nhưng không báo target đã nhận.
-- [ ] Thay nhận diện nguồn nước bằng component/tag/layer cụ thể; không dựa vào tên `Water` hoặc `Jar`.
-- [ ] Giới hạn dung tích của thau/nồi, không cho cộng nước vô hạn hoặc amount âm.
+- [x] Thay nhận diện nguồn nước bằng `WaterSource`; không dựa vào tên `Water` hoặc `Jar`.
+- [x] Giới hạn dung tích của thau/nồi, không cho cộng nước vô hạn hoặc amount âm.
 - [x] Thống nhất ngưỡng nước tối thiểu ở cả hai thứ tự thêm nguyên liệu: `1.0`.
 
 ### 5.3. Nồi phải chỉ nhận gạo đã vo
@@ -143,37 +143,37 @@ Acceptance tests:
 
 - [x] Cooking loop kiểm tra `isLidClosed`; nồi chỉ tăng cooking timer khi nắp đóng.
 - [x] Mở nắp khi đang sôi tạm dừng cooking progress và boiling FX/audio.
-- [ ] Chỉ snap khi nắp đúng orientation và đúng nồi; xử lý thả/giật ổn định với XR Grab.
+- [x] Chỉ snap khi nắp đúng orientation, đúng khoảng cách và đúng snap point độc lập của nồi.
 - [ ] Thực hiện rung/nảy nắp khi sôi bằng visual/animation an toàn, không phá physics hoặc gây rung camera.
 - [x] Không cho xới khi nắp còn đóng.
 
 ### 5.5. Heat source, nấu chín và cháy khét
 
-- [ ] Nồi chỉ nhận nhiệt từ `WoodStove` đang cháy; không dùng tên object chứa `Stove` để bật nhiệt.
-- [ ] Theo dõi nhiều collider contact ổn định; một child collider exit không được tắt nhiệt nếu nồi vẫn nằm trên bếp.
-- [ ] Cho phép tạm dừng/tiếp tục khi nhấc nồi khỏi bếp theo requirement.
+- [x] Nồi chỉ nhận nhiệt từ `WoodStove` đang cháy; không dùng tên object chứa `Stove` để bật nhiệt.
+- [x] Theo dõi nhiều collider contact ổn định; một child collider exit không tắt nhiệt nếu collider khác vẫn tiếp xúc.
+- [x] Cho phép tạm dừng/tiếp tục khi nhấc nồi khỏi bếp.
 - [x] Sửa FSM để `Cooked -> Burnt` thực sự có thể xảy ra khi tiếp tục đun.
 - [x] Bảo vệ `CompleteCooking()` và `BurnRice()` khỏi transition sai state.
 - [x] Reset gạo, nước, timer và state sau khi xới hết mẻ một-bát hiện tại.
 
 ### 5.6. Củi và que diêm
 
-- [ ] `WoodStove.Ignite()` phải yêu cầu match khác null, đang cháy và còn hiệu lực.
-- [ ] Không cho que diêm tự bén chỉ vì chạm object có tên `Table` hoặc `Stove`.
-- [ ] Tạo striker/matchbox riêng và yêu cầu vận tốc/quỹ đạo quẹt tối thiểu.
-- [ ] Bảo đảm callback order không làm việc thả que diêm chưa cháy vào bếp trở thành nhóm lửa ngẫu nhiên.
-- [ ] Chốt việc que diêm có bị tiêu thụ sau khi nhóm bếp hay không.
-- [ ] Quy định thêm củi khi bếp đang cháy và cập nhật count/fuel/visual nhất quán.
+- [x] `WoodStove.Ignite()` yêu cầu match khác null và đang cháy.
+- [x] Không cho que diêm tự bén chỉ vì chạm object có tên `Table` hoặc `Stove`.
+- [x] Tạo `MatchStriker` riêng và yêu cầu vận tốc quẹt tối thiểu.
+- [x] Thả que diêm chưa cháy vào bếp không thể nhóm lửa.
+- [x] Que diêm không bị tiêu thụ ngay khi nhóm bếp; nó tự tàn theo `burnDuration`.
+- [x] Thêm củi khi bếp đang cháy cộng fuel/count trong giới hạn và cập nhật visual.
 
 ## 6. P1 — XR interaction, physics và UX
 
 ### 6.1. Cần quay cối
 
-- [ ] Kiểm tra `XRGrabInteractable`, Rigidbody, collider và attach point trên setup thật.
-- [ ] Xác nhận tay người chơi không kéo cần rời khỏi pivot; chỉ xoay quanh trục cối.
-- [ ] Giới hạn spike tiến độ khi attach point đi qua góc `-180/180` hoặc tracking giật.
-- [ ] Chốt có cho quay hai chiều đều xay hay chỉ một chiều.
-- [ ] Haptic tỷ lệ với tốc độ nhưng có giới hạn tần suất/biên độ phù hợp thiết bị.
+- [x] Scene validator kiểm tra `XRGrabInteractable`, collider và reference của handle trên setup sinh thật.
+- [x] Handle tắt track position/rotation/scale nên tay không kéo cần rời pivot.
+- [x] Giới hạn mỗi sample tối đa 45 độ để chặn spike tracking.
+- [x] Thiết kế hiện tại cho quay hai chiều đều xay.
+- [x] Haptic tỷ lệ tốc độ, giới hạn 0.5 amplitude và 10 Hz trong code (mức thiết bị thật vẫn cần QA).
 - [ ] Keyboard simulator không được che giấu lỗi XR path.
 
 ### 6.2. Grab/snap và vật lý vật phẩm
@@ -186,9 +186,9 @@ Acceptance tests:
 
 ### 6.3. Quest guide
 
-- [ ] Quest chỉ tiến khi điều kiện gameplay thật đã hoàn thành, không chỉ dựa vào helper event có thể gọi trực tiếp.
-- [ ] Không bỏ qua bước lấy gạo đã vo, đậy nắp hoặc xới cơm.
-- [ ] Billboard luôn hướng về camera/player hoặc có vị trí dễ đọc trong khu bếp.
+- [x] Quest tiến theo state/output event thật của các hệ thống gameplay.
+- [x] Không bỏ qua bước lấy gạo đã vo, đậy nắp hoặc xới cơm.
+- [x] Billboard yaw-follow camera/player.
 - [ ] Kiểm tra font, emoji, fallback font, kích thước và occlusion trên kính VR.
 - [ ] Có feedback lỗi: sai nguyên liệu, thiếu nước, chưa vo sạch, chưa có củi, diêm chưa cháy, nắp chưa đậy.
 
@@ -196,11 +196,11 @@ Acceptance tests:
 
 Hiện scene đang thiếu nhiều reference và dùng primitive fallback. Cần hoàn thiện:
 
-- [ ] `GrindMillStation`: white-rice prefab, rice output point, chaff particle, grinding loop, completion sound.
-- [ ] `WaterDipper`: water surface, pour origin/FX, scoop sound, pour sound.
-- [ ] `RiceWashingPot`: rice visual, water material hỗ trợ property block, drain FX, wash sound, drain sound.
-- [ ] `WoodStove`: fire particle, smoke particle, ember/firewood visual, ignition sound, looping fire audio.
-- [ ] `CookingPot`: water visual, steam FX, raw/cooked/burnt materials, boiling/cooked audio, bowl prefab.
+- [ ] `GrindMillStation`: đã có white-rice prefab, output point, chaff particle và grinding clip; còn thiếu completion sound riêng.
+- [ ] `WaterDipper`: đã có water surface, pour origin/FX; còn thiếu scoop/pour sound phù hợp.
+- [ ] `RiceWashingPot`: đã có rice visual, water property block và drain FX; còn thiếu wash/drain sound phù hợp.
+- [ ] `WoodStove`: đã có fire/smoke particle, light; còn thiếu ember art và ignition/fire audio phù hợp.
+- [ ] `CookingPot`: đã có water visual, steam FX, bowl prefab; còn thiếu bộ material raw/cooked/burnt và boiling/cooked audio.
 - [ ] `PotLid`: open/close audio và boiling-rattle feedback.
 - [ ] `MatchItem`: striker, flame FX và strike sound.
 - [ ] `CookedRiceBowl`: prefab hoàn chỉnh, steam FX và burnt variant nếu cần.
@@ -210,12 +210,12 @@ Hiện scene đang thiếu nhiều reference và dùng primitive fallback. Cần
 
 Scene validation bắt buộc:
 
-- [ ] Đúng một setup root trong scene.
-- [ ] Không có missing MonoBehaviour.
+- [x] Đúng một setup root trong scene.
+- [x] Không có missing MonoBehaviour (đã loại một component mất script trên `Pause canvas`, giữ các Canvas component còn lại).
 - [ ] Tất cả required reference khác null.
-- [ ] Trigger/collider/layer matrix đúng.
+- [x] Hopper/source/wash/stove trigger và collider bắt buộc được generator cấu hình, validator kiểm tra reference.
 - [ ] Không spawn dưới Terrain hoặc bên trong collider khác.
-- [ ] Chạy lại integrator cho kết quả idempotent và không xóa object do designer sở hữu.
+- [x] Chạy integrator lặp lại giữ đúng một setup root; chỉ thay root do tool sở hữu và sửa đúng missing component đã audit.
 
 ## 8. P1 — Nâng chất lượng automated tests
 
@@ -226,9 +226,9 @@ Scene validation bắt buộc:
 - [x] Test water threshold nhất quán.
 - [x] Test lid requirement.
 - [x] Test `Cooked -> Burnt` reachable.
-- [ ] Test một mẻ xay chỉ sinh một rice output.
+- [x] Test một mẻ xay chỉ sinh một rice output.
 - [x] Test một mẻ nấu không thể sinh bowl vô hạn.
-- [ ] Test amount âm, null input, duplicate collider và public method gọi sai state.
+- [x] Test amount âm, null input, duplicate source/collider và completion gọi sai state.
 - [ ] Test quest không nhảy bước sớm.
 
 ### 8.2. PlayMode physics/integration
@@ -246,8 +246,8 @@ Scene validation bắt buộc:
 
 ### 8.3. Báo cáo test
 
-- [ ] Không gọi test là “end-to-end” nếu nó bỏ qua trigger/XR hoặc gọi trực tiếp transition helper.
-- [x] Báo đúng số test từ XML mới nhất; mốc sau batch CookingPot là EditMode `81/81`, PlayMode `12/12`.
+- [x] Test domain-flow đã đổi tên, không còn tự nhận là end-to-end XR.
+- [x] Báo đúng số test XML mới nhất: EditMode `96/96`, PlayMode `12/12`.
 - [ ] Nếu tuyên bố coverage, phải sinh coverage report và ghi rõ phạm vi assembly/file.
 - [ ] Test pass không được dùng thay cho QA scene/device.
 
@@ -265,16 +265,16 @@ Scene validation bắt buộc:
 
 ## 10. P2 — Code quality và tài liệu
 
-- [ ] Loại bỏ nhận diện gameplay dựa vào `GameObject.name` ở hopper, nguồn nước, match và heat source.
+- [x] Loại bỏ nhận diện gameplay dựa vào `GameObject.name` ở hopper, nguồn nước, match và heat source.
 - [ ] Giảm public mutable state; dùng API transition có validation và property chỉ đọc khi phù hợp.
 - [ ] Phân tách input/interaction, domain state và presentation/FX để test đúng lớp.
-- [ ] Bảo đảm subscribe/unsubscribe event đối xứng khi object enable/disable hoặc destroy.
-- [ ] Thêm warning/error rõ cho required reference bị thiếu; fail validation trước khi save scene.
-- [ ] Không dùng primitive fallback im lặng trong production scene.
-- [ ] Cập nhật `2026_08_31_work.md`: bỏ tuyên bố 100% cho đến khi đạt Definition of Done.
-- [ ] Sửa số test 77 thành số thực tế từ lần chạy cuối.
-- [ ] Sửa danh sách commit; commit `refactor(physics): polish VR lid parenting...` hiện không tồn tại với subject đã báo cáo.
-- [ ] Ghi rõ những file ngoài `Assets/Khoa` đã chỉnh và lý do tích hợp.
+- [x] Quest và vật phẩm subscribe/unsubscribe event đối xứng theo enable/disable hoặc destroy.
+- [x] Required functional reference fail validation trước khi save scene.
+- [x] Production scene được nối white-rice/bowl prefab; fallback chỉ còn là guard debug trong runtime code.
+- [x] Cập nhật `2026_08_31_work.md`: bỏ tuyên bố 100% cho đến khi đạt Definition of Done.
+- [x] Sửa số test cũ thành `96/96` EditMode và `12/12` PlayMode.
+- [x] Sửa danh sách commit; bỏ commit `refactor(physics): polish VR lid parenting...` không tồn tại.
+- [x] Ghi rõ file ngoài `Assets/Khoa` đã chỉnh: scene chính và work report, vì tích hợp/đính chính bằng chứng.
 
 ## 11. Thứ tự triển khai đề xuất
 
@@ -311,11 +311,12 @@ Exit gate: scene validation pass, không còn required reference null và không
 
 Exit gate: đạt toàn bộ Definition of Done; chỉ lúc đó mới ghi `100%`.
 
-## 12. Trạng thái bằng chứng tại thời điểm lập plan
+## 12. Cập nhật bằng chứng 2026-09-01
 
 - Unity version: `6000.3.16f1`.
-- EditMode sau batch CookingPot: `81/81 passed`.
-- PlayMode sau batch CookingPot: `12/12 passed`.
-- Các test hiện tại chưa chứng minh XR/physics end-to-end vì nhiều bước gọi trực tiếp helper/transition method.
-- Scene đã có setup root và các component chính, nhưng nhiều prefab/FX/audio/material reference còn null.
-- Chưa có bằng chứng QA trực tiếp trên kính VR hoặc build thiết bị đích cho chuỗi gameplay mới.
+- EditMode: `96/96 passed`; PlayMode: `12/12 passed`.
+- Đã hoàn tất transaction vật lý `RiceThresher -> PaddyBatchItem -> hopper -> mill`, washing gesture theo quỹ đạo góc, local pour, typed water source/receiver, striker vận tốc, multi-collider heat, XR scoop/serve, snap nắp và quest state thực.
+- XRI mapping đã đối chiếu trực tiếp từ `XRI Default Input Actions`: Grip = Select/Grab, Trigger = Activate cho cả hai tay. Dev mapping được gom tại `CookingDevInputMap`: quay cối `A/Left Arrow` hoặc `D/Right Arrow/Z/Up Arrow`, lấy gạo đã vo `Q`, xới cơm `E`; test khóa cứng các phím này để tránh mapping bị lệch về sau.
+- Integrator chạy lặp lại thành công; full scene validator pass: đúng một setup root, không Missing MonoBehaviour, output cối tuốt và reference chức năng bắt buộc đều tồn tại.
+- Các test hiện tại vẫn chưa chứng minh full cycle bằng toàn bộ collider/XR event; một số PlayMode test còn kiểm tra từng cụm riêng.
+- Audio/art hoàn chỉnh, recipe ratio/overwater UX, lid rattle, snap nồi, Android/Quest build, profile, QA kính/controller và playtest vẫn chưa có bằng chứng. Do đó trạng thái tổng thể vẫn **chưa phải 100% Definition of Done**.

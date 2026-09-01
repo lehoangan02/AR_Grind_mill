@@ -19,6 +19,8 @@ namespace Khoa.Farming
 
         public AudioClip openSound;
         public AudioClip closeSound;
+        [Min(0.05f)] public float maxSnapDistance = 0.22f;
+        [Range(1f, 90f)] public float maxSnapAngle = 30f;
 
         private Rigidbody rb;
         private XRGrabInteractable grabInteractable;
@@ -81,17 +83,24 @@ namespace Khoa.Farming
             // Kiểm tra nếu thả gần miệng nồi thì tự động đậy nắp
             if (attachedPot != null)
             {
-                Vector3 snapPos = attachedPot.lidSnapPoint != null ? attachedPot.lidSnapPoint.position : attachedPot.transform.position + Vector3.up * 0.25f;
-                float dist = Vector3.Distance(transform.position, snapPos);
-                if (dist <= 0.4f)
+                if (CanSnapTo(attachedPot))
                 {
                     SnapToPot(attachedPot);
                 }
             }
         }
 
-        public void SnapToPot(CookingPot pot)
+        public bool CanSnapTo(CookingPot pot)
         {
+            if (pot == null || pot.lidSnapPoint == null || pot.lidSnapPoint == transform) return false;
+            float distance = Vector3.Distance(transform.position, pot.lidSnapPoint.position);
+            float angle = Quaternion.Angle(transform.rotation, pot.lidSnapPoint.rotation);
+            return distance <= maxSnapDistance && angle <= maxSnapAngle;
+        }
+
+        public bool SnapToPot(CookingPot pot)
+        {
+            if (!CanSnapTo(pot)) return false;
             attachedPot = pot;
             if (pot != null)
             {
@@ -123,7 +132,9 @@ namespace Khoa.Farming
                 }
 
                 Debug.Log("[PotLid] Đã đậy nắp vung nồi khít chặt!");
+                return true;
             }
+            return false;
         }
     }
 }

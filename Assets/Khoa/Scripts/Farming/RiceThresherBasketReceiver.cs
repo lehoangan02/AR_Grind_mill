@@ -23,12 +23,18 @@ namespace Khoa.Farming
         [Tooltip("Tự động nạp thóc vào Giỏ lúa trong Inventory của người chơi nếu không có giỏ đặt cạnh")]
         public bool autoFillInventoryBasket = true;
 
+        [Header("Physical Paddy Output")]
+        [Tooltip("Typed paddy batch spawned when no nearby empty basket is available.")]
+        public GameObject paddyBatchPrefab;
+        public Transform paddyOutputPoint;
+
         [Header("Audio & FX")]
         [Tooltip("Âm thanh rót thóc vào giỏ")]
         public AudioClip fillBasketSound;
 
         // Sự kiện khi đổ đầy thóc vào giỏ thành công
         public event Action<GameObject> OnBasketFilled;
+        public event Action<PaddyBatchItem> OnPaddyBatchCreated;
 
         private AudioSource audioSource;
 
@@ -57,7 +63,27 @@ namespace Khoa.Farming
                 filled = FillPhysicalBasket(nearbyBasket);
             }
 
-            // 2. Nếu không có giỏ ngoài sân, thử nạp vào Giỏ lúa trong Inventory người chơi
+            // 2. Luôn ưu tiên một output vật lý có thể mang đến hopper mới.
+            if (!filled && paddyBatchPrefab != null)
+            {
+                Vector3 position = paddyOutputPoint != null
+                    ? paddyOutputPoint.position
+                    : transform.position + transform.right * 0.8f + Vector3.up * 0.4f;
+                GameObject batchObject = Instantiate(paddyBatchPrefab, position, Quaternion.identity);
+                PaddyBatchItem batch = batchObject.GetComponent<PaddyBatchItem>();
+                if (batch != null)
+                {
+                    batch.SetHasPaddy(true);
+                    OnPaddyBatchCreated?.Invoke(batch);
+                    filled = true;
+                }
+                else
+                {
+                    if (Application.isPlaying) Destroy(batchObject); else DestroyImmediate(batchObject);
+                }
+            }
+
+            // 3. Compatibility fallback cho inventory cũ khi chưa cấu hình output vật lý.
             if (!filled && autoFillInventoryBasket)
             {
                 filled = FillPlayerInventoryBasket();

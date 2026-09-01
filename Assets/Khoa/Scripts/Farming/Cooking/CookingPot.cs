@@ -30,7 +30,7 @@ namespace Khoa.Farming
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(XRGrabInteractable))]
-    public class CookingPot : MonoBehaviour
+    public class CookingPot : MonoBehaviour, IWaterReceiver
     {
         public const float RequiredWaterAmount = 1f;
 
@@ -43,6 +43,7 @@ namespace Khoa.Farming
 
         [Tooltip("Lượng nước hiện có trong nồi (cần ít nhất 1.0 để nấu)")]
         public float currentWaterAmount = 0f;
+        [Min(1f)] public float maxWaterCapacity = 2f;
 
         [Tooltip("Nắp vung hiện tại có đang đậy trên nồi hay không")]
         public bool isLidClosed = true;
@@ -219,7 +220,17 @@ namespace Khoa.Farming
         /// </summary>
         public void AddWater(float amount)
         {
-            currentWaterAmount += amount;
+            TryAddWater(amount);
+        }
+
+        public bool TryAddWater(float amount)
+        {
+            if (amount <= 0f || currentWaterAmount >= maxWaterCapacity || currentState == CookingState.Cooked || currentState == CookingState.Burnt)
+            {
+                return false;
+            }
+
+            currentWaterAmount = Mathf.Min(maxWaterCapacity, currentWaterAmount + amount);
 
             if (currentRiceAmount > 0)
             {
@@ -232,6 +243,7 @@ namespace Khoa.Farming
 
             UpdateVisuals();
             Debug.Log($"<color=cyan>[CookingPot] Đã đong nước vào nồi (Nước: {currentWaterAmount:F1}).</color>");
+            return true;
         }
 
         /// <summary>
@@ -361,20 +373,6 @@ namespace Khoa.Farming
             if (other.TryGetComponent<WhiteRiceItem>(out var rice))
             {
                 AddRice(rice);
-            }
-            else if (other.TryGetComponent<WoodStove>(out var stove) || other.name.Contains("Stove"))
-            {
-                SetHeatSource(true);
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other == null) return;
-
-            if (other.TryGetComponent<WoodStove>(out var stove) || other.name.Contains("Stove"))
-            {
-                SetHeatSource(false);
             }
         }
 

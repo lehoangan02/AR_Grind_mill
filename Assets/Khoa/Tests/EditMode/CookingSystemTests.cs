@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Khoa.Farming;
 
 namespace Khoa.Farming.Tests
@@ -12,6 +13,20 @@ namespace Khoa.Farming.Tests
 
         private GameObject potGO;
         private CookingPot cookingPot;
+
+        [Test]
+        public void DevInputMap_UsesDocumentedNonConflictingCookingKeys()
+        {
+            Assert.AreEqual(Key.Q, CookingDevInputMap.ExtractWashedRice);
+            Assert.AreEqual(Key.E, CookingDevInputMap.ServeCookedRice);
+            Assert.AreEqual(Key.A, CookingDevInputMap.MillCounterClockwisePrimary);
+            Assert.AreEqual(Key.LeftArrow, CookingDevInputMap.MillCounterClockwiseAlternate);
+            Assert.AreEqual(Key.D, CookingDevInputMap.MillClockwisePrimary);
+            Assert.AreEqual(Key.RightArrow, CookingDevInputMap.MillClockwiseAlternate);
+            Assert.AreEqual(Key.Z, CookingDevInputMap.MillClockwiseLegacy);
+            Assert.AreEqual(Key.UpArrow, CookingDevInputMap.MillClockwiseAccessibility);
+            Assert.AreNotEqual(CookingDevInputMap.ExtractWashedRice, CookingDevInputMap.ServeCookedRice);
+        }
 
         [SetUp]
         public void SetUp()
@@ -86,6 +101,72 @@ namespace Khoa.Farming.Tests
             Assert.IsTrue(woodStove.isBurning);
 
             Object.DestroyImmediate(matchGO);
+        }
+
+        [Test]
+        public void WoodStove_Ignite_WithUnlitMatch_IsRejected()
+        {
+            GameObject woodGO = new GameObject("Test_Firewood");
+            FirewoodItem wood = woodGO.AddComponent<FirewoodItem>();
+            woodStove.AddFirewood(wood);
+            GameObject matchGO = new GameObject("Test_Match");
+            MatchItem match = matchGO.AddComponent<MatchItem>();
+
+            bool ignited = woodStove.Ignite(match);
+
+            Assert.IsFalse(ignited);
+            Assert.IsFalse(woodStove.isBurning);
+            Object.DestroyImmediate(matchGO);
+        }
+
+        [Test]
+        public void Match_OnlyLightsOnStrikerAtRequiredSpeed()
+        {
+            GameObject matchGO = new GameObject("Test_Match");
+            MatchItem match = matchGO.AddComponent<MatchItem>();
+            GameObject strikerGO = new GameObject("Test_Striker");
+            MatchStriker striker = strikerGO.AddComponent<MatchStriker>();
+
+            Assert.IsFalse(match.TryStrike(striker, match.minimumStrikeSpeed - 0.01f));
+            Assert.IsFalse(match.isLit);
+            Assert.IsTrue(match.TryStrike(striker, match.minimumStrikeSpeed));
+            Assert.IsTrue(match.isLit);
+
+            Object.DestroyImmediate(matchGO);
+            Object.DestroyImmediate(strikerGO);
+        }
+
+        [Test]
+        public void WoodStove_MultiplePotColliders_DoNotDropHeatOnFirstExit()
+        {
+            woodStove.RegisterPotContact(cookingPot, 101);
+            woodStove.RegisterPotContact(cookingPot, 202);
+
+            Assert.AreEqual(cookingPot, woodStove.placedPot);
+            woodStove.UnregisterPotContact(cookingPot, 101);
+            Assert.AreEqual(cookingPot, woodStove.placedPot);
+            woodStove.UnregisterPotContact(cookingPot, 202);
+            Assert.IsNull(woodStove.placedPot);
+        }
+
+        [Test]
+        public void PotLid_SnapRequiresCorrectDistanceAndOrientation()
+        {
+            GameObject snapGO = new GameObject("LidSnapPoint");
+            snapGO.transform.SetParent(potGO.transform, false);
+            cookingPot.lidSnapPoint = snapGO.transform;
+            GameObject lidGO = new GameObject("Test_Lid");
+            PotLid lid = lidGO.AddComponent<PotLid>();
+            lidGO.transform.position = snapGO.transform.position;
+            lidGO.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            Assert.IsFalse(lid.CanSnapTo(cookingPot));
+            lidGO.transform.rotation = snapGO.transform.rotation;
+            Assert.IsTrue(lid.CanSnapTo(cookingPot));
+            lidGO.transform.position += Vector3.right * (lid.maxSnapDistance + 0.01f);
+            Assert.IsFalse(lid.CanSnapTo(cookingPot));
+
+            Object.DestroyImmediate(lidGO);
         }
 
         [Test]
@@ -188,6 +269,30 @@ namespace Khoa.Farming.Tests
             Assert.IsNull(secondBowl);
 
             if (firstBowl != null) Object.DestroyImmediate(firstBowl.gameObject);
+        }
+
+        [Test]
+        public void ServingLadle_ProducesBowlOnlyFromValidOpenPot()
+        {
+            GameObject ladleGO = new GameObject("Test_ServingLadle");
+            RiceServingLadle ladle = ladleGO.AddComponent<RiceServingLadle>();
+
+            Assert.IsNull(ladle.TryServe(cookingPot));
+
+            GameObject riceGO = new GameObject("Test_WashedRice");
+            WhiteRiceItem rice = riceGO.AddComponent<WhiteRiceItem>();
+            rice.isWashed = true;
+            cookingPot.AddRice(rice);
+            cookingPot.AddWater(1f);
+            cookingPot.CompleteCooking();
+            cookingPot.isLidClosed = false;
+
+            CookedRiceBowl bowl = ladle.TryServe(cookingPot);
+            Assert.IsNotNull(bowl);
+            Assert.IsNull(ladle.TryServe(cookingPot));
+
+            if (bowl != null) Object.DestroyImmediate(bowl.gameObject);
+            Object.DestroyImmediate(ladleGO);
         }
     }
 }

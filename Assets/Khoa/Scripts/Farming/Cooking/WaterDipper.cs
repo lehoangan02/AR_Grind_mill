@@ -38,6 +38,10 @@ namespace Khoa.Farming
         [Tooltip("Góc nghiêng tối thiểu để nước tự động rót ra (độ)")]
         [Range(30f, 90f)]
         public float pourTiltAngle = 50f;
+        [Tooltip("Mouth of the dipper. Its local down direction defines the pour ray.")]
+        public Transform pourOrigin;
+        [Min(0.05f)] public float pourRadius = 0.12f;
+        [Min(0.1f)] public float pourDistance = 0.8f;
 
         // Events
         public event Action OnWaterScooped;
@@ -112,9 +116,31 @@ namespace Khoa.Farming
         /// <summary>
         /// Rót nước ra khỏi gáo.
         /// </summary>
-        public void PourWater()
+        public bool PourWater()
         {
-            if (!hasWater) return;
+            if (!hasWater) return false;
+
+            Transform origin = pourOrigin != null ? pourOrigin : transform;
+            RaycastHit[] hits = Physics.SphereCastAll(origin.position, pourRadius, -origin.up, pourDistance, ~0, QueryTriggerInteraction.Collide);
+            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (RaycastHit hit in hits)
+            {
+                IWaterReceiver receiver = FindWaterReceiver(hit.collider);
+                if (receiver != null && TryPourInto(receiver))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool TryPourInto(IWaterReceiver receiver)
+        {
+            if (!hasWater || receiver == null || !receiver.TryAddWater(waterAmount))
+            {
+                return false;
+            }
 
             hasWater = false;
             UpdateVisuals();
@@ -129,35 +155,30 @@ namespace Khoa.Farming
                 audioSource.PlayOneShot(pourSound);
             }
 
-            // Nhận diện nồi / thau ở phía dưới dòng nước rót
-            Collider[] colliders = Physics.OverlapSphere(transform.position + Vector3.down * 0.35f, 0.65f);
-            foreach (Collider col in colliders)
-            {
-                if (col.TryGetComponent<RiceWashingPot>(out var washingPot) || (col.transform.parent != null && col.transform.parent.TryGetComponent(out washingPot)))
-                {
-                    washingPot.AddWater(waterAmount);
-                    break;
-                }
-                else if (col.TryGetComponent<CookingPot>(out var cookingPot) || (col.transform.parent != null && col.transform.parent.TryGetComponent(out cookingPot)))
-                {
-                    cookingPot.AddWater(waterAmount);
-                    break;
-                }
-            }
-
             OnWaterPoured?.Invoke(waterAmount);
             Debug.Log("<color=cyan>[WaterDipper] Đã rót nước ra khỏi gáo.</color>");
+            return true;
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (other == null) return;
 
-            // Chạm vào chum nước hoặc nguồn nước
-            if (other.name.Contains("Water") || other.name.Contains("Jar"))
+            if (other.GetComponentInParent<WaterSource>() != null)
             {
                 ScoopWater();
             }
+        }
+
+        private static IWaterReceiver FindWaterReceiver(Collider collider)
+        {
+            if (collider == null) return null;
+            MonoBehaviour[] behaviours = collider.GetComponentsInParent<MonoBehaviour>();
+            foreach (MonoBehaviour behaviour in behaviours)
+            {
+                if (behaviour is IWaterReceiver receiver) return receiver;
+            }
+            return null;
         }
 
         private void UpdateVisuals()

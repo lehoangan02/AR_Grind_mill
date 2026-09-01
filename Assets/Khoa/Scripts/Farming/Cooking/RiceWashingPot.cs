@@ -28,8 +28,9 @@ namespace Khoa.Farming
     [RequireComponent(typeof(BoxCollider))]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(XRGrabInteractable))]
-    public class RiceWashingPot : MonoBehaviour
+    public class RiceWashingPot : MonoBehaviour, IWaterReceiver
     {
+        public const float RequiredWashProgress = 100f;
         [Header("State")]
         public RiceWashingState currentState = RiceWashingState.Empty;
 
@@ -40,6 +41,16 @@ namespace Khoa.Farming
 
         [Tooltip("Lượng nước hiện có trong thau")]
         public float currentWater = 0f;
+
+        [Min(0.1f)]
+        public float maxWaterCapacity = 2f;
+
+        [Header("Physical Stir Gesture")]
+        [Min(0.01f)] public float minimumStirRadius = 0.08f;
+        [Min(1f)] public float minimumAngularStep = 12f;
+        [Min(1f)] public float maximumAngularStep = 120f;
+        [Min(0.01f)] public float maximumSampleInterval = 0.35f;
+        [Min(1f)] public float washProgressPerRotation = 35f;
 
         [Tooltip("Lượng gạo hiện có trong thau")]
         public int currentRiceAmount = 0;
@@ -79,6 +90,9 @@ namespace Khoa.Farming
         private MaterialPropertyBlock mpb;
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
         private static readonly int ColorId = Shader.PropertyToID("_Color");
+        private bool hasPreviousStirSample;
+        private Vector2 previousStirPoint;
+        private float previousStirTime;
 
         private void Awake()
         {
@@ -163,7 +177,17 @@ namespace Khoa.Farming
         /// </summary>
         public void AddWater(float amount)
         {
-            currentWater += amount;
+            TryAddWater(amount);
+        }
+
+        public bool TryAddWater(float amount)
+        {
+            if (amount <= 0f || currentWater >= maxWaterCapacity)
+            {
+                return false;
+            }
+
+            currentWater = Mathf.Min(maxWaterCapacity, currentWater + amount);
 
             if (currentRiceAmount > 0)
             {
@@ -176,6 +200,50 @@ namespace Khoa.Farming
 
             UpdateVisuals();
             Debug.Log($"<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: {currentWater:F1}).</color>");
+            return true;
+        }
+
+        public bool RecordStirPoint(Vector3 worldPosition, float sampleTime)
+        {
+            if (currentState != RiceWashingState.HasRiceAndWater && currentState != RiceWashingState.Washing)
+            {
+                EndStirGesture();
+                return false;
+            }
+
+            Vector3 local = transform.InverseTransformPoint(worldPosition);
+            Vector2 point = new Vector2(local.x, local.z);
+            if (point.magnitude < minimumStirRadius)
+            {
+                EndStirGesture();
+                return false;
+            }
+
+            if (!hasPreviousStirSample)
+            {
+                hasPreviousStirSample = true;
+                previousStirPoint = point;
+                previousStirTime = sampleTime;
+                return false;
+            }
+
+            float elapsed = sampleTime - previousStirTime;
+            float angle = Mathf.Abs(Vector2.SignedAngle(previousStirPoint, point));
+            previousStirPoint = point;
+            previousStirTime = sampleTime;
+
+            if (elapsed <= 0f || elapsed > maximumSampleInterval || angle < minimumAngularStep || angle > maximumAngularStep)
+            {
+                return false;
+            }
+
+            StirRice(angle / 360f * washProgressPerRotation);
+            return true;
+        }
+
+        public void EndStirGesture()
+        {
+            hasPreviousStirSample = false;
         }
 
         /// <summary>
@@ -225,7 +293,7 @@ namespace Khoa.Farming
                 audioSource.PlayOneShot(drainSound);
             }
 
-            if (currentRiceAmount > 0 && washProgress >= 60f)
+            if (currentRiceAmount > 0 && washProgress >= RequiredWashProgress)
             {
                 currentState = RiceWashingState.WashedRiceReady;
                 Debug.Log("<color=green>[RiceWashingPot] ✨ Đã chắt ráo nước! Gạo sạch ngậm nước sẵn sàng cho vào nồi gang nấu cơm!</color>");
@@ -249,7 +317,7 @@ namespace Khoa.Farming
         /// </summary>
         public WhiteRiceItem TakeOutWashedRice()
         {
-            if (currentState != RiceWashingState.WashedRiceReady && currentState != RiceWashingState.HasRice)
+            if (currentState != RiceWashingState.WashedRiceReady || currentWater > 0.05f || washProgress < RequiredWashProgress)
             {
                 return null;
             }
@@ -270,7 +338,7 @@ namespace Khoa.Farming
             riceGO.AddComponent<XRGrabInteractable>();
             WhiteRiceItem washedRice = riceGO.AddComponent<WhiteRiceItem>();
             washedRice.riceAmount = currentRiceAmount;
-            washedRice.isWashed = (washProgress >= 60f);
+            washedRice.isWashed = true;
 
             currentRiceAmount = 0;
             currentState = RiceWashingState.Empty;
@@ -290,10 +358,6 @@ namespace Khoa.Farming
             if (other.TryGetComponent<WhiteRiceItem>(out var rice))
             {
                 AddRice(rice);
-            }
-            else if (other.name.Contains("Hand") || other.name.Contains("Controller") || other.name.Contains("Finger"))
-            {
-                StirRice(20f);
             }
         }
 

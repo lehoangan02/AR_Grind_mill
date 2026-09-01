@@ -23,7 +23,7 @@ namespace Khoa.Farming.PlayModeTests
             WhiteRiceItem receivedRice = null;
             station.OnMillingCompleted += rice => receivedRice = rice;
 
-            station.CompleteMilling();
+            for (int i = 0; i < 32; i++) station.ProcessRotation(45f);
             yield return null;
 
             Assert.AreEqual(GrindMillState.Completed, station.currentState);
@@ -55,7 +55,7 @@ namespace Khoa.Farming.PlayModeTests
             washPot.AddWater(1.0f);
             Assert.AreEqual(RiceWashingState.HasRiceAndWater, washPot.currentState);
 
-            washPot.StirRice(80f);
+            washPot.StirRice(100f);
             Assert.AreEqual(RiceWashingState.Washing, washPot.currentState);
             Assert.GreaterOrEqual(washPot.washProgress, 80f);
 
@@ -109,7 +109,8 @@ namespace Khoa.Farming.PlayModeTests
             pot.AddWater(1.0f);
             Assert.AreEqual(CookingState.ReadyToCook, pot.currentState);
 
-            pot.SetHeatSource(true);
+            potGO.GetComponent<Rigidbody>().isKinematic = true;
+            potGO.transform.position = stoveGO.transform.position;
 
             yield return new WaitForSeconds(0.35f);
 

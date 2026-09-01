@@ -98,7 +98,7 @@ namespace Khoa.Farming.Tests
             washingPot.AddRice(riceItem);
             washingPot.AddWater(1.0f);
 
-            washingPot.StirRice(80f);
+            washingPot.StirRice(100f);
             washingPot.DrainWater();
 
             Assert.AreEqual(RiceWashingState.WashedRiceReady, washingPot.currentState);
@@ -119,8 +119,84 @@ namespace Khoa.Farming.Tests
             waterDipper.ScoopWater();
             Assert.IsTrue(waterDipper.hasWater);
 
-            waterDipper.PourWater();
+            bool poured = waterDipper.TryPourInto(washingPot);
+            Assert.IsTrue(poured);
             Assert.IsFalse(waterDipper.hasWater);
+            Assert.AreEqual(1f, washingPot.currentWater);
+        }
+
+        [Test]
+        public void WaterDipper_MissedPour_PreservesWater()
+        {
+            waterDipper.ScoopWater();
+
+            bool poured = waterDipper.TryPourInto(null);
+
+            Assert.IsFalse(poured);
+            Assert.IsTrue(waterDipper.hasWater);
+        }
+
+        [Test]
+        public void AddWater_RejectsNonPositiveAmount_AndCapsCapacity()
+        {
+            washingPot.maxWaterCapacity = 2f;
+
+            Assert.IsFalse(washingPot.TryAddWater(-1f));
+            Assert.IsTrue(washingPot.TryAddWater(3f));
+            Assert.AreEqual(2f, washingPot.currentWater);
+        }
+
+        [Test]
+        public void DrainWater_BelowFullWash_CannotCreateWashedRice()
+        {
+            GameObject riceGO = new GameObject("Test_WhiteRice");
+            WhiteRiceItem riceItem = riceGO.AddComponent<WhiteRiceItem>();
+            washingPot.AddRice(riceItem);
+            washingPot.AddWater(1f);
+            washingPot.StirRice(99f);
+
+            washingPot.DrainWater();
+
+            Assert.AreEqual(RiceWashingState.HasRice, washingPot.currentState);
+            Assert.IsNull(washingPot.TakeOutWashedRice());
+        }
+
+        [Test]
+        public void CircularStir_RequiresMeaningfulAngularTravel()
+        {
+            GameObject riceGO = new GameObject("Test_WhiteRice");
+            WhiteRiceItem riceItem = riceGO.AddComponent<WhiteRiceItem>();
+            washingPot.AddRice(riceItem);
+            washingPot.AddWater(1f);
+
+            Assert.IsFalse(washingPot.RecordStirPoint(new Vector3(0.2f, 0f, 0f), 0f));
+            Assert.IsFalse(washingPot.RecordStirPoint(new Vector3(0.2f, 0f, 0f), 0.1f));
+            Assert.IsTrue(washingPot.RecordStirPoint(new Vector3(0f, 0f, 0.2f), 0.2f));
+            Assert.Greater(washingPot.washProgress, 0f);
+        }
+
+        [Test]
+        public void WashedRiceScoop_ExtractsExactlyOneFullyWashedBatch()
+        {
+            GameObject riceGO = new GameObject("Test_WhiteRice");
+            WhiteRiceItem riceItem = riceGO.AddComponent<WhiteRiceItem>();
+            riceItem.riceAmount = 7;
+            washingPot.AddRice(riceItem);
+            washingPot.AddWater(1f);
+            washingPot.StirRice(100f);
+            washingPot.DrainWater();
+            GameObject scoopGO = new GameObject("Test_WashedRiceScoop");
+            WashedRiceScoop scoop = scoopGO.AddComponent<WashedRiceScoop>();
+
+            WhiteRiceItem output = scoop.TryExtract(washingPot);
+
+            Assert.IsNotNull(output);
+            Assert.IsTrue(output.isWashed);
+            Assert.AreEqual(7, output.riceAmount);
+            Assert.IsNull(scoop.TryExtract(washingPot));
+            Assert.AreEqual(RiceWashingState.Empty, washingPot.currentState);
+            if (output != null) Object.DestroyImmediate(output.gameObject);
+            Object.DestroyImmediate(scoopGO);
         }
     }
 }

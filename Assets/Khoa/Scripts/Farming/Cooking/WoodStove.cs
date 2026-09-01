@@ -47,6 +47,7 @@ namespace Khoa.Farming
         [Tooltip("Vị trí kiềng đặt nồi cơm trên bếp")]
         public Transform potPlacementPoint;
         public CookingPot placedPot;
+        private readonly Dictionary<CookingPot, HashSet<int>> potContacts = new Dictionary<CookingPot, HashSet<int>>();
 
         // Events
         public event Action<bool> OnFireStateChanged;
@@ -76,9 +77,9 @@ namespace Khoa.Farming
                 }
 
                 // Cung cấp nhiệt cho nồi đặt trên bếp
-                if (placedPot != null)
+                foreach (CookingPot pot in potContacts.Keys)
                 {
-                    placedPot.SetHeatSource(true);
+                    if (pot != null) pot.SetHeatSource(true);
                 }
 
                 if (remainingFuelTime <= 0f)
@@ -88,9 +89,9 @@ namespace Khoa.Farming
             }
             else
             {
-                if (placedPot != null)
+                foreach (CookingPot pot in potContacts.Keys)
                 {
-                    placedPot.SetHeatSource(false);
+                    if (pot != null) pot.SetHeatSource(false);
                 }
             }
         }
@@ -127,6 +128,11 @@ namespace Khoa.Farming
         public bool Ignite(MatchItem match)
         {
             if (isBurning) return true;
+            if (match == null || !match.isLit)
+            {
+                Debug.LogWarning("[WoodStove] Cần một que diêm đang cháy để nhóm bếp.");
+                return false;
+            }
             if (currentFirewoodCount == 0)
             {
                 Debug.LogWarning("[WoodStove] Chưa có củi trong bếp, không thể nhóm lửa!");
@@ -154,6 +160,10 @@ namespace Khoa.Farming
             isBurning = false;
             remainingFuelTime = 0f;
             currentFirewoodCount = 0;
+            foreach (CookingPot pot in potContacts.Keys)
+            {
+                if (pot != null) pot.SetHeatSource(false);
+            }
 
             UpdateVisuals();
             OnFireStateChanged?.Invoke(isBurning);
@@ -177,11 +187,7 @@ namespace Khoa.Farming
             }
             else if (other.TryGetComponent<CookingPot>(out var pot) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out pot)))
             {
-                placedPot = pot;
-                if (isBurning)
-                {
-                    pot.SetHeatSource(true);
-                }
+                RegisterPotContact(pot, other.GetInstanceID());
             }
         }
 
@@ -191,10 +197,41 @@ namespace Khoa.Farming
 
             if (other.TryGetComponent<CookingPot>(out var pot) || (other.transform.parent != null && other.transform.parent.TryGetComponent(out pot)))
             {
-                if (placedPot == pot)
+                UnregisterPotContact(pot, other.GetInstanceID());
+            }
+        }
+
+        public void RegisterPotContact(CookingPot pot, int colliderId)
+        {
+            if (pot == null) return;
+            if (!potContacts.TryGetValue(pot, out HashSet<int> contacts))
+            {
+                contacts = new HashSet<int>();
+                potContacts.Add(pot, contacts);
+            }
+            contacts.Add(colliderId);
+            if (placedPot == null) placedPot = pot;
+            if (isBurning) pot.SetHeatSource(true);
+        }
+
+        public void UnregisterPotContact(CookingPot pot, int colliderId)
+        {
+            if (pot == null || !potContacts.TryGetValue(pot, out HashSet<int> contacts)) return;
+            contacts.Remove(colliderId);
+            if (contacts.Count > 0) return;
+
+            potContacts.Remove(pot);
+            pot.SetHeatSource(false);
+            if (placedPot == pot)
+            {
+                placedPot = null;
+                foreach (CookingPot remaining in potContacts.Keys)
                 {
-                    pot.SetHeatSource(false);
-                    placedPot = null;
+                    if (remaining != null)
+                    {
+                        placedPot = remaining;
+                        break;
+                    }
                 }
             }
         }

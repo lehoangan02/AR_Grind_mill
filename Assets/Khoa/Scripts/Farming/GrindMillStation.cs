@@ -82,6 +82,7 @@ namespace Khoa.Farming
         public event Action<GrindMillState> OnStateChanged;
         public event Action<float> OnProgressChanged;
         public event Action<WhiteRiceItem> OnMillingCompleted;
+        public event Action OnMilledRiceCollected;
 
         private IXRSelectInteractor grabbingInteractor;
         private Vector3 previousHandLocalPos;
@@ -146,22 +147,15 @@ namespace Khoa.Farming
             }
 
             // 2. Hỗ trợ phím bàn phím / Simulator testing
-            if (Keyboard.current != null)
+            float keyInput = CookingDevInputMap.ReadMillDirection(Keyboard.current);
+            if (Mathf.Abs(keyInput) > 0.01f)
             {
-                float keyInput = 0f;
-                if (Keyboard.current.leftArrowKey.isPressed || Keyboard.current.aKey.isPressed) keyInput -= 1f;
-                if (Keyboard.current.rightArrowKey.isPressed || Keyboard.current.dKey.isPressed) keyInput += 1f;
-                if (Keyboard.current.zKey.isPressed || Keyboard.current.upArrowKey.isPressed) keyInput += 1f;
-
-                if (Mathf.Abs(keyInput) > 0.01f)
+                float angleDelta = keyInput * 90f * Time.deltaTime;
+                rotationDelta += Mathf.Abs(angleDelta);
+                currentHandleAngle += angleDelta;
+                if (handlebarTransform != null)
                 {
-                    float angleDelta = keyInput * 90f * Time.deltaTime;
-                    rotationDelta += Mathf.Abs(angleDelta);
-                    currentHandleAngle += angleDelta;
-                    if (handlebarTransform != null)
-                    {
-                        handlebarTransform.localRotation = Quaternion.Euler(0f, currentHandleAngle, 0f);
-                    }
+                    handlebarTransform.localRotation = Quaternion.Euler(0f, currentHandleAngle, 0f);
                 }
             }
 
@@ -178,8 +172,7 @@ namespace Khoa.Farming
                         OnStateChanged?.Invoke(currentState);
                     }
 
-                    progress = Mathf.Clamp(progress + (rotationDelta / 360f) * millingSpeedMultiplier, 0f, 100f);
-                    OnProgressChanged?.Invoke(progress);
+                    ProcessRotation(rotationDelta);
 
                     // Hiệu ứng hạt bụi cám văng ra
                     if (chaffParticles != null && !chaffParticles.isPlaying)
@@ -190,10 +183,6 @@ namespace Khoa.Farming
                     // Rung Haptic khi xoay
                     TriggerHapticFeedback(angularSpeed);
 
-                    if (progress >= 100f)
-                    {
-                        CompleteMilling();
-                    }
                 }
                 else
                 {
@@ -221,7 +210,7 @@ namespace Khoa.Farming
         /// </summary>
         public bool PourPaddyIntoMill()
         {
-            if (currentState == GrindMillState.ReadyToGrind || currentState == GrindMillState.Grinding)
+            if (currentState != GrindMillState.Empty)
             {
                 Debug.LogWarning("[GrindMillStation] Cối xay đang chứa lúa, hãy xay hết mẻ này trước!");
                 return false;
@@ -237,11 +226,51 @@ namespace Khoa.Farming
             return true;
         }
 
+        public bool TryLoadPaddy(IPaddySource source)
+        {
+            if (source == null || !source.HasPaddy || currentState != GrindMillState.Empty)
+            {
+                return false;
+            }
+
+            if (!source.TryConsumePaddy())
+            {
+                return false;
+            }
+
+            return PourPaddyIntoMill();
+        }
+
+        public bool ProcessRotation(float rotationDeltaDegrees)
+        {
+            if ((currentState != GrindMillState.ReadyToGrind && currentState != GrindMillState.Grinding) || rotationDeltaDegrees <= 0f)
+            {
+                return false;
+            }
+
+            if (currentState != GrindMillState.Grinding)
+            {
+                currentState = GrindMillState.Grinding;
+                OnStateChanged?.Invoke(currentState);
+            }
+
+            float safeDelta = Mathf.Min(rotationDeltaDegrees, 45f);
+            progress = Mathf.Clamp(progress + safeDelta / 360f * millingSpeedMultiplier, 0f, 100f);
+            OnProgressChanged?.Invoke(progress);
+            if (progress >= 100f) CompleteMilling();
+            return true;
+        }
+
         /// <summary>
         /// Hoàn thành xay 100%: Sinh ra thúng gạo trắng sạch.
         /// </summary>
-        public void CompleteMilling()
+        public bool CompleteMilling()
         {
+            if (currentState != GrindMillState.Grinding || progress < 100f || spawnedRiceInstance != null)
+            {
+                return false;
+            }
+
             currentState = GrindMillState.Completed;
             progress = 100f;
 
@@ -259,6 +288,7 @@ namespace Khoa.Farming
             OnStateChanged?.Invoke(currentState);
             OnProgressChanged?.Invoke(progress);
             Debug.Log("<color=green>[GrindMillStation] 🎉 Xay gạo thành công! Gạo trắng đã sẵn sàng để đem đi vo và nấu cơm!</color>");
+            return true;
         }
 
         private void SpawnWhiteRiceItem()
@@ -299,19 +329,15 @@ namespace Khoa.Farming
                 spawnedRiceInstance.OnGrabbed += (rice) =>
                 {
                     if (milledRiceVisual != null) milledRiceVisual.SetActive(false);
+                    spawnedRiceInstance = null;
+                    currentState = GrindMillState.Empty;
+                    progress = 0f;
+                    UpdateVisuals();
+                    OnStateChanged?.Invoke(currentState);
+                    OnProgressChanged?.Invoke(progress);
+                    OnMilledRiceCollected?.Invoke();
                 };
                 OnMillingCompleted?.Invoke(spawnedRiceInstance);
-            }
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other == null) return;
-
-            // Nhận diện giỏ thóc
-            if (other.name.Contains("Basket") || other.name.Contains("Rice") || other.name.Contains("Paddy"))
-            {
-                PourPaddyIntoMill();
             }
         }
 
