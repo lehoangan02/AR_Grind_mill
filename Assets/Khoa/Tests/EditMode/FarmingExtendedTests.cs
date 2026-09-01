@@ -249,6 +249,28 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
+        public void RiceThresherReceiver_WithPhysicalOutput_SpawnsTypedPaddyBatch()
+        {
+            GameObject thresherGO = new GameObject("ThresherWithPhysicalOutput");
+            thresherGO.transform.SetParent(testRoot.transform);
+            RiceThresherBasketReceiver receiver = thresherGO.AddComponent<RiceThresherBasketReceiver>();
+            receiver.autoFillInventoryBasket = false;
+            GameObject template = new GameObject("PaddyTemplate");
+            template.transform.SetParent(testRoot.transform);
+            template.AddComponent<PaddyBatchItem>();
+            receiver.paddyBatchPrefab = template;
+            PaddyBatchItem spawned = null;
+            receiver.OnPaddyBatchCreated += item => spawned = item;
+
+            bool accepted = receiver.TryReceiveGrain(10);
+
+            Assert.IsTrue(accepted);
+            Assert.IsNotNull(spawned);
+            Assert.IsTrue(spawned.HasPaddy);
+            Object.DestroyImmediate(spawned.gameObject);
+        }
+
+        [Test]
         public void Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle()
         {
             GleanedRiceStalk.currentGleanedCount = 0;

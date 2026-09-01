@@ -128,19 +128,26 @@ public class GrindMillController : InteractableObject
         //     textMeshProUGUI.text = "Not ready to grind rice!";
         // }
         
-        if (Keyboard.current.zKey.isPressed)
+        bool isVRTriggerPressed = (VRController.instance != null && (VRController.instance.IsRightTriggerPressed() || VRController.instance.IsRightGripPressed()));
+        bool isKeyboardZPressed = (Keyboard.current != null && (Keyboard.current.zKey.isPressed || Keyboard.current.upArrowKey.isPressed));
+        bool isGrindActive = isVRTriggerPressed || isKeyboardZPressed || isPlayerInHandleRange;
+
+        if (handlebarInputController != null)
         {
-            handlebarInputController.enabled = true;
-            isSelected = true;
-            riceGrindProgressBar.SetActive(true);
-            textMeshProUGUI.text = "Ready to grind rice!";
-        }
-        else
-        {
-            handlebarInputController.enabled = false;
-            isSelected = false;
-            riceGrindProgressBar.SetActive(false);
-            textMeshProUGUI.text = "Not ready to grind rice!";
+            if (isGrindActive)
+            {
+                handlebarInputController.enabled = true;
+                isSelected = true;
+                if (riceGrindProgressBar != null) riceGrindProgressBar.SetActive(true);
+                if (textMeshProUGUI != null) textMeshProUGUI.text = "Ready to grind rice!";
+            }
+            else
+            {
+                handlebarInputController.enabled = false;
+                isSelected = false;
+                if (riceGrindProgressBar != null) riceGrindProgressBar.SetActive(false);
+                if (textMeshProUGUI != null) textMeshProUGUI.text = "Not ready to grind rice!";
+            }
         }
     }
 }
