@@ -118,8 +118,15 @@ public class VRController : MonoBehaviour
     }
     private void Toggle(InputAction.CallbackContext context)
     {
-        // Debug.Log("Toggle called");
-        UI.SetActive(!UI.activeSelf);
+        if (UIManager.instance != null)
+        {
+            UIManager.instance.TogglePauseMenu();
+            return;
+        }
+        if (UI != null)
+        {
+            UI.SetActive(!UI.activeSelf);
+        }
     }
     private void OnDeviceChange(InputDevice device, InputDeviceChange change)
     {

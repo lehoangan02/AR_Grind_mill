@@ -9,6 +9,29 @@ public class PauseMenuScreen : UIScreen
     [SerializeField] private Button quitButton;
     [SerializeField] private string mainMenuSceneName;
 
+    [SerializeField, Tooltip("Time.timeScale to apply while this menu is open. Defaults to 0 (full physics pause).")]
+    private float pausedTimeScale = 0f;
+
+    [SerializeField, Tooltip("Time.timeScale restored on close. Defaults to 1 (normal playback).")]
+    private float resumedTimeScale = 1f;
+
+    private float timeScaleBeforePause;
+
+    public override void OnOpen(UIScreenData openData = null)
+    {
+        timeScaleBeforePause = Time.timeScale;
+        Time.timeScale = pausedTimeScale;
+        base.OnOpen(openData);
+    }
+
+    public override void OnClose()
+    {
+        base.OnClose();
+        Time.timeScale = resumedTimeScale > 0f
+            ? (timeScaleBeforePause > 0f ? timeScaleBeforePause : resumedTimeScale)
+            : resumedTimeScale;
+    }
+
     private void Start()
     {
         if (resumeButton != null)
