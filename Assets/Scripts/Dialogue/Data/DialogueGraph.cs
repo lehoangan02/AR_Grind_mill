@@ -23,6 +23,15 @@ namespace AR_Grind_mill.Dialogue.Data
                  "Validate() also checks that every node is reachable from entryNode.")]
         public List<DialogueNode> nodes = new List<DialogueNode>();
 
+        [Header("Validation")]
+        [Tooltip("Treat this graph as a flat pool of nodes instead of a connected tree. " +
+                 "When true, Validate() / OnValidate() will NOT flag nodes as unreachable " +
+                 "from entryNode. Use this when the runtime swaps entryNode at delivery " +
+                 "time (e.g. quest events that inject specific lines) rather than walking " +
+                 "the graph via choices. Other checks (null refs, terminal sanity) still " +
+                 "run.")]
+        public bool isNodePool;
+
         /// <summary>
         /// Returns the entry node, or null if none is assigned.
         /// </summary>
@@ -60,24 +69,30 @@ namespace AR_Grind_mill.Dialogue.Data
                 }
             }
 
-            // 2. Reachable set: every node we can reach from entryNode via BFS.
+            // 2. Reachable set: BFS from entryNode. Skipped when isNodePool.
             HashSet<DialogueNode> reachable = new HashSet<DialogueNode>();
-            foreach (DialogueNode n in WalkGraph())
+            if (!isNodePool)
             {
-                if (n != null)
+                foreach (DialogueNode n in WalkGraph())
                 {
-                    reachable.Add(n);
+                    if (n != null)
+                    {
+                        reachable.Add(n);
+                    }
                 }
             }
 
-            // 3. Orphan nodes: listed but never reachable.
-            for (int i = 0; i < nodes.Count; i++)
+            // 3. Orphan nodes: listed but never reachable. Skipped when isNodePool.
+            if (!isNodePool)
             {
-                DialogueNode node = nodes[i];
-                if (node == null) continue;
-                if (!reachable.Contains(node))
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    errors.Add($"[{name}] nodes[{i}] ('{node.name}') is unreachable from entryNode.");
+                    DialogueNode node = nodes[i];
+                    if (node == null) continue;
+                    if (!reachable.Contains(node))
+                    {
+                        errors.Add($"[{name}] nodes[{i}] ('{node.name}') is unreachable from entryNode.");
+                    }
                 }
             }
 

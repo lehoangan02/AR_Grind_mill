@@ -131,7 +131,7 @@ namespace AR_Grind_mill.Dialogue.Editor
                 farewell,
             };
 
-            CreateChildGraph(GraphAssetPath, SpeakerName, intro, orderedNodes);
+            CreateChildGraph(GraphAssetPath, SpeakerName, intro, orderedNodes, isNodePool: true);
 
             // --- Validate ---
             DialogueGraph graph = AssetDatabase.LoadAssetAtPath<DialogueGraph>(GraphAssetPath);
@@ -219,7 +219,7 @@ namespace AR_Grind_mill.Dialogue.Editor
         /// all 17 child-NPC nodes together.
         /// </summary>
         private static void CreateChildGraph(
-            string path, string characterName, DialogueNode entry, List<DialogueNode> nodes)
+            string path, string characterName, DialogueNode entry, List<DialogueNode> nodes, bool isNodePool = false)
         {
             DialogueGraph graph = AssetDatabase.LoadAssetAtPath<DialogueGraph>(path);
             if (graph == null)
@@ -238,6 +238,7 @@ namespace AR_Grind_mill.Dialogue.Editor
             graph.characterName = characterName;
             graph.entryNode     = entry;
             graph.nodes         = new List<DialogueNode>(nodes);
+            graph.isNodePool    = isNodePool;
             EditorUtility.SetDirty(graph);
         }
 
