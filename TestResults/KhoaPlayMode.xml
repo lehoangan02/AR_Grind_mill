@@ -1,0 +1,1104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Passed" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4,402455">
+  <test-suite type="TestSuite" id="1020" name="AR_5" fullname="AR_5" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4.402455" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1013" name="Khoa.Farming.PlayModeTests.dll" fullname="D:/Unity/Project/AR_Grind_mill/Library/ScriptAssemblies/Khoa.Farming.PlayModeTests.dll" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4.392487" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10036" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1014" name="Khoa" fullname="Khoa" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4.391451" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1015" name="Farming" fullname="Khoa.Farming" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4.390991" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1016" name="PlayModeTests" fullname="Khoa.Farming.PlayModeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:34Z" duration="4.390558" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="CookingRuntimePlayModeTests" fullname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests" classname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:30Z" duration="0.494629" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1002" name="GrindMill_CompleteProcess_SpawnsWhiteRiceItem" fullname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests.GrindMill_CompleteProcess_SpawnsWhiteRiceItem" methodname="GrindMill_CompleteProcess_SpawnsWhiteRiceItem" classname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests" runstate="Runnable" seed="775221607" result="Passed" start-time="2026-08-31 14:53:29Z" end-time="2026-08-31 14:53:30Z" duration="0.103717" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+<color=green>[GrindMillStation] 🎉 Xay gạo thành công! Gạo trắng đã sẵn sàng để đem đi vo và nấu cơm!</color>
+]]></output>
+              </test-case>
+              <test-case id="1003" name="RiceWashing_FullCycle_ProducesWashedRice" fullname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests.RiceWashing_FullCycle_ProducesWashedRice" methodname="RiceWashing_FullCycle_ProducesWashedRice" classname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests" runstate="Runnable" seed="2034836826" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:30Z" duration="0.016580" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+<color=white>[RiceWashingPot] Đã cho 8 phần gạo trắng vào thau!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+<color=green>[RiceWashingPot] ✨ Đã chắt ráo nước! Gạo sạch ngậm nước sẵn sàng cho vào nồi gang nấu cơm!</color>
+]]></output>
+              </test-case>
+              <test-case id="1004" name="WoodStoveAndCookingPot_CooksRice_ServesRiceBowl" fullname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests.WoodStoveAndCookingPot_CooksRice_ServesRiceBowl" methodname="WoodStoveAndCookingPot_CooksRice_ServesRiceBowl" classname="Khoa.Farming.PlayModeTests.CookingRuntimePlayModeTests" runstate="Runnable" seed="1378963594" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:30Z" duration="0.355883" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=orange>[WoodStove] Đã chụm thêm 1 thanh củi vào bếp (Tổng củi: 1/4).</color>
+<color=red>[WoodStove] 🔥 Bếp củi đã bùng cháy rực rỡ! Hãy đặt nồi cơm lên kiềng bếp để nấu.</color>
+<color=white>[CookingPot] Đã cho gạo vào nồi (Số lượng: 10).</color>
+<color=cyan>[CookingPot] Đã đong nước vào nồi (Nước: 1,0).</color>
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+<color=green>[CookingPot] 🍚 Cơm gang đã chín tới thơm lừng mùi gạo mới! Mở nắp xới cơm thôi!</color>
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+<color=yellow>[CookingPot] 🍲 Đã xới ra 1 bát cơm trắng thơm dẻo!</color>
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1005" name="FarmingRuntimeTests" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:34Z" duration="3.894408" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1008" name="BuffaloPlow_PhysicsTrigger_PlowsPlot" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.BuffaloPlow_PhysicsTrigger_PlowsPlot" methodname="BuffaloPlow_PhysicsTrigger_PlowsPlot" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="1034585341" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:30Z" duration="0.025117" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã dùng Bừa để xới đất!
+]]></output>
+              </test-case>
+              <test-case id="1007" name="DryingYard_TriggerAndUpdate_DriesPhysicalBundle" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.DryingYard_TriggerAndUpdate_DriesPhysicalBundle" methodname="DryingYard_TriggerAndUpdate_DriesPhysicalBundle" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="1251354772" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:30Z" duration="0.020928" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=cyan>[FarmingWeatherSystem] Thời tiết thay đổi: Sunny -> Overcast</color>
+<color=cyan>[FarmingWeatherSystem] Thời tiết thay đổi: Overcast -> Sunny</color>
+Đã đặt bó lúa lên sân phơi. Tiến độ khô hiện tại: 0,0%
+]]></output>
+              </test-case>
+              <test-case id="1012" name="Fishing_AfterCasting_ReachesWaitingForFishThenBite" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.Fishing_AfterCasting_ReachesWaitingForFishThenBite" methodname="Fishing_AfterCasting_ReachesWaitingForFishThenBite" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="1001793642" result="Passed" start-time="2026-08-31 14:53:30Z" end-time="2026-08-31 14:53:33Z" duration="3.022652" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có Controller lẫn Camera.main! Giữ cần câu tại vị trí hiện tại.
+<b>[VR CÂU CÁ]</b> VRFishingController đã sẵn sàng!
+<b>[FISHING ZONE]</b> Lưỡi câu đã đi vào vùng câu: Vùng câu cá (Default)
+<b>[VR CÂU CÁ]</b> Phao chạm nước! Vùng: Vùng câu cá. Bắt đầu thả dây...
+<b>[VR CÂU CÁ]</b> Đang chờ cá cắn mồi...
+<b>[VR CÂU CÁ] CÁ ĐÃ CẮN MỒI!!! Giật cần nhanh lên!</b>
+]]></output>
+              </test-case>
+              <test-case id="1011" name="Fishing_BobberPhysicsTrigger_StartsCasting" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.Fishing_BobberPhysicsTrigger_StartsCasting" methodname="Fishing_BobberPhysicsTrigger_StartsCasting" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="127141927" result="Passed" start-time="2026-08-31 14:53:33Z" end-time="2026-08-31 14:53:33Z" duration="0.015788" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có Controller lẫn Camera.main! Giữ cần câu tại vị trí hiện tại.
+<b>[VR CÂU CÁ]</b> VRFishingController đã sẵn sàng!
+<b>[VR CÂU CÁ]</b> Phao chạm nước! Vùng: Vùng câu cá. Bắt đầu thả dây...
+<b>[FISHING ZONE]</b> Lưỡi câu đã đi vào vùng câu: Vùng câu cá (Default)
+<b>[FISHING ZONE]</b> Lưỡi câu đã đi vào vùng câu: Vùng câu cá (Default)
+]]></output>
+              </test-case>
+              <test-case id="1009" name="SluiceGate_BatchesIrrigationInsteadOfUpdatingEveryFrame" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.SluiceGate_BatchesIrrigationInsteadOfUpdatingEveryFrame" methodname="SluiceGate_BatchesIrrigationInsteadOfUpdatingEveryFrame" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="2036698497" result="Passed" start-time="2026-08-31 14:53:33Z" end-time="2026-08-31 14:53:34Z" duration="0.554203" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã mở van nước! Nước đang chảy vào các thửa ruộng...
+]]></output>
+              </test-case>
+              <test-case id="1010" name="SluiceGate_PartialOpeningScalesRealIrrigationFlow" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.SluiceGate_PartialOpeningScalesRealIrrigationFlow" methodname="SluiceGate_PartialOpeningScalesRealIrrigationFlow" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="194198603" result="Passed" start-time="2026-08-31 14:53:34Z" end-time="2026-08-31 14:53:34Z" duration="0.122405" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="SluiceGate_Start_AutoConnectsAndIrrigatesNearbyPlot" fullname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests.SluiceGate_Start_AutoConnectsAndIrrigatesNearbyPlot" methodname="SluiceGate_Start_AutoConnectsAndIrrigatesNearbyPlot" classname="Khoa.Farming.PlayModeTests.FarmingRuntimeTests" runstate="Runnable" seed="954748153" result="Passed" start-time="2026-08-31 14:53:34Z" end-time="2026-08-31 14:53:34Z" duration="0.131039" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Van nước đã kết nối thành công với 1 ô ruộng lân cận.
+Đã mở van nước! Nước đang chảy vào các thửa ruộng...
+Saving results to: C:/Users/ASUS/AppData/LocalLow/DefaultCompany/AR_5\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

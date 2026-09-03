@@ -2,7 +2,9 @@
     "name": "Khoa.Farming.PlayModeTests",
     "rootNamespace": "Khoa.Farming.PlayModeTests",
     "references": [
-        "Khoa.Farming"
+        "Khoa.Farming",
+        "Unity.XR.Interaction.Toolkit",
+        "Unity.XR.CoreUtils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

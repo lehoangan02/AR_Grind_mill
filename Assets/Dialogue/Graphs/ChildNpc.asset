@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueGraph
   characterName: Helper Boy
   entryNode: {fileID: 11400000, guid: 23a32fdd07ed88b6881ce73395b2fe88, type: 2}
+  isNodePool: 1
   nodes:
   - {fileID: 11400000, guid: 23a32fdd07ed88b6881ce73395b2fe88, type: 2}
   - {fileID: 11400000, guid: 610d101c5a39f091d84cf1482606533d, type: 2}

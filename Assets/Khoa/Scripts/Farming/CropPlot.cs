@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
@@ -32,6 +32,10 @@ namespace Khoa.Farming
         [Header("Debug Interaction")]
         [Tooltip("Chỉ bật trong scene test. Gameplay thật yêu cầu nông cụ có đúng Tag.")]
         public bool allowDebugSelectInteractions = false;
+
+        [Header("Fertilizer State")]
+        [Tooltip("Đã bón lót phân hoai cho ô đất (áp dụng cho cây lúa vụ tiếp theo)")]
+        public bool hasFertilizerApplied = false;
 
         [Header("Models 3D (Optional)")]
         public GameObject emptyModel3D; // Model đất trống chưa cày (thả vào đây)
@@ -140,10 +144,25 @@ namespace Khoa.Farming
                     PlowPlot();
                 }
             }
-            // 2. Dùng Mạ (Seed) để cấy lên đất đã xới
-            else if (other.CompareTag("Seed") && currentState == PlotState.Tilled)
+            // 2. Bón lót phân hoai cho đất đã cày (Tilled) hoặc bón trực tiếp cho cây lúa
+            MatureFertilizerItem matureFertilizer = other.GetComponent<MatureFertilizerItem>() ?? other.GetComponentInParent<MatureFertilizerItem>();
+            if (matureFertilizer != null)
+            {
+                matureFertilizer.TryApplyTo(this);
+                return;
+            }
+
+            // 3. Dùng Mạ (Seed) để cấy lên đất đã xới
+            if (other.CompareTag("Seed") && currentState == PlotState.Tilled)
             {
                 PlantCrop();
+            }
+            // 4. Bón lót phân thường (Legacy test) cho đất đã cày
+            else if (other.CompareTag("Fertilizer") && currentState == PlotState.Tilled && !hasFertilizerApplied)
+            {
+                hasFertilizerApplied = true;
+                UpdateVisuals();
+                Debug.Log("Đã bón lót phân cho đất đã cày!");
             }
             // Các tương tác chăm sóc cây (khi có lúa) nếu đập trúng đất thay vì trúng thân cây
             else if (currentState == PlotState.Occupied && currentCrop != null)
@@ -157,6 +176,35 @@ namespace Khoa.Farming
                     currentCrop.WaterPlant(20f);
                 }
             }
+        }
+
+        /// <summary>
+        /// Giao dịch an toàn: Bón phân hoai mục vào ô ruộng.
+        /// Chỉ trả về true nếu bón thành công (ruộng đã cày Tilled hoặc lúa chưa bón).
+        /// </summary>
+        public bool TryApplyFertilizer(MatureFertilizerItem item)
+        {
+            if (currentState == PlotState.Tilled)
+            {
+                if (!hasFertilizerApplied)
+                {
+                    hasFertilizerApplied = true;
+                    UpdateVisuals();
+                    Debug.Log("<b>[CropPlot]</b> Đã bón lót phân hoai cho ô đất đã cày! Vụ mùa tới sẽ tăng trưởng 1.5x.");
+                    return true;
+                }
+                return false;
+            }
+            else if (currentState == PlotState.Occupied && currentCrop != null)
+            {
+                if (!currentCrop.hasFertilizer && currentCrop.currentState != CropState.Dead)
+                {
+                    currentCrop.Fertilize();
+                    return true;
+                }
+                return false;
+            }
+            return false;
         }
 
         // Hàm xử lý chung khi bấm bằng tia Laser VR (Dùng để dự phòng / Test)
@@ -180,6 +228,7 @@ namespace Khoa.Farming
             if (currentState != PlotState.Empty) return;
             
             currentState = PlotState.Tilled;
+            hasFertilizerApplied = false;
             UpdateVisuals();
             OnStateChanged?.Invoke(currentState);
             Debug.Log("Đã dùng Bừa để xới đất!");
@@ -215,6 +264,12 @@ namespace Khoa.Farming
             if (currentCrop != null)
             {
                 currentCrop.Initialize(this);
+                if (hasFertilizerApplied)
+                {
+                    currentCrop.Fertilize();
+                    hasFertilizerApplied = false;
+                    Debug.Log("<b>[CropPlot]</b> Đất đã được bón lót phân hoai -> Lúa cấy vào nhận hiệu lực 1.5x!");
+                }
             }
         }
 
@@ -275,6 +330,7 @@ namespace Khoa.Farming
                 
                 // Trở về đất trống
                 currentState = PlotState.Empty;
+                hasFertilizerApplied = false;
                 UpdateVisuals();
                 OnStateChanged?.Invoke(currentState);
                 Debug.Log("Đã gặt lúa thành công và sinh ra Bó Lúa!");
@@ -297,7 +353,8 @@ namespace Khoa.Farming
             
             // Trở về đất trống
             currentState = PlotState.Empty;
-            UpdateVisuals();
+                hasFertilizerApplied = false;
+                UpdateVisuals();
             OnStateChanged?.Invoke(currentState);
         }
 
