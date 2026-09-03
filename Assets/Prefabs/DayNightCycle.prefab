@@ -50,7 +50,7 @@ MonoBehaviour:
   dayIntensity: 1
   nightIntensity: 0.05
   sunYawDegrees: 30
-  enableFog: 1
+  enableFog: 0
   fogDensity: 0.005
   autoCycle: 1
   sunColorGradient:
