@@ -6,7 +6,8 @@
         "UnityEditor.TestRunner",
         "Khoa.Farming",
         "Unity.XR.Interaction.Toolkit",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.XR.CoreUtils"
     ],
     "includePlatforms": [
         "Editor"

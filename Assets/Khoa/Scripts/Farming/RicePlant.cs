@@ -204,6 +204,13 @@ namespace Khoa.Farming
             Debug.Log("Đã bón phân! Cây sẽ lớn nhanh hơn.");
         }
 
+        public bool TryApplyFertilizer(MatureFertilizerItem item)
+        {
+            if (currentState == CropState.Dead || hasFertilizer) return false;
+            Fertilize();
+            return true;
+        }
+
         // Hỗ trợ va chạm xuyên thấu (Trigger)
         private void OnTriggerEnter(Collider other)
         {
