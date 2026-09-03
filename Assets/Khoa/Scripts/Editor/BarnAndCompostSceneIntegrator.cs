@@ -109,7 +109,16 @@ namespace Khoa.Farming.Editor
                 buffaloInst.transform.position = pos + new Vector3(0f, 0f, 0.5f);
                 buffaloInst.transform.rotation = Quaternion.Euler(0f, UnityEngine.Random.Range(30f, 60f), 0f);
 
-                // Gỡ bỏ Rider script nếu có trên bản clone visual để tránh xung đột
+                // Gỡ bỏ Plow attachment và Rider script nếu có trên bản clone visual để tránh xung đột
+                BuffaloPlowAttachment[] plows = buffaloInst.GetComponentsInChildren<BuffaloPlowAttachment>(true);
+                for (int i = plows.Length - 1; i >= 0; i--)
+                {
+                    if (plows[i] != null)
+                    {
+                        Object.DestroyImmediate(plows[i].gameObject);
+                    }
+                }
+
                 foreach (var comp in buffaloInst.GetComponents<MonoBehaviour>())
                 {
                     if (comp != null && comp.GetType().Name == "BuffaloRider")

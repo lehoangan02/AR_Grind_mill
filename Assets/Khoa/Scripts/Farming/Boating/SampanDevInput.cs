@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Khoa.Farming.Boating
 {
@@ -36,10 +37,10 @@ namespace Khoa.Farming.Boating
 
         private void Update()
         {
-            if (!Application.isEditor) return;
+            if (!Application.isEditor || Keyboard.current == null) return;
 
             // F: Lên / Xuống xuồng
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Keyboard.current.fKey.wasPressedThisFrame)
             {
                 if (seat != null)
                 {
@@ -49,32 +50,32 @@ namespace Khoa.Farming.Boating
             }
 
             // Chỉ xử lý chèo phím khi đang ngồi trên xuồng hoặc đang test
-            bool canRow = (seat == null || seat.IsSeated || Input.GetKey(KeyCode.LeftShift));
+            bool canRow = (seat == null || seat.IsSeated || Keyboard.current.leftShiftKey.isPressed);
             if (!canRow) return;
 
             // W: Chèo tiến đối xứng (cả 2 mái chèo quét về sau)
-            if (Input.GetKey(KeyCode.W))
+            if (Keyboard.current.wKey.isPressed)
             {
                 Vector3 strokeVel = -transform.forward * simulatedStrokeSpeed;
                 if (leftOar != null) leftOar.SimulateStroke(strokeVel);
                 if (rightOar != null) rightOar.SimulateStroke(strokeVel);
             }
             // S: Chèo lùi
-            else if (Input.GetKey(KeyCode.S))
+            else if (Keyboard.current.sKey.isPressed)
             {
-                Vector3 strokeVel = transform.forward * simulatedStrokeSpeed;
+                Vector3 strokeVel = transform.forward * simulatedStrokeSpeed * 0.5f;
                 if (leftOar != null) leftOar.SimulateStroke(strokeVel);
                 if (rightOar != null) rightOar.SimulateStroke(strokeVel);
             }
 
             // A: Quay trái (Chèo mái bên phải về sau)
-            if (Input.GetKey(KeyCode.A))
+            if (Keyboard.current.aKey.isPressed)
             {
                 Vector3 strokeVel = -transform.forward * simulatedStrokeSpeed;
                 if (rightOar != null) rightOar.SimulateStroke(strokeVel);
             }
             // D: Quay phải (Chèo mái bên trái về sau)
-            else if (Input.GetKey(KeyCode.D))
+            else if (Keyboard.current.dKey.isPressed)
             {
                 Vector3 strokeVel = -transform.forward * simulatedStrokeSpeed;
                 if (leftOar != null) leftOar.SimulateStroke(strokeVel);

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.InputSystem;
 
 namespace Khoa.Farming
 {
@@ -65,7 +66,7 @@ namespace Khoa.Farming
         private void Update()
         {
             // Dev simulator phím E
-            if (Application.isEditor && Input.GetKeyDown(KeyCode.E))
+            if (Application.isEditor && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
             {
                 PerformShovelAction();
             }
