@@ -175,10 +175,6 @@ PrefabInstance:
       propertyPath: sunLight
       value: 
       objectReference: {fileID: 381974129}
-    - target: {fileID: 4787273579563296259, guid: 89217c55e9413449682b7306fd53bd62, type: 3}
-      propertyPath: moonLight
-      value: 
-      objectReference: {fileID: 1401923309}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1071,12 +1067,12 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 381974130}
   - {fileID: 2053819317}
   - {fileID: 1598355375}
   - {fileID: 314128426}
   - {fileID: 4522764977845968455}
   - {fileID: 692129321}
   - {fileID: 481149966}
-  - {fileID: 381974130}
-  - {fileID: 1401923310}
   - {fileID: 44275581}
+  - {fileID: 1401923310}
