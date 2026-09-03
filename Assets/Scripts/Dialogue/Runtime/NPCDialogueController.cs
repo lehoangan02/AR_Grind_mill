@@ -6,14 +6,13 @@ using AR_Grind_mill.Dialogue.Data;
 namespace AR_Grind_mill.Dialogue.Runtime
 {
     /// <summary>
-    /// Per-NPC orchestrator. Owns the dialogue graph, drives the animator + head look,
+    /// Per-NPC orchestrator. Owns the dialogue graph, drives the head look,
     /// listens for the player's start action while they are in proximity, and emits the
     /// shared <see cref="DialogueEvents"/> so the UI layer can render the conversation.
     ///
     /// Wiring (Inspector):
     ///   graph              — DialogueGraph ScriptableObject (assignable at runtime)
     ///   proximityTrigger   — NPCProximityTrigger on the same NPC root
-    ///   animatorDriver     — NPCAnimatorDriver on the same NPC root
     ///   headLook           — HeadLookAtPlayer on the head bone (or anywhere)
     ///   startAction        — InputActionReference, bind to &lt;XRController&gt;/{PrimaryAction}
     ///   endAction          — InputActionReference, optional, lets player dismiss early
@@ -28,9 +27,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
         [Tooltip("Proximity sphere that tells us whether the player can start a conversation.")]
         public NPCProximityTrigger proximityTrigger;
 
-        [Tooltip("Animator + voice wrapper. Talks / plays gestures / plays voice clips.")]
-        public NPCAnimatorDriver animatorDriver;
-
         [Tooltip("Head look-at-player rig. Enabled only while talking.")]
         public HeadLookAtPlayer headLook;
 
@@ -41,6 +37,8 @@ namespace AR_Grind_mill.Dialogue.Runtime
         [Tooltip("Optional action that ENDS a conversation early (e.g. right-hand grip).")]
         public InputActionReference endAction;
 
+        private const string TalkingParamName = "IsTalking";
+
         private DialogueNode currentNode;
         private IReadOnlyList<DialogueChoice> currentChoices;
         private bool isTalking;
@@ -48,6 +46,9 @@ namespace AR_Grind_mill.Dialogue.Runtime
 
         private bool startActionWasEnabled;
         private bool endActionWasEnabled;
+
+        private Animator animator;
+        private static readonly int TalkingParamHash = Animator.StringToHash(TalkingParamName);
 
         // ──────────────────────────────────────────────────────────────────────
         // Lifecycle
@@ -62,18 +63,36 @@ namespace AR_Grind_mill.Dialogue.Runtime
                     $"Drag a graph asset into the Inspector.",
                     this);
             }
-            if (animatorDriver == null)
-            {
-                Debug.LogError(
-                    $"[{nameof(NPCDialogueController)}] '{name}' has no NPCAnimatorDriver assigned.",
-                    this);
-            }
             if (proximityTrigger == null)
             {
                 Debug.LogError(
                     $"[{nameof(NPCDialogueController)}] '{name}' has no NPCProximityTrigger assigned.",
                     this);
             }
+
+            animator = GetComponentInChildren<Animator>(includeInactive: true);
+            if (animator == null)
+            {
+                Debug.LogWarning(
+                    $"[{nameof(NPCDialogueController)}] '{name}' has no Animator in children — talking animation will not switch.",
+                    this);
+            }
+            else if (!HasParameter(animator, TalkingParamName))
+            {
+                Debug.LogWarning(
+                    $"[{nameof(NPCDialogueController)}] '{name}' Animator on '{animator.name}' has no '{TalkingParamName}' bool parameter — talking animation will not switch.",
+                    animator);
+            }
+        }
+
+        private static bool HasParameter(Animator a, string paramName)
+        {
+            if (a == null || a.runtimeAnimatorController == null) return false;
+            foreach (var p in a.parameters)
+            {
+                if (p.name == paramName) return true;
+            }
+            return false;
         }
 
         private void OnEnable()
@@ -224,13 +243,14 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 return;
             }
 
-            if (animatorDriver != null)
-            {
-                animatorDriver.SetTalking(true);
-            }
             if (headLook != null)
             {
                 headLook.SetActive(true);
+            }
+
+            if (animator != null)
+            {
+                animator.SetBool(TalkingParamHash, true);
             }
 
             DialogueEvents.RaiseDialogueStarted(graph);
@@ -267,13 +287,14 @@ namespace AR_Grind_mill.Dialogue.Runtime
         {
             if (!isTalking) return;
 
-            if (animatorDriver != null)
-            {
-                animatorDriver.SetTalking(false);
-            }
             if (headLook != null)
             {
                 headLook.SetActive(false);
+            }
+
+            if (animator != null)
+            {
+                animator.SetBool(TalkingParamHash, false);
             }
 
             DialogueEvents.RaiseDialogueEnded();
@@ -295,18 +316,6 @@ namespace AR_Grind_mill.Dialogue.Runtime
                 : (IReadOnlyList<DialogueChoice>)System.Array.Empty<DialogueChoice>();
 
             DialogueLine line = currentNode.line;
-
-            if (animatorDriver != null)
-            {
-                if (!string.IsNullOrEmpty(line.animationTag))
-                {
-                    animatorDriver.PlayGesture(line.animationTag);
-                }
-                if (line.voiceClip != null)
-                {
-                    animatorDriver.PlayVoice(line.voiceClip);
-                }
-            }
 
             DialogueEvents.RaiseNodePresented(line, currentChoices);
 

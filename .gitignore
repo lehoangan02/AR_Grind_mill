@@ -80,6 +80,18 @@ BuildToRunAndroid/
 .omo/
 !.omo/rules/
 !.omo/rules/**
+
+# AI tool configs (local agent skills, not part of the project)
+.agents/
+.claude/
+.codex/
+.github/
+
+# Android / Unity build artifacts
+.utmp/
+
+# Local planning scratch
+now_plan.md
 # macOS Junk
 .DS_Store
 

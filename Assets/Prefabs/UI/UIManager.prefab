@@ -163,8 +163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb4aecb50db762ebadb3fbc63e5aaf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIScreenAnimator
-  openTransition: 0
-  closeTransition: 0
+  openTransition: 3
+  closeTransition: 3
   duration: 0.3
   openSound: {fileID: 0}
   closeSound: {fileID: 0}
