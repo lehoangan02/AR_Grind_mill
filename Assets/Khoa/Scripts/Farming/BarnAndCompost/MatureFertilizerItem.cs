@@ -107,6 +107,15 @@ namespace Khoa.Farming
             if (isConsumed || other == null) return;
 
             CropPlot plot = other.GetComponent<CropPlot>() ?? other.GetComponentInParent<CropPlot>();
+            if (plot == null)
+            {
+                RicePlant plant = other.GetComponent<RicePlant>() ?? other.GetComponentInParent<RicePlant>();
+                if (plant != null)
+                {
+                    plot = plant.assignedPlot;
+                }
+            }
+
             if (plot != null)
             {
                 TryApplyTo(plot);

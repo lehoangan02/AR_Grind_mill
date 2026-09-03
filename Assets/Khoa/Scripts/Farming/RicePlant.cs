@@ -249,6 +249,20 @@ namespace Khoa.Farming
 
             if (currentState == CropState.Dead) return;
 
+            MatureFertilizerItem matureFert = other.GetComponent<MatureFertilizerItem>() ?? other.GetComponentInParent<MatureFertilizerItem>();
+            if (matureFert != null)
+            {
+                if (targetPlot != null)
+                {
+                    matureFert.TryApplyTo(targetPlot);
+                }
+                else if (!hasFertilizer)
+                {
+                    TryApplyFertilizer(matureFert);
+                }
+                return;
+            }
+
             if (other.CompareTag("Fertilizer") && !hasFertilizer)
             {
                 Fertilize();

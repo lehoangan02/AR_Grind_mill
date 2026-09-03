@@ -80,6 +80,10 @@ namespace Khoa.Farming
                     CompleteComposting();
                 }
             }
+            else if (currentState == CompostState.Ready)
+            {
+                CheckAndResetIfOutputsCleared();
+            }
         }
 
         /// <summary>
@@ -294,6 +298,50 @@ namespace Khoa.Farming
                     progressText.text = "<color=green>PHÂN HOAI MỤC ĐÃ CHÍN!</color>\nĐã có 3 phần phân bón\n<i>Bón lót cho ruộng đã cày (1.5x)</i>";
                     break;
             }
+        }
+
+        /// <summary>
+        /// Kiểm tra nếu tất cả phân bón thành phẩm đã được lấy đi hoặc tiêu thụ hết thì tự động chuyển về Empty.
+        /// </summary>
+        public void CheckAndResetIfOutputsCleared()
+        {
+            if (currentState != CompostState.Ready || !hasSpawnedOutputs) return;
+
+            bool allOutputsCleared = true;
+            for (int i = 0; i < spawnedOutputs.Count; i++)
+            {
+                MatureFertilizerItem item = spawnedOutputs[i];
+                if (item != null && !item.IsConsumed)
+                {
+                    // Nếu vẫn còn tồn tại và nằm gần đống ủ (trong bán kính spawn + 0.6m), coi như chưa lấy hết
+                    if (Vector3.Distance(item.transform.position, transform.position) < outputSpawnRadius + 0.6f)
+                    {
+                        allOutputsCleared = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allOutputsCleared)
+            {
+                ResetToEmpty();
+            }
+        }
+
+        /// <summary>
+        /// Dọn sạch đống ủ và đưa trạng thái về Empty để tiếp tục chu kỳ ủ mới.
+        /// </summary>
+        public void ResetToEmpty()
+        {
+            currentState = CompostState.Empty;
+            currentPortions = 0;
+            compostTimer = 0f;
+            hasSpawnedOutputs = false;
+            spawnedOutputs.Clear();
+            UpdateVisuals();
+            UpdateUI();
+            OnStateChanged?.Invoke(currentState);
+            Debug.Log("<b>[CompostPile]</b> Đống ủ đã được dọn sạch thành phẩm và sẵn sàng cho mẻ ủ phân mới!");
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Khoa.Farming.Tests
         public void SetUp()
         {
             testRoot = new GameObject("BarnCompost_TestRoot");
+            CleanupOrphanedTestObjects();
         }
 
         [TearDown]
@@ -23,6 +24,19 @@ namespace Khoa.Farming.Tests
             if (testRoot != null)
             {
                 Object.DestroyImmediate(testRoot);
+            }
+            CleanupOrphanedTestObjects();
+        }
+
+        private void CleanupOrphanedTestObjects()
+        {
+            foreach (var item in Object.FindObjectsByType<MatureFertilizerItem>(FindObjectsSortMode.None))
+            {
+                if (item != null) Object.DestroyImmediate(item.gameObject);
+            }
+            foreach (var item in Object.FindObjectsByType<ManureItem>(FindObjectsSortMode.None))
+            {
+                if (item != null) Object.DestroyImmediate(item.gameObject);
             }
         }
 
@@ -226,6 +240,94 @@ namespace Khoa.Farming.Tests
             bool appliedAgain = fertItem2.TryApplyTo(plot);
             Assert.IsFalse(appliedAgain);
             Assert.IsFalse(fertItem2.IsConsumed);
+        }
+
+        [Test]
+        public void Test_MatureFertilizerItem_AppliedDirectlyToRicePlant_ConsumesItemAndFertilizesPlant()
+        {
+            GameObject plotGO = new GameObject("Test_CropPlot_Occupied");
+            plotGO.transform.SetParent(testRoot.transform);
+            CropPlot plot = plotGO.AddComponent<CropPlot>();
+            plot.currentState = PlotState.Occupied;
+
+            // Tạo cây lúa
+            GameObject riceGO = new GameObject("Test_RicePlant");
+            riceGO.transform.SetParent(testRoot.transform);
+            BoxCollider riceCol = riceGO.AddComponent<BoxCollider>();
+            riceCol.isTrigger = true;
+            RicePlant plant = riceGO.AddComponent<RicePlant>();
+            plant.Initialize(plot);
+            typeof(CropPlot).GetField("currentCrop", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(plot, plant);
+
+            Assert.IsFalse(plant.hasFertilizer);
+
+            // Tạo phân hoai mục
+            GameObject fertGO = new GameObject("MatureFertilizer");
+            fertGO.transform.SetParent(testRoot.transform);
+            fertGO.AddComponent<Rigidbody>();
+            BoxCollider fertCol = fertGO.AddComponent<BoxCollider>();
+            fertCol.isTrigger = true;
+            MatureFertilizerItem fertItem = fertGO.AddComponent<MatureFertilizerItem>();
+
+            // Giả lập va chạm trực tiếp giữa bao phân và thân cây lúa
+            System.Reflection.MethodInfo handleCollision = typeof(MatureFertilizerItem).GetMethod("HandleCollision",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            Assert.IsNotNull(handleCollision);
+            handleCollision.Invoke(fertItem, new object[] { riceCol });
+
+            // Xác nhận cây lúa được bón phân VÀ bao phân đã bị tiêu thụ
+            Assert.IsTrue(plant.hasFertilizer, "Cây lúa phải được bật cờ bón phân!");
+            Assert.IsTrue(fertItem.IsConsumed, "Bao phân phải bị tiêu thụ sau khi bón vào cây lúa!");
+        }
+
+        [Test]
+        public void Test_CompostPile_ResetsToEmpty_WhenAllOutputsCleared_AllowsNewBatch()
+        {
+            GameObject compostGO = new GameObject("Test_CompostPile");
+            compostGO.transform.SetParent(testRoot.transform);
+            CompostPile compost = compostGO.AddComponent<CompostPile>();
+            compost.requiredPortions = 3;
+            compost.compostDuration = 90f;
+
+            GameObject shovelGO = new GameObject("Shovel");
+            shovelGO.transform.SetParent(testRoot.transform);
+            shovelGO.AddComponent<Rigidbody>();
+            shovelGO.AddComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+            ManureShovel shovel = shovelGO.AddComponent<ManureShovel>();
+
+            // Nạp đủ 3 phần phân để chuyển sang Composting
+            for (int i = 0; i < 3; i++)
+            {
+                shovel.SetFull(true);
+                compost.TryDepositManure(shovel);
+            }
+            Assert.AreEqual(CompostState.Composting, compost.CurrentState);
+
+            // Hoàn thành ủ -> Ready
+            compost.CompleteComposting();
+            Assert.AreEqual(CompostState.Ready, compost.CurrentState);
+
+            // Tìm và dọn sạch các bao phân vừa sinh ra
+            MatureFertilizerItem[] outputs = Object.FindObjectsByType<MatureFertilizerItem>(FindObjectsSortMode.None);
+            Assert.AreEqual(3, outputs.Length);
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                Object.DestroyImmediate(outputs[i].gameObject);
+            }
+
+            // Gọi kiểm tra dọn sạch
+            compost.CheckAndResetIfOutputsCleared();
+
+            // Xác nhận đống ủ đã quay về Empty và sẵn sàng nhận phân mới
+            Assert.AreEqual(CompostState.Empty, compost.CurrentState);
+            Assert.AreEqual(0, compost.CurrentPortions);
+
+            // Thử nạp mẻ phân mới
+            shovel.SetFull(true);
+            bool depositNewBatch = compost.TryDepositManure(shovel);
+            Assert.IsTrue(depositNewBatch, "Đống ủ sau khi reset phải nhận phân cho mẻ mới!");
+            Assert.AreEqual(1, compost.CurrentPortions);
+            Assert.AreEqual(CompostState.Filling, compost.CurrentState);
         }
     }
 }
