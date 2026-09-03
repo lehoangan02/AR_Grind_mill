@@ -92,6 +92,13 @@ BuildToRunAndroid/
 
 # Local planning scratch
 now_plan.md
+
+# Khoa personal documentation (do not push to remote)
+Assets/Khoa/*.md
+Assets/Khoa/*.md.meta
+Assets/Khoa/**/*.md
+Assets/Khoa/**/*.md.meta
+
 # macOS Junk
 .DS_Store
 
