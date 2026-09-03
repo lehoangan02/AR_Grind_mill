@@ -89,6 +89,7 @@ BuildToRunAndroid/
 
 # Android / Unity build artifacts
 .utmp/
+[Tt]est[Rr]esults/
 
 # Local planning scratch
 now_plan.md
