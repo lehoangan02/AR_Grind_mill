@@ -62,6 +62,28 @@ public class DayNightCycle : MonoBehaviour
     private float sunYawDegrees = 30f;
 
     [SerializeField]
+    [Header("Moon")]
+    [Tooltip("The Directional Light that represents the moon. Auto-bound via GameObject.Find(\"MoonLight\") on enable if left null.")]
+    private Light moonLight;
+
+    [SerializeField]
+    [Tooltip("Moon light intensity at lunar zenith (peak). Stylized, tunable via inspector.")]
+    [Min(0f)]
+    private float moonIntensity = 0.3f;
+
+    [SerializeField]
+    [Tooltip("Yaw rotation offset applied to the moon rotation around world Y axis (degrees). 180 places the moon opposite the sun.")]
+    private float moonYawOffsetDegrees = 180f;
+
+    [SerializeField]
+    [Tooltip("If true, the moon casts soft shadows. Off by default for performance.")]
+    private bool moonCastsShadows = false;
+
+    [SerializeField]
+    [Tooltip("Moon light color over the day. time 0 = midnight, 0.25 = 06:00, 0.5 = noon, 0.75 = 18:00.")]
+    private Gradient moonColorGradient = new Gradient();
+
+    [SerializeField]
     [Header("Fog")]
     [Tooltip("Enable exponential-squared fog driven by the fog color ramp.")]
     private bool enableFog = true;
@@ -152,6 +174,17 @@ public class DayNightCycle : MonoBehaviour
             sunLight = FindFirstObjectByType<Light>(FindObjectsInactive.Exclude);
         }
 
+        // Bind to the scene's MoonLight GameObject (named exactly "MoonLight").
+        // Do NOT use FindFirstObjectByType<Light>() here — it would return the sun first.
+        if (moonLight == null)
+        {
+            moonLight = GameObject.Find("MoonLight")?.GetComponent<Light>();
+            if (moonLight == null)
+            {
+                Debug.LogWarning("[DayNightCycle] MoonLight disabled; GameObject not found in scene.");
+            }
+        }
+
         // Ensure a Skybox/Procedural material exists at runtime.
         if (RenderSettings.skybox == null || RenderSettings.skybox.shader == null || RenderSettings.skybox.shader.name != "Skybox/Procedural")
         {
@@ -182,6 +215,9 @@ public class DayNightCycle : MonoBehaviour
         {
             RenderSettings.fog = false;
         }
+
+        // Seed the moon's initial state so it doesn't flash at default intensity on frame 1.
+        ApplyState(startHour / 24f);
     }
 
     void Update()
@@ -205,6 +241,15 @@ public class DayNightCycle : MonoBehaviour
             sunLight.transform.localRotation = Quaternion.Euler(sunAngleDeg, sunYawDegrees, 0f);
             sunLight.intensity = EvaluateIntensity(sunAltitude);
             sunLight.color = sunColorGradient.Evaluate(t);
+        }
+
+        if (moonLight != null)
+        {
+            float moonAltitude = Mathf.Max(0f, -sunAltitude);
+            moonLight.transform.localRotation = Quaternion.Euler(sunAngleDeg + moonYawOffsetDegrees, sunYawDegrees, 0f);
+            moonLight.intensity = moonIntensity * (moonAltitude * moonAltitude * (3f - 2f * moonAltitude));
+            moonLight.color = moonColorGradient.Evaluate(t);
+            moonLight.shadows = moonCastsShadows ? LightShadows.Soft : LightShadows.None;
         }
 
         Color ambientSky = ambientColorGradient.Evaluate(t);
@@ -264,6 +309,11 @@ public class DayNightCycle : MonoBehaviour
         {
             PopulateDefaultGradients();
         }
+
+        if (moonColorGradient == null || moonColorGradient.colorKeys == null || moonColorGradient.colorKeys.Length == 0)
+        {
+            PopulateDefaultGradients();
+        }
     }
 
     void PopulateDefaultGradients()
@@ -315,5 +365,16 @@ public class DayNightCycle : MonoBehaviour
         ambientColorGradient.SetKeys(ambientColorKeys, alphaKeys);
         fogColorGradient.SetKeys(fogColorKeys, alphaKeys);
         skyTintGradient.SetKeys(skyTintColorKeys, alphaKeys);
+
+        GradientColorKey[] moonColorKeys = new GradientColorKey[]
+        {
+            new GradientColorKey(new Color(0.85f, 0.92f, 1.00f, 1.0f), 0.0f),
+            new GradientColorKey(new Color(0.85f, 0.92f, 1.00f, 1.0f), 0.20f),
+            new GradientColorKey(new Color(0.50f, 0.60f, 0.85f, 1.0f), 0.25f),
+            new GradientColorKey(new Color(0.50f, 0.60f, 0.85f, 1.0f), 0.75f),
+            new GradientColorKey(new Color(0.85f, 0.92f, 1.00f, 1.0f), 0.80f),
+            new GradientColorKey(new Color(0.85f, 0.92f, 1.00f, 1.0f), 1.0f),
+        };
+        moonColorGradient.SetKeys(moonColorKeys, alphaKeys);
     }
 }
