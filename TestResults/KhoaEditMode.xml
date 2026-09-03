@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="78" result="Passed" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20,8207565">
+  <test-suite type="TestSuite" id="1000" name="AR_5" fullname="AR_5" runstate="Runnable" testcasecount="78" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20.820757" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1091" name="Khoa.Farming.Tests.dll" fullname="D:/Unity/Project/AR_Grind_mill/Library/ScriptAssemblies/Khoa.Farming.Tests.dll" runstate="Runnable" testcasecount="78" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20.811218" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23336" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1092" name="Khoa" fullname="Khoa" runstate="Runnable" testcasecount="78" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20.809666" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1093" name="Farming" fullname="Khoa.Farming" runstate="Runnable" testcasecount="78" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20.808510" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1094" name="Tests" fullname="Khoa.Farming.Tests" runstate="Runnable" testcasecount="78" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:59Z" duration="20.807264" total="78" passed="78" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="CookingSystemTests" fullname="Khoa.Farming.Tests.CookingSystemTests" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.103955" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1005" name="CookingPot_AddWashedRiceAndWater_BecomesReadyToCook" fullname="Khoa.Farming.Tests.CookingSystemTests.CookingPot_AddWashedRiceAndWater_BecomesReadyToCook" methodname="CookingPot_AddWashedRiceAndWater_BecomesReadyToCook" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" seed="1128472968" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.051790" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[CookingPot] Đã cho gạo vào nồi (Số lượng: 5).</color>
+<color=cyan>[CookingPot] Đã đong nước vào nồi (Nước: 1,0).</color>
+]]></output>
+              </test-case>
+              <test-case id="1006" name="CookingPot_CompleteCooking_TransitionsToCooked_AndServesBowl" fullname="Khoa.Farming.Tests.CookingSystemTests.CookingPot_CompleteCooking_TransitionsToCooked_AndServesBowl" methodname="CookingPot_CompleteCooking_TransitionsToCooked_AndServesBowl" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" seed="1451287662" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.020530" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[CookingPot] Đã cho gạo vào nồi (Số lượng: 5).</color>
+<color=cyan>[CookingPot] Đã đong nước vào nồi (Nước: 1,0).</color>
+<color=green>[CookingPot] 🍚 Cơm gang đã chín tới thơm lừng mùi gạo mới! Mở nắp xới cơm thôi!</color>
+<color=yellow>[CookingPot] 🍲 Đã xới ra 1 bát cơm trắng thơm dẻo!</color>
+]]></output>
+              </test-case>
+              <test-case id="1002" name="WoodStove_AddFirewood_IncreasesCountAndFuel" fullname="Khoa.Farming.Tests.CookingSystemTests.WoodStove_AddFirewood_IncreasesCountAndFuel" methodname="WoodStove_AddFirewood_IncreasesCountAndFuel" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" seed="1609986742" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.005629" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=orange>[WoodStove] Đã chụm thêm 1 thanh củi vào bếp (Tổng củi: 1/4).</color>
+]]></output>
+              </test-case>
+              <test-case id="1003" name="WoodStove_Ignite_WithoutWood_ReturnsFalse" fullname="Khoa.Farming.Tests.CookingSystemTests.WoodStove_Ignite_WithoutWood_ReturnsFalse" methodname="WoodStove_Ignite_WithoutWood_ReturnsFalse" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" seed="414065437" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.003594" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[WoodStove] Chưa có củi trong bếp, không thể nhóm lửa!
+]]></output>
+              </test-case>
+              <test-case id="1004" name="WoodStove_Ignite_WithWood_StartsBurning" fullname="Khoa.Farming.Tests.CookingSystemTests.WoodStove_Ignite_WithWood_StartsBurning" methodname="WoodStove_Ignite_WithWood_StartsBurning" classname="Khoa.Farming.Tests.CookingSystemTests" runstate="Runnable" seed="2011146696" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.004602" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=orange>[WoodStove] Đã chụm thêm 1 thanh củi vào bếp (Tổng củi: 1/4).</color>
+<color=red>[WoodStove] 🔥 Bếp củi đã bùng cháy rực rỡ! Hãy đặt nồi cơm lên kiềng bếp để nấu.</color>
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1007" name="EndToEndFarmingToCookingTests" fullname="Khoa.Farming.Tests.EndToEndFarmingToCookingTests" classname="Khoa.Farming.Tests.EndToEndFarmingToCookingTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.032518" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1008" name="FullCycle_FromHarvestToCookedRice_SucceedsSeamlessly" fullname="Khoa.Farming.Tests.EndToEndFarmingToCookingTests.FullCycle_FromHarvestToCookedRice_SucceedsSeamlessly" methodname="FullCycle_FromHarvestToCookedRice_SucceedsSeamlessly" classname="Khoa.Farming.Tests.EndToEndFarmingToCookingTests" runstate="Runnable" seed="524912616" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.029965" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+<color=green>[GrindMillStation] 🎉 Xay gạo thành công! Gạo trắng đã sẵn sàng để đem đi vo và nấu cơm!</color>
+<color=white>[RiceWashingPot] Đã cho 10 phần gạo trắng vào thau!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+<color=green>[RiceWashingPot] ✨ Đã chắt ráo nước! Gạo sạch ngậm nước sẵn sàng cho vào nồi gang nấu cơm!</color>
+<color=orange>[WoodStove] Đã chụm thêm 1 thanh củi vào bếp (Tổng củi: 1/4).</color>
+<color=red>[WoodStove] 🔥 Bếp củi đã bùng cháy rực rỡ! Hãy đặt nồi cơm lên kiềng bếp để nấu.</color>
+<color=white>[CookingPot] Đã cho gạo vào nồi (Số lượng: 10).</color>
+<color=cyan>[CookingPot] Đã đong nước vào nồi (Nước: 1,0).</color>
+[CookingPot] Trạng thái tiếp xúc nhiệt bếp củi: True
+<color=green>[CookingPot] 🍚 Cơm gang đã chín tới thơm lừng mùi gạo mới! Mở nắp xới cơm thôi!</color>
+<color=yellow>[CookingPot] 🍲 Đã xới ra 1 bát cơm trắng thơm dẻo!</color>
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1009" name="FarmingExtendedTests" fullname="Khoa.Farming.Tests.FarmingExtendedTests" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.091967" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1012" name="Test_BuffaloPlowAttachment_PlowsEmptyPlot" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_BuffaloPlowAttachment_PlowsEmptyPlot" methodname="Test_BuffaloPlowAttachment_PlowsEmptyPlot" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="761923781" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.007946" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã dùng Bừa để xới đất!
+]]></output>
+              </test-case>
+              <test-case id="1020" name="Test_CropPlot_Harvest_SpawnsGleanStalks" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_CropPlot_Harvest_SpawnsGleanStalks" methodname="Test_CropPlot_Harvest_SpawnsGleanStalks" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="1770994716" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.032853" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã dùng Bừa để xới đất!
+Đã cấy mạ!
+Đã gặt lúa thành công và sinh ra Bó Lúa!
+]]></output>
+              </test-case>
+              <test-case id="1010" name="Test_CropPlot_WaterPlot_IncreasesMoisture" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_CropPlot_WaterPlot_IncreasesMoisture" methodname="Test_CropPlot_WaterPlot_IncreasesMoisture" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="1174164472" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.003339" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="Test_FarmingParticleFactory_CreatesValidParticleSystems" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_FarmingParticleFactory_CreatesValidParticleSystems" methodname="Test_FarmingParticleFactory_CreatesValidParticleSystems" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="2117579877" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.015019" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="Test_FarmingWeatherSystem_StateTransition" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_FarmingWeatherSystem_StateTransition" methodname="Test_FarmingWeatherSystem_StateTransition" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="671016841" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.004680" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=cyan>[FarmingWeatherSystem] Thời tiết thay đổi: Sunny -> Rainy</color>
+<color=cyan>[FarmingWeatherSystem] Thời tiết thay đổi: Rainy -> Sunny</color>
+]]></output>
+              </test-case>
+              <test-case id="1019" name="Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle" methodname="Test_GleanedRiceStalk_Collection_CountsAndSpawnsBundle" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="1917035643" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.008469" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>🌾 Đã mót được 1 bông lúa! Tiến độ: 1/3</color>
+<color=yellow>🌾 Đã mót được 1 bông lúa! Tiến độ: 2/3</color>
+<color=yellow>🌾 Đã mót được 1 bông lúa! Tiến độ: 3/3</color>
+<color=green>✨ Bạn đã mót đủ lúa và bó lại thành 1 Bó Lúa (RiceBundleItem) hoàn chỉnh!</color>
+]]></output>
+              </test-case>
+              <test-case id="1013" name="Test_RiceDryingYard_DriesBundleToCompletion" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_RiceDryingYard_DriesBundleToCompletion" methodname="Test_RiceDryingYard_DriesBundleToCompletion" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="613464556" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.002201" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+]]></output>
+              </test-case>
+              <test-case id="1016" name="Test_RiceDryingYard_RainDecay_WhenNotSheltered" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_RiceDryingYard_RainDecay_WhenNotSheltered" methodname="Test_RiceDryingYard_RainDecay_WhenNotSheltered" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="985477243" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001838" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+]]></output>
+              </test-case>
+              <test-case id="1017" name="Test_RiceShelterZone_ProtectsBundleFromRain" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_RiceShelterZone_ProtectsBundleFromRain" methodname="Test_RiceShelterZone_ProtectsBundleFromRain" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="2125632648" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001283" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="Test_RiceThresher_RejectsWet_AndPreservesDryBundleWithoutReceiver" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_RiceThresher_RejectsWet_AndPreservesDryBundleWithoutReceiver" methodname="Test_RiceThresher_RejectsWet_AndPreservesDryBundleWithoutReceiver" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="1041263018" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.004433" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa còn tươi/ẩm ướt! Bạn cần đem ra sân phơi nắng khô (100%) trước khi tuốt hạt.
+Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+Không có giỏ lúa rỗng nhận thóc. Bó lúa được giữ lại để người chơi thử lại.
+]]></output>
+              </test-case>
+              <test-case id="1018" name="Test_RiceThresherBasketReceiver_ComponentSetup" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_RiceThresherBasketReceiver_ComponentSetup" methodname="Test_RiceThresherBasketReceiver_ComponentSetup" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="563845938" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.000886" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="Test_SluiceGate_OpenClose_And_IrrigatesPlots" fullname="Khoa.Farming.Tests.FarmingExtendedTests.Test_SluiceGate_OpenClose_And_IrrigatesPlots" methodname="Test_SluiceGate_OpenClose_And_IrrigatesPlots" classname="Khoa.Farming.Tests.FarmingExtendedTests" runstate="Runnable" seed="1671320354" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.003007" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã mở van nước! Nước đang chảy vào các thửa ruộng...
+Đã đóng van nước kênh mương.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1022" name="FarmingLeverAndGridTests" fullname="Khoa.Farming.Tests.FarmingLeverAndGridTests" classname="Khoa.Farming.Tests.FarmingLeverAndGridTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.016937" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1026" name="PlotGridGenerator_ExposesLockedProductionConfiguration" fullname="Khoa.Farming.Tests.FarmingLeverAndGridTests.PlotGridGenerator_ExposesLockedProductionConfiguration" methodname="PlotGridGenerator_ExposesLockedProductionConfiguration" classname="Khoa.Farming.Tests.FarmingLeverAndGridTests" runstate="Runnable" seed="877430477" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="SluiceGate_SetOpenAmount_UpdatesFlowStateAndLeverRotation" fullname="Khoa.Farming.Tests.FarmingLeverAndGridTests.SluiceGate_SetOpenAmount_UpdatesFlowStateAndLeverRotation" methodname="SluiceGate_SetOpenAmount_UpdatesFlowStateAndLeverRotation" classname="Khoa.Farming.Tests.FarmingLeverAndGridTests" runstate="Runnable" seed="337840809" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.002171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="SluiceGateLever_MapsGrabPositionOntoConstrainedLeverArc" fullname="Khoa.Farming.Tests.FarmingLeverAndGridTests.SluiceGateLever_MapsGrabPositionOntoConstrainedLeverArc" methodname="SluiceGateLever_MapsGrabPositionOntoConstrainedLeverArc" classname="Khoa.Farming.Tests.FarmingLeverAndGridTests" runstate="Runnable" seed="1830324122" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.004895" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="SluiceGatePrefab_HasIndependentPhysicalGrabHandle" fullname="Khoa.Farming.Tests.FarmingLeverAndGridTests.SluiceGatePrefab_HasIndependentPhysicalGrabHandle" methodname="SluiceGatePrefab_HasIndependentPhysicalGrabHandle" classname="Khoa.Farming.Tests.FarmingLeverAndGridTests" runstate="Runnable" seed="698995414" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.006655" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1027" name="FarmingLogicTests" fullname="Khoa.Farming.Tests.FarmingLogicTests" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.007574" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1028" name="Test_CropPlot_InitialState_IsEmpty" fullname="Khoa.Farming.Tests.FarmingLogicTests.Test_CropPlot_InitialState_IsEmpty" methodname="Test_CropPlot_InitialState_IsEmpty" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" seed="1816089753" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.000954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1029" name="Test_CropPlot_Plow_TransitionsToTilled" fullname="Khoa.Farming.Tests.FarmingLogicTests.Test_CropPlot_Plow_TransitionsToTilled" methodname="Test_CropPlot_Plow_TransitionsToTilled" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" seed="768694891" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001160" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã dùng Bừa để xới đất!
+]]></output>
+              </test-case>
+              <test-case id="1030" name="Test_RiceBundleItem_AddDryness_CalculatesCorrectly" fullname="Khoa.Farming.Tests.FarmingLogicTests.Test_RiceBundleItem_AddDryness_CalculatesCorrectly" methodname="Test_RiceBundleItem_AddDryness_CalculatesCorrectly" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" seed="940172099" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+]]></output>
+              </test-case>
+              <test-case id="1032" name="Test_RicePlant_Fertilize_SetsFlag" fullname="Khoa.Farming.Tests.FarmingLogicTests.Test_RicePlant_Fertilize_SetsFlag" methodname="Test_RicePlant_Fertilize_SetsFlag" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" seed="2053480752" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.001436" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Đã bón phân! Cây sẽ lớn nhanh hơn.
+]]></output>
+              </test-case>
+              <test-case id="1031" name="Test_RicePlant_Water_ClampsAtMaxWater" fullname="Khoa.Farming.Tests.FarmingLogicTests.Test_RicePlant_Water_ClampsAtMaxWater" methodname="Test_RicePlant_Water_ClampsAtMaxWater" classname="Khoa.Farming.Tests.FarmingLogicTests" runstate="Runnable" seed="1533466462" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.000808" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1033" name="FarmingRegressionTests" fullname="Khoa.Farming.Tests.FarmingRegressionTests" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:54Z" duration="15.564049" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1042" name="BasketReceiver_WithNearbyPhysicalBasket_AcceptsGrainTransaction" fullname="Khoa.Farming.Tests.FarmingRegressionTests.BasketReceiver_WithNearbyPhysicalBasket_AcceptsGrainTransaction" methodname="BasketReceiver_WithNearbyPhysicalBasket_AcceptsGrainTransaction" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1781379909" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.005828" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=green>🌾 Đã đổ đầy thóc vàng vào Giỏ Lúa (RiceBasket) đặt cạnh cối tuốt!</color>
+]]></output>
+              </test-case>
+              <test-case id="1040" name="CropPlot_EmptyFloodedSoil_ShowsWaterSurfaceAtSeventyPercent" fullname="Khoa.Farming.Tests.FarmingRegressionTests.CropPlot_EmptyFloodedSoil_ShowsWaterSurfaceAtSeventyPercent" methodname="CropPlot_EmptyFloodedSoil_ShowsWaterSurfaceAtSeventyPercent" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1221207773" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.000694" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1035" name="CropPlot_GenericSelect_DoesNotAdvanceFarmingState" fullname="Khoa.Farming.Tests.FarmingRegressionTests.CropPlot_GenericSelect_DoesNotAdvanceFarmingState" methodname="CropPlot_GenericSelect_DoesNotAdvanceFarmingState" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1511082182" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.000599" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1046" name="FarmingSceneIntegrator_DoesNotMoveAnUnrelatedPhysicalBasket" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_DoesNotMoveAnUnrelatedPhysicalBasket" methodname="FarmingSceneIntegrator_DoesNotMoveAnUnrelatedPhysicalBasket" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1718588284" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.296487" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1048" name="FarmingSceneIntegrator_FindsInactiveFieldWaterPlane" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_FindsInactiveFieldWaterPlane" methodname="FarmingSceneIntegrator_FindsInactiveFieldWaterPlane" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="436154593" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.024065" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1049" name="FarmingSceneIntegrator_PlacesStationBottomOnTerrain" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_PlacesStationBottomOnTerrain" methodname="FarmingSceneIntegrator_PlacesStationBottomOnTerrain" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="452428011" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.053126" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1044" name="FarmingSceneIntegrator_PreparationPreservesEveryPlotTransform" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_PreparationPreservesEveryPlotTransform" methodname="FarmingSceneIntegrator_PreparationPreservesEveryPlotTransform" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="971447599" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:38Z" duration="0.002802" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1045" name="FarmingSceneIntegrator_UsesAlreadyOpenMainSceneWithoutDiscardingUnsavedObjects" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_UsesAlreadyOpenMainSceneWithoutDiscardingUnsavedObjects" methodname="FarmingSceneIntegrator_UsesAlreadyOpenMainSceneWithoutDiscardingUnsavedObjects" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1350218080" result="Passed" start-time="2026-08-31 14:51:38Z" end-time="2026-08-31 14:51:46Z" duration="7.665665" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+[PlayerSpeedSetter] Successfully forced speed to 3 on 16 controller components!
+]]></output>
+              </test-case>
+              <test-case id="1047" name="FarmingSceneIntegrator_WiresRequiredBuffaloInputActions" fullname="Khoa.Farming.Tests.FarmingRegressionTests.FarmingSceneIntegrator_WiresRequiredBuffaloInputActions" methodname="FarmingSceneIntegrator_WiresRequiredBuffaloInputActions" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="201321008" result="Passed" start-time="2026-08-31 14:51:46Z" end-time="2026-08-31 14:51:46Z" duration="0.308466" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1043" name="GleaningProgress_NewSession_ResetsStaticCounter" fullname="Khoa.Farming.Tests.FarmingRegressionTests.GleaningProgress_NewSession_ResetsStaticCounter" methodname="GleaningProgress_NewSession_ResetsStaticCounter" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1128319713" result="Passed" start-time="2026-08-31 14:51:46Z" end-time="2026-08-31 14:51:46Z" duration="0.000791" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1055" name="MainScene_HasBoundedPlayableFarmingSetup" fullname="Khoa.Farming.Tests.FarmingRegressionTests.MainScene_HasBoundedPlayableFarmingSetup" methodname="MainScene_HasBoundedPlayableFarmingSetup" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1991331009" result="Passed" start-time="2026-08-31 14:51:46Z" end-time="2026-08-31 14:51:53Z" duration="6.844689" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeDualStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleBendedTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeSingleStraightTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioOneSided couldn't be instanced because the prefab contains no valid mesh renderer.
+The tree PalmTreeTrioTwoSided couldn't be instanced because the prefab contains no valid mesh renderer.
+[PlayerSpeedSetter] Successfully forced speed to 3 on 16 controller components!
+]]></output>
+              </test-case>
+              <test-case id="1051" name="PlotGridGenerator_DefaultsToProductionHundredByHundred" fullname="Khoa.Farming.Tests.FarmingRegressionTests.PlotGridGenerator_DefaultsToProductionHundredByHundred" methodname="PlotGridGenerator_DefaultsToProductionHundredByHundred" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1387934228" result="Passed" start-time="2026-08-31 14:51:53Z" end-time="2026-08-31 14:51:53Z" duration="0.011072" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1050" name="PlotPrefab_CropSpawnPointIsOnTopSurface" fullname="Khoa.Farming.Tests.FarmingRegressionTests.PlotPrefab_CropSpawnPointIsOnTopSurface" methodname="PlotPrefab_CropSpawnPointIsOnTopSurface" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1542850198" result="Passed" start-time="2026-08-31 14:51:53Z" end-time="2026-08-31 14:51:53Z" duration="0.001160" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1052" name="RicePlant_RepeatedWateringDoesNotSpamConsole" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RicePlant_RepeatedWateringDoesNotSpamConsole" methodname="RicePlant_RepeatedWateringDoesNotSpamConsole" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="77586134" result="Passed" start-time="2026-08-31 14:51:53Z" end-time="2026-08-31 14:51:53Z" duration="0.000798" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1039" name="RicePlant_UsesDocumentedGrowthThresholds" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RicePlant_UsesDocumentedGrowthThresholds" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-08-31 14:51:53Z" end-time="2026-08-31 14:51:54Z" duration="0.319744" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1036" name="RicePlant_UsesDocumentedGrowthThresholds(25.0f,Growing)" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RicePlant_UsesDocumentedGrowthThresholds(25.0f,Growing)" methodname="RicePlant_UsesDocumentedGrowthThresholds" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1617211106" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001106" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1037" name="RicePlant_UsesDocumentedGrowthThresholds(60.0f,Maturing)" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RicePlant_UsesDocumentedGrowthThresholds(60.0f,Maturing)" methodname="RicePlant_UsesDocumentedGrowthThresholds" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="971921745" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.000267" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1038" name="RicePlant_UsesDocumentedGrowthThresholds(90.0f,ReadyToHarvest)" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RicePlant_UsesDocumentedGrowthThresholds(90.0f,ReadyToHarvest)" methodname="RicePlant_UsesDocumentedGrowthThresholds" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="322933418" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.000180" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1041" name="RiceThresher_WithoutGrainReceiver_DoesNotConsumeBundle" fullname="Khoa.Farming.Tests.FarmingRegressionTests.RiceThresher_WithoutGrainReceiver_DoesNotConsumeBundle" methodname="RiceThresher_WithoutGrainReceiver_DoesNotConsumeBundle" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="2093632017" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.002237" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Bó lúa đã được phơi khô hoàn toàn, sẵn sàng đem tuốt hạt!
+Không có giỏ lúa rỗng nhận thóc. Bó lúa được giữ lại để người chơi thử lại.
+]]></output>
+              </test-case>
+              <test-case id="1054" name="TerrainPlacement_FootprintCanCrossAdjacentTerrainTiles" fullname="Khoa.Farming.Tests.FarmingRegressionTests.TerrainPlacement_FootprintCanCrossAdjacentTerrainTiles" methodname="TerrainPlacement_FootprintCanCrossAdjacentTerrainTiles" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="382061886" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.010034" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1053" name="TerrainPlacement_MultiSampleKeepsWholePlotAboveUnevenGround" fullname="Khoa.Farming.Tests.FarmingRegressionTests.TerrainPlacement_MultiSampleKeepsWholePlotAboveUnevenGround" methodname="TerrainPlacement_MultiSampleKeepsWholePlotAboveUnevenGround" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="538306808" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.008641" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="ThresherPrefab_HasValidBasketReceiverScript" fullname="Khoa.Farming.Tests.FarmingRegressionTests.ThresherPrefab_HasValidBasketReceiverScript" methodname="ThresherPrefab_HasValidBasketReceiverScript" classname="Khoa.Farming.Tests.FarmingRegressionTests" runstate="Runnable" seed="1920519627" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001263" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1056" name="FishingSystemTests" fullname="Khoa.Farming.Tests.FishingSystemTests" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.102071" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1063" name="Test_CaughtFishItem_Grab_DetachesFromHookAndResetsRod" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_CaughtFishItem_Grab_DetachesFromHookAndResetsRod" methodname="Test_CaughtFishItem_Grab_DetachesFromHookAndResetsRod" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="265775485" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.016655" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+<b>[CÂU CÁ]</b> Người chơi đã gỡ con cá Cá Tra (1,2kg) khỏi lưỡi câu!
+<b>[VR CÂU CÁ]</b> Đã nhận cá từ người chơi. Reset cần câu về Idle.
+<b>[VR CÂU CÁ]</b> Đã reset về trạng thái chờ (Idle).
+]]></output>
+              </test-case>
+              <test-case id="1065" name="Test_FishingController_EnsureHookMeshTriggerSetup_ConfiguresBobberTrigger" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_FishingController_EnsureHookMeshTriggerSetup_ConfiguresBobberTrigger" methodname="Test_FishingController_EnsureHookMeshTriggerSetup_ConfiguresBobberTrigger" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1763350245" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.002878" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1066" name="Test_FishingController_PlaceBobberAtLineEnd_MovesWithLineLength" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_FishingController_PlaceBobberAtLineEnd_MovesWithLineLength" methodname="Test_FishingController_PlaceBobberAtLineEnd_MovesWithLineLength" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1934612518" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001606" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="Test_FishingHookTrigger_DetectsWaterCollider" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_FishingHookTrigger_DetectsWaterCollider" methodname="Test_FishingHookTrigger_DetectsWaterCollider" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1663179018" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.004002" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1064" name="Test_FishingStationBoard_ToggleEquipAndUnequip" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_FishingStationBoard_ToggleEquipAndUnequip" methodname="Test_FishingStationBoard_ToggleEquipAndUnequip" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1116710255" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.012078" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[BẢNG CÂU CÁ]</b> Người chơi bấm bảng: LẤY CẦN CÂU dính vào tay!
+<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+<b>[BẢNG CÂU CÁ]</b> Người chơi bấm bảng: CẤT CẦN CÂU về giá!
+<b>[VR CÂU CÁ]</b> Đã reset về trạng thái chờ (Idle).
+<b>[VR CÂU CÁ]</b> Đã cất cần câu về giá/bảng!
+]]></output>
+              </test-case>
+              <test-case id="1062" name="Test_FishingZone_SetsCustomFishTypeAndParameters" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_FishingZone_SetsCustomFishTypeAndParameters" methodname="Test_FishingZone_SetsCustomFishTypeAndParameters" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1179116042" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.013122" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+<b>[VR CÂU CÁ]</b> Phao chạm nước! Vùng: Cầu Cá Tra. Bắt đầu thả dây...
+]]></output>
+              </test-case>
+              <test-case id="1058" name="Test_VRFishingController_EquipRod_SetsEquippedTrue" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_VRFishingController_EquipRod_SetsEquippedTrue" methodname="Test_VRFishingController_EquipRod_SetsEquippedTrue" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="970964204" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.010311" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+]]></output>
+              </test-case>
+              <test-case id="1057" name="Test_VRFishingController_InitialState_IsIdle" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_VRFishingController_InitialState_IsIdle" methodname="Test_VRFishingController_InitialState_IsIdle" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1923062105" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001024" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="Test_VRFishingController_ReelIn_ResetsToIdle" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_VRFishingController_ReelIn_ResetsToIdle" methodname="Test_VRFishingController_ReelIn_ResetsToIdle" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1604167184" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.015006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+<b>[VR CÂU CÁ]</b> Phao chạm nước! Vùng: Mặc định. Bắt đầu thả dây...
+<b>[VR CÂU CÁ]</b> Đang cuộn dây câu về...
+<b>[VR CÂU CÁ]</b> Đã reset về trạng thái chờ (Idle).
+]]></output>
+              </test-case>
+              <test-case id="1060" name="Test_VRFishingController_StartFishingInWater_TransitionsState" fullname="Khoa.Farming.Tests.FishingSystemTests.Test_VRFishingController_StartFishingInWater_TransitionsState" methodname="Test_VRFishingController_StartFishingInWater_TransitionsState" classname="Khoa.Farming.Tests.FishingSystemTests" runstate="Runnable" seed="1004814886" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.011304" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [Right Controller]!
+<b>[VR CÂU CÁ]</b> Phao chạm nước! Vùng: Mặc định. Bắt đầu thả dây...
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1067" name="GrindMillTests" fullname="Khoa.Farming.Tests.GrindMillTests" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.011612" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1071" name="CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" fullname="Khoa.Farming.Tests.GrindMillTests.CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" methodname="CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1782324914" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.003359" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+<color=green>[GrindMillStation] 🎉 Xay gạo thành công! Gạo trắng đã sẵn sàng để đem đi vo và nấu cơm!</color>
+]]></output>
+              </test-case>
+              <test-case id="1068" name="InitialState_IsEmpty" fullname="Khoa.Farming.Tests.GrindMillTests.InitialState_IsEmpty" methodname="InitialState_IsEmpty" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1452674542" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.000516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1069" name="PourPaddy_TransitionsToReadyToGrind" fullname="Khoa.Farming.Tests.GrindMillTests.PourPaddy_TransitionsToReadyToGrind" methodname="PourPaddy_TransitionsToReadyToGrind" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1686460555" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+]]></output>
+              </test-case>
+              <test-case id="1070" name="PourPaddy_WhenAlreadyReady_ReturnsFalse" fullname="Khoa.Farming.Tests.GrindMillTests.PourPaddy_WhenAlreadyReady_ReturnsFalse" methodname="PourPaddy_WhenAlreadyReady_ReturnsFalse" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1157253653" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.001459" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+[GrindMillStation] Cối xay đang chứa lúa, hãy xay hết mẻ này trước!
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1072" name="RiceWashingTests" fullname="Khoa.Farming.Tests.RiceWashingTests" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.023931" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1074" name="AddRice_TransitionsToHasRice" fullname="Khoa.Farming.Tests.RiceWashingTests.AddRice_TransitionsToHasRice" methodname="AddRice_TransitionsToHasRice" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1934889624" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.003954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[RiceWashingPot] Đã cho 10 phần gạo trắng vào thau!</color>
+]]></output>
+              </test-case>
+              <test-case id="1075" name="AddWater_TransitionsToHasRiceAndWater" fullname="Khoa.Farming.Tests.RiceWashingTests.AddWater_TransitionsToHasRiceAndWater" methodname="AddWater_TransitionsToHasRiceAndWater" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1019251232" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.002661" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[RiceWashingPot] Đã cho 10 phần gạo trắng vào thau!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+]]></output>
+              </test-case>
+              <test-case id="1077" name="DrainWater_WhenWashProgressHigh_TransitionsToWashedRiceReady" fullname="Khoa.Farming.Tests.RiceWashingTests.DrainWater_WhenWashProgressHigh_TransitionsToWashedRiceReady" methodname="DrainWater_WhenWashProgressHigh_TransitionsToWashedRiceReady" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1761865998" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.003567" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[RiceWashingPot] Đã cho 10 phần gạo trắng vào thau!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+<color=green>[RiceWashingPot] ✨ Đã chắt ráo nước! Gạo sạch ngậm nước sẵn sàng cho vào nồi gang nấu cơm!</color>
+]]></output>
+              </test-case>
+              <test-case id="1073" name="InitialState_IsEmpty" fullname="Khoa.Farming.Tests.RiceWashingTests.InitialState_IsEmpty" methodname="InitialState_IsEmpty" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1778200794" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1076" name="StirRice_IncreasesWashProgress" fullname="Khoa.Farming.Tests.RiceWashingTests.StirRice_IncreasesWashProgress" methodname="StirRice_IncreasesWashProgress" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1509249024" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.002240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=white>[RiceWashingPot] Đã cho 10 phần gạo trắng vào thau!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+]]></output>
+              </test-case>
+              <test-case id="1078" name="WaterDipper_ScoopAndPour_WorksCorrectly" fullname="Khoa.Farming.Tests.RiceWashingTests.WaterDipper_ScoopAndPour_WorksCorrectly" methodname="WaterDipper_ScoopAndPour_WorksCorrectly" classname="Khoa.Farming.Tests.RiceWashingTests" runstate="Runnable" seed="1055275284" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:54Z" duration="0.006489" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=cyan>[WaterDipper] Đã múc đầy gáo nước trong mát từ chum!</color>
+<color=cyan>[RiceWashingPot] Đã thêm nước vào thau (Tổng nước: 1,0).</color>
+<color=cyan>[WaterDipper] Đã rót nước ra khỏi gáo.</color>
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1079" name="VietnameseVegetationEditorToolTests" fullname="Khoa.Farming.Tests.VietnameseVegetationEditorToolTests" classname="Khoa.Farming.Tests.VietnameseVegetationEditorToolTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:59Z" duration="4.803365" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1080" name="MainScenePreview_BuildsAValidDecorationOnlyPlanWithoutApplyingIt" fullname="Khoa.Farming.Tests.VietnameseVegetationEditorToolTests.MainScenePreview_BuildsAValidDecorationOnlyPlanWithoutApplyingIt" methodname="MainScenePreview_BuildsAValidDecorationOnlyPlanWithoutApplyingIt" classname="Khoa.Farming.Tests.VietnameseVegetationEditorToolTests" runstate="Runnable" seed="640636309" result="Passed" start-time="2026-08-31 14:51:54Z" end-time="2026-08-31 14:51:59Z" duration="4.800243" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[=== Vietnamese Countryside Vegetation Preview ===
+Terrain 'Terrain_(-1000.00, 0.00, -1000.00)': 5350 placements
+Terrain 'Terrain_(-1000.00, 0.00, 0.00)': 5196 placements
+Terrain 'Terrain_(0.00, 0.00, -1000.00)': 5149 placements
+Terrain 'Terrain': 5304 placements
+Total placements: 20999
+Rice/Vegetable terrain instances: 0
+Prototype palette: Banana=3, Lemon=8, Bamboo=5, Coconut=12, Melaleuca=3, ArecaPalm=9, PalmCluster=10
+Zones:
+  VillageGarden: 90
+  Waterside: 4388
+  FieldEdge: 226
+  OpenCountryside: 16295
+Species:
+  Banana: 3464
+  Lemon: 3948
+  Bamboo: 5071
+  Coconut: 1645
+  Melaleuca: 5327
+  ArecaPalm: 1215
+  PalmCluster: 329
+Rejected candidates:
+  submerged=1885, structure=507, road=359, slope=75, spacing=9006
+Sampling: deterministic Poisson-disc anchors, semantic zones and variable canopy spacing.
+
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1081" name="VietnameseVegetationPlannerTests" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.044469" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1084" name="ClassifyZone_PrioritizesGardenThenWaterThenFieldEdge" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.ClassifyZone_PrioritizesGardenThenWaterThenFieldEdge" methodname="ClassifyZone_PrioritizesGardenThenWaterThenFieldEdge" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="39072265" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.001194" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1083" name="GeneratePoissonPoints_IsDeterministicAndRespectsMinimumDistance" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.GeneratePoissonPoints_IsDeterministicAndRespectsMinimumDistance" methodname="GeneratePoissonPoints_IsDeterministicAndRespectsMinimumDistance" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="437815137" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.024617" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1088" name="MinimumSpacing_ReservesMoreRoomForTallPalmsThanBananas" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.MinimumSpacing_ReservesMoreRoomForTallPalmsThanBananas" methodname="MinimumSpacing_ReservesMoreRoomForTallPalmsThanBananas" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1537041082" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.001112" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1082" name="PlannerType_IsAvailableToTheVegetationTool" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.PlannerType_IsAvailableToTheVegetationTool" methodname="PlannerType_IsAvailableToTheVegetationTool" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1554269268" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000261" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1089" name="PrototypeClassification_UsesAssetFamiliesAndRejectsGameplayRice" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.PrototypeClassification_UsesAssetFamiliesAndRejectsGameplayRice" methodname="PrototypeClassification_UsesAssetFamiliesAndRejectsGameplayRice" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1225173863" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000722" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1087" name="RetentionProbability_MakesSettledAndWatersideZonesLusherThanOpenLand" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.RetentionProbability_MakesSettledAndWatersideZonesLusherThanOpenLand" methodname="RetentionProbability_MakesSettledAndWatersideZonesLusherThanOpenLand" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1285439195" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000614" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1085" name="SelectSpecies_UsesDifferentVietnamesePlantingProfilesPerZone" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.SelectSpecies_UsesDifferentVietnamesePlantingProfilesPerZone" methodname="SelectSpecies_UsesDifferentVietnamesePlantingProfilesPerZone" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1965114660" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000635" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1086" name="SpacingIndex_RejectsOverlappingCanopies" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.SpacingIndex_RejectsOverlappingCanopies" methodname="SpacingIndex_RejectsOverlappingCanopies" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="1552339447" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000774" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1090" name="TargetDimensions_KeepCoconutTallWithoutAnOversizedCanopy" fullname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests.TargetDimensions_KeepCoconutTallWithoutAnOversizedCanopy" methodname="TargetDimensions_KeepCoconutTallWithoutAnOversizedCanopy" classname="Khoa.Farming.Tests.VietnameseVegetationPlannerTests" runstate="Runnable" seed="944973835" result="Passed" start-time="2026-08-31 14:51:59Z" end-time="2026-08-31 14:51:59Z" duration="0.000702" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/ASUS/AppData/LocalLow/DefaultCompany/AR_5\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
