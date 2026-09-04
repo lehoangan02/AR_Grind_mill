@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4aa86815f3d9316b6ecf06bbb29a55, type: 3}
+  m_Name: MrsFour
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueGraph
+  characterName: Mrs. Four
+  entryNode: {fileID: 11400000, guid: ee9b977b495ea2fcd8c924330a64ad7e, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: ee9b977b495ea2fcd8c924330a64ad7e, type: 2}
+  - {fileID: 11400000, guid: 0d7cf71589b608f6696ff702b20989e6, type: 2}
+  - {fileID: 11400000, guid: 00c6e85f38ed1936f97d86ecf8c2504d, type: 2}
+  - {fileID: 11400000, guid: 49562c8c3ff6221f28737184cd301242, type: 2}
+  - {fileID: 11400000, guid: e3f39fb493e2579c6bbbae8d1c9521de, type: 2}
+  - {fileID: 11400000, guid: 3e59302e0eba6f036952b034743430e0, type: 2}
+  - {fileID: 11400000, guid: 42902eb16faaa5f4a97b3870e0f762d6, type: 2}
+  - {fileID: 11400000, guid: 8bdd55aa40703bc41999dcbb95678cb8, type: 2}
+  - {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
+  isNodePool: 0

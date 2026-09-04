@@ -1,0 +1,5 @@
+=== TREE CONCENTRATION (dense near houses, sparse across terrain) ===
+- 'Terrain_(-1000.00, 0.00, 0.00)': no trees, left unchanged.
+- 'Terrain': no trees, left unchanged.
+- 'Terrain_(0.00, 0.00, -1000.00)': blocks=1, trees 400 -> 400
+- 'Terrain_(-1000.00, 0.00, -1000.00)': blocks=1, trees 400 -> 400

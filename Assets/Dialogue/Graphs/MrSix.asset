@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4aa86815f3d9316b6ecf06bbb29a55, type: 3}
+  m_Name: MrSix
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueGraph
+  characterName: Mr. Six
+  entryNode: {fileID: 11400000, guid: a5d484c41587f7b72bd53f6c4af1833e, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: a5d484c41587f7b72bd53f6c4af1833e, type: 2}
+  - {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
+  - {fileID: 11400000, guid: ba4263ffbd3162fa3a9442907724aa46, type: 2}
+  - {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
+  - {fileID: 11400000, guid: 4c02c0ff20b2dfa3387b88cdab1a1c21, type: 2}
+  - {fileID: 11400000, guid: e7e966b63476c946d87bf6e731cb091f, type: 2}
+  - {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+  - {fileID: 11400000, guid: c30b49b1a64aa8a9e8c2773ece3bff39, type: 2}
+  - {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
+  isNodePool: 0

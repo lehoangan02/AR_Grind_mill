@@ -80,3 +80,32 @@ BuildToRunAndroid/
 .omo/
 !.omo/rules/
 !.omo/rules/**
+
+# AI tool configs (local agent skills, not part of the project)
+.agents/
+.claude/
+.codex/
+.github/
+
+# Android / Unity build artifacts
+.utmp/
+[Tt]est[Rr]esults/
+
+# Local planning scratch
+now_plan.md
+
+# Khoa personal documentation (do not push to remote)
+Assets/Khoa/*.md
+Assets/Khoa/*.md.meta
+Assets/Khoa/**/*.md
+Assets/Khoa/**/*.md.meta
+
+# macOS Junk
+.DS_Store
+
+# Visual Studio solution file format
+*.slnx
+
+# Mono Crash Dumps & Test Results
+mono_crash.*.json
+test-results.xml

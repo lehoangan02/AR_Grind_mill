@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0,0816998">
+  <test-suite type="TestSuite" id="1000" name="AR_5" fullname="AR_5" runstate="Runnable" testcasecount="66" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.081700" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1076" name="Khoa.Farming.Tests.dll" fullname="D:/Unity/Project/AR_Grind_mill/Library/ScriptAssemblies/Khoa.Farming.Tests.dll" runstate="Runnable" testcasecount="66" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.072094" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31552" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1077" name="Khoa" fullname="Khoa" runstate="Runnable" testcasecount="66" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.070319" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1078" name="Farming" fullname="Khoa.Farming" runstate="Runnable" testcasecount="66" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.068811" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1079" name="Tests" fullname="Khoa.Farming.Tests" runstate="Runnable" testcasecount="66" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.067228" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1059" name="GrindMillTests" fullname="Khoa.Farming.Tests.GrindMillTests" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.064584" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1063" name="CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" fullname="Khoa.Farming.Tests.GrindMillTests.CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" methodname="CompleteMilling_SetsCompletedState_AndSpawnsWhiteRice" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="514255710" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.041777" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+<color=green>[GrindMillStation] 🎉 Xay gạo thành công! Gạo trắng đã sẵn sàng để đem đi vo và nấu cơm!</color>
+]]></output>
+              </test-case>
+              <test-case id="1060" name="InitialState_IsEmpty" fullname="Khoa.Farming.Tests.GrindMillTests.InitialState_IsEmpty" methodname="InitialState_IsEmpty" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1121136034" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.000625" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="PourPaddy_TransitionsToReadyToGrind" fullname="Khoa.Farming.Tests.GrindMillTests.PourPaddy_TransitionsToReadyToGrind" methodname="PourPaddy_TransitionsToReadyToGrind" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="34318909" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.001332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+]]></output>
+              </test-case>
+              <test-case id="1062" name="PourPaddy_WhenAlreadyReady_ReturnsFalse" fullname="Khoa.Farming.Tests.GrindMillTests.PourPaddy_WhenAlreadyReady_ReturnsFalse" methodname="PourPaddy_WhenAlreadyReady_ReturnsFalse" classname="Khoa.Farming.Tests.GrindMillTests" runstate="Runnable" seed="1577422240" result="Passed" start-time="2026-08-31 14:35:43Z" end-time="2026-08-31 14:35:43Z" duration="0.002042" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<color=yellow>[GrindMillStation] Đã đổ thóc đầy phễu cối! Hãy cầm cần quay cối để xay gạo.</color>
+[GrindMillStation] Cối xay đang chứa lúa, hãy xay hết mẻ này trước!
+Saving results to: C:/Users/ASUS/AppData/LocalLow/DefaultCompany/AR_5\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

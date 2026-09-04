@@ -32,7 +32,9 @@ public abstract class UIScreen : MonoBehaviour
 
         if (canvasGroup != null)
         {
+            canvasGroup.alpha = 0f;
             canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
         }
     }
 
@@ -42,7 +44,9 @@ public abstract class UIScreen : MonoBehaviour
 
         if (canvasGroup != null)
         {
+            canvasGroup.alpha = 1f;
             canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
         }
     }
 }

@@ -7,6 +7,8 @@ public enum TransitionType
     Fade,
     SlideFromRight,
     SlideFromLeft,
+    SlideFromTop,
+    SlideFromBottom,
     Scale,
     None
 }
@@ -14,8 +16,8 @@ public enum TransitionType
 [RequireComponent(typeof(AudioSource))]
 public class UIScreenAnimator : MonoBehaviour
 {
-    [SerializeField] private TransitionType openTransition = TransitionType.Fade;
-    [SerializeField] private TransitionType closeTransition = TransitionType.Fade;
+    [SerializeField] private TransitionType openTransition = TransitionType.SlideFromTop;
+    [SerializeField] private TransitionType closeTransition = TransitionType.SlideFromTop;
     [SerializeField] private float duration = 0.3f;
     [SerializeField] private AudioClip openSound;
     [SerializeField] private AudioClip closeSound;
@@ -75,29 +77,36 @@ public class UIScreenAnimator : MonoBehaviour
             yield break;
         }
 
-        yield return StartCoroutine(ExecuteTransition(cg, transition, isOpen));
+        // Fade always runs alongside any other effect.
+        Coroutine fade = StartCoroutine(FadeRoutine(cg, isOpen));
 
-        IsAnimating = false;
-        onComplete?.Invoke();
-    }
-
-    private IEnumerator ExecuteTransition(CanvasGroup cg, TransitionType transition, bool isOpen)
-    {
         switch (transition)
         {
             case TransitionType.Fade:
-                yield return StartCoroutine(FadeRoutine(cg, isOpen));
+                // Fade already started; nothing extra to do.
                 break;
             case TransitionType.SlideFromRight:
-                yield return StartCoroutine(SlideRoutine(cg, isOpen, slideInFromRight: true));
+                yield return StartCoroutine(SlideHorizontalRoutine(cg, isOpen, fromRight: true));
                 break;
             case TransitionType.SlideFromLeft:
-                yield return StartCoroutine(SlideRoutine(cg, isOpen, slideInFromRight: false));
+                yield return StartCoroutine(SlideHorizontalRoutine(cg, isOpen, fromRight: false));
+                break;
+            case TransitionType.SlideFromTop:
+                yield return StartCoroutine(SlideVerticalRoutine(cg, isOpen, fromTop: true));
+                break;
+            case TransitionType.SlideFromBottom:
+                yield return StartCoroutine(SlideVerticalRoutine(cg, isOpen, fromTop: false));
                 break;
             case TransitionType.Scale:
                 yield return StartCoroutine(ScaleRoutine(cg, isOpen));
                 break;
         }
+
+        // Wait for fade to finish before signaling completion.
+        yield return fade;
+
+        IsAnimating = false;
+        onComplete?.Invoke();
     }
 
     private IEnumerator FadeRoutine(CanvasGroup cg, bool isOpen)
@@ -110,7 +119,7 @@ public class UIScreenAnimator : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             cg.alpha = Mathf.Lerp(startAlpha, endAlpha, t);
             yield return null;
@@ -119,13 +128,12 @@ public class UIScreenAnimator : MonoBehaviour
         cg.alpha = endAlpha;
     }
 
-    private IEnumerator SlideRoutine(CanvasGroup cg, bool isOpen, bool slideInFromRight)
+    private IEnumerator SlideHorizontalRoutine(CanvasGroup cg, bool isOpen, bool fromRight)
     {
         RectTransform rectTransform = cg.transform as RectTransform;
         if (rectTransform == null)
         {
-            Debug.LogWarning("UIScreenAnimator: CanvasGroup has no RectTransform, cannot slide. Falling back to Fade.");
-            yield return StartCoroutine(FadeRoutine(cg, isOpen));
+            Debug.LogWarning("UIScreenAnimator: CanvasGroup has no RectTransform, cannot slide horizontally. Skipping.");
             yield break;
         }
 
@@ -134,13 +142,13 @@ public class UIScreenAnimator : MonoBehaviour
 
         if (isOpen)
         {
-            startX = slideInFromRight ? width : -width;
+            startX = fromRight ? width : -width;
             endX = 0f;
         }
         else
         {
             startX = 0f;
-            endX = slideInFromRight ? width : -width;
+            endX = fromRight ? width : -width;
         }
 
         Vector2 pos = rectTransform.anchoredPosition;
@@ -150,7 +158,7 @@ public class UIScreenAnimator : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
 
             pos = rectTransform.anchoredPosition;
@@ -165,6 +173,51 @@ public class UIScreenAnimator : MonoBehaviour
         rectTransform.anchoredPosition = pos;
     }
 
+    private IEnumerator SlideVerticalRoutine(CanvasGroup cg, bool isOpen, bool fromTop)
+    {
+        RectTransform rectTransform = cg.transform as RectTransform;
+        if (rectTransform == null)
+        {
+            Debug.LogWarning("UIScreenAnimator: CanvasGroup has no RectTransform, cannot slide vertically. Skipping.");
+            yield break;
+        }
+
+        float height = rectTransform.rect.height;
+        float startY, endY;
+
+        if (isOpen)
+        {
+            startY = fromTop ? height : -height;
+            endY = 0f;
+        }
+        else
+        {
+            startY = 0f;
+            endY = fromTop ? height : -height;
+        }
+
+        Vector2 pos = rectTransform.anchoredPosition;
+        pos.y = startY;
+        rectTransform.anchoredPosition = pos;
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            pos = rectTransform.anchoredPosition;
+            pos.y = Mathf.Lerp(startY, endY, t);
+            rectTransform.anchoredPosition = pos;
+
+            yield return null;
+        }
+
+        pos = rectTransform.anchoredPosition;
+        pos.y = endY;
+        rectTransform.anchoredPosition = pos;
+    }
+
     private IEnumerator ScaleRoutine(CanvasGroup cg, bool isOpen)
     {
         Vector3 startScale = isOpen ? Vector3.zero : Vector3.one;
@@ -175,7 +228,7 @@ public class UIScreenAnimator : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             cg.transform.localScale = Vector3.Lerp(startScale, endScale, t);
             yield return null;
@@ -198,6 +251,7 @@ public class UIScreenAnimator : MonoBehaviour
         {
             Vector2 pos = rectTransform.anchoredPosition;
             pos.x = 0f;
+            pos.y = 0f;
             rectTransform.anchoredPosition = pos;
         }
     }

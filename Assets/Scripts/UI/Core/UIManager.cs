@@ -170,6 +170,25 @@ public class UIManager : MonoBehaviour
         return false;
     }
 
+    public bool HasOpenScreen => screenStack.Count > 0;
+
+    /// <summary>
+    /// Closes the pause menu if it is on top of the stack, otherwise opens it.
+    /// The pause menu handles Time.timeScale in its OnOpen/OnClose so callers
+    /// never touch pause state directly.
+    /// </summary>
+    public void TogglePauseMenu()
+    {
+        if (IsScreenOpen<PauseMenuScreen>())
+        {
+            Close();
+        }
+        else
+        {
+            Open<PauseMenuScreen>();
+        }
+    }
+
     private GameObject FindPrefabByType<T>() where T : UIScreen
     {
         if (screenPrefabs == null)

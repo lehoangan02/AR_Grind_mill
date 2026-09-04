@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
+  m_Name: MrSix_AboutMrsFour
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
+  editorNotes: 
+  line:
+    speakerName: Mr. Six
+    text: "Mrs. Four next door? Her b\xE1nh ch\u01B0ng at T\u1EBFt could make a stone
+      shed a tear. Don't tell her I said so \u2014 she would never let me hear the
+      end of it."
+    animationTag: 
+    voiceClip: {fileID: 0}
+    autoAdvanceAfter: 0
+  choices:
+  - choiceText: Farewell
+    nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
+    animationTag: 
+  isEndNode: 0

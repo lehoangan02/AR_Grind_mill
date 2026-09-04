@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4aa86815f3d9316b6ecf06bbb29a55, type: 3}
+  m_Name: ChildNpc
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueGraph
+  characterName: Helper Boy
+  entryNode: {fileID: 11400000, guid: 23a32fdd07ed88b6881ce73395b2fe88, type: 2}
+  nodes:
+  - {fileID: 11400000, guid: 23a32fdd07ed88b6881ce73395b2fe88, type: 2}
+  - {fileID: 11400000, guid: 6eb467f43d73a87b3951ea421f978c09, type: 2}
+  - {fileID: 11400000, guid: 6587f3d8c3037a09f8a169895e4b6908, type: 2}
+  - {fileID: 11400000, guid: a44cad4a915319e02adabdb427cc98f6, type: 2}
+  - {fileID: 11400000, guid: 0f7a4b3a41fce18f285e0f14bef0a855, type: 2}
+  - {fileID: 11400000, guid: 20a9e2712ea5b762ea584801a83f3127, type: 2}
+  - {fileID: 11400000, guid: f02cad8e7f6f541e6b533bc1725afef6, type: 2}
+  - {fileID: 11400000, guid: e6e14637561628a96bdf21aa6eba1656, type: 2}
+  - {fileID: 11400000, guid: 7a7286fde0753e3708e2e086f1e05977, type: 2}
+  - {fileID: 11400000, guid: a64c4a36936ca12cdace319a61d8e75d, type: 2}
+  - {fileID: 11400000, guid: ba14c305c2a1c5b75943b8a3bff18138, type: 2}
+  isNodePool: 1

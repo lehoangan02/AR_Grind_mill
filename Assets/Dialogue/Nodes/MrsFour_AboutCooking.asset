@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
+  m_Name: MrsFour_AboutCooking
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
+  editorNotes: 
+  line:
+    speakerName: Mrs. Four
+    text: "Slow fire, a pinch of salt, and patience \u2014 that is the whole secret
+      to a good pot of rice. My mother said: rush a meal and you will be hungry again
+      by sundown."
+    animationTag: 
+    voiceClip: {fileID: 0}
+    autoAdvanceAfter: 0
+  choices:
+  - choiceText: Tell me about your family
+    nextNode: {fileID: 11400000, guid: 3e59302e0eba6f036952b034743430e0, type: 2}
+    animationTag: 
+  - choiceText: What is happening around here?
+    nextNode: {fileID: 11400000, guid: 49562c8c3ff6221f28737184cd301242, type: 2}
+    animationTag: 
+  - choiceText: Take care
+    nextNode: {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
+    animationTag: 
+  isEndNode: 0
