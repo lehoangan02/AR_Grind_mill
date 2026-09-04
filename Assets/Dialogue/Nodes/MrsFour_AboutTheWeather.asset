@@ -15,11 +15,18 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Mrs. Four
-    text: Clear skies over the paddies today. Good for drying the rice.
+    text: "Clear skies over the paddies today. Good for drying the rice \u2014 though
+      the old knee says rain is coming by the week's end. The knee is never wrong."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
+  - choiceText: What is growing in your garden?
+    nextNode: {fileID: 11400000, guid: 00c6e85f38ed1936f97d86ecf8c2504d, type: 2}
+    animationTag: 
+  - choiceText: What is happening around here?
+    nextNode: {fileID: 11400000, guid: 49562c8c3ff6221f28737184cd301242, type: 2}
+    animationTag: 
   - choiceText: Take care
     nextNode: {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
     animationTag: 

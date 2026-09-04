@@ -17,4 +17,11 @@ MonoBehaviour:
   nodes:
   - {fileID: 11400000, guid: a5d484c41587f7b72bd53f6c4af1833e, type: 2}
   - {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
+  - {fileID: 11400000, guid: ba4263ffbd3162fa3a9442907724aa46, type: 2}
+  - {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
+  - {fileID: 11400000, guid: 4c02c0ff20b2dfa3387b88cdab1a1c21, type: 2}
+  - {fileID: 11400000, guid: e7e966b63476c946d87bf6e731cb091f, type: 2}
+  - {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+  - {fileID: 11400000, guid: c30b49b1a64aa8a9e8c2773ece3bff39, type: 2}
   - {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
+  isNodePool: 0

@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
-  m_Name: MrSix_Greeting
+  m_Name: MrsFour_AboutCooking
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
   editorNotes: 
   line:
-    speakerName: Mr. Six
-    text: Hello there, traveler. Welcome to my little mill. What would you like to
-      know?
+    speakerName: Mrs. Four
+    text: "Slow fire, a pinch of salt, and patience \u2014 that is the whole secret
+      to a good pot of rice. My mother said: rush a meal and you will be hungry again
+      by sundown."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
-  - choiceText: Tell me about the mill
-    nextNode: {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
-    animationTag: 
-  - choiceText: How is the harvest?
-    nextNode: {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
-    animationTag: 
   - choiceText: Tell me about your family
-    nextNode: {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+    nextNode: {fileID: 11400000, guid: 3e59302e0eba6f036952b034743430e0, type: 2}
+    animationTag: 
+  - choiceText: What is happening around here?
+    nextNode: {fileID: 11400000, guid: 49562c8c3ff6221f28737184cd301242, type: 2}
+    animationTag: 
+  - choiceText: Take care
+    nextNode: {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
     animationTag: 
   isEndNode: 0

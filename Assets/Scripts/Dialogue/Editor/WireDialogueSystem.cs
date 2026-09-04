@@ -415,57 +415,173 @@ namespace AR_Grind_mill.Dialogue.EditorTools
         // ═════════════════════════════════════════════════════════════════
         private static void BuildDialogueAssets()
         {
-            // --- Create all nodes first so choices can reference them ---
-            DialogueNode mrsixGreeting    = CreateNodeAsset($"{NodesDir}/{MrSixName}_Greeting.asset",         "Mr. Six",   "Hello there, traveler. Welcome to my little mill.", false);
-            DialogueNode mrsixAboutMill   = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutTheMill.asset",    "Mr. Six",   "This old stone mill has been turning grain for three generations.", false);
-            DialogueNode mrsixFarewell    = CreateNodeAsset($"{NodesDir}/{MrSixName}_Farewell.asset",       "Mr. Six",   "Safe travels!", true);
+            // ═══════════════════════════════════════════════════════════════
+            // MR. SIX — old mill keeper, third-generation. Depth-3 tree with
+            // 1-3 choices at every node and shared cross-references through
+            // AboutMrsFour. Kept in lock-step with
+            // BuildMrSixAndMrsFourDialogueAssets so the dedicated builder and
+            // the full wire-up produce identical dialogue content.
+            // ═══════════════════════════════════════════════════════════════
 
-            DialogueNode mrsfourGreeting  = CreateNodeAsset($"{NodesDir}/{MrsFourName}_Greeting.asset",       "Mrs. Four", "Oh, a visitor! How lovely.", false);
-            DialogueNode mrsfourWeather   = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutTheWeather.asset", "Mrs. Four", "Clear skies over the paddies today. Good for drying the rice.", false);
-            DialogueNode mrsfourFarewell  = CreateNodeAsset($"{NodesDir}/{MrsFourName}_Farewell.asset",      "Mrs. Four", "Come back anytime.", true);
+            DialogueNode mrsixGreeting     = CreateNodeAsset($"{NodesDir}/{MrSixName}_Greeting.asset",           "Mr. Six",   "Hello there, traveler. Welcome to my little mill. What would you like to know?", false);
+            DialogueNode mrsixAboutMill    = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutTheMill.asset",      "Mr. Six",   "This old stone mill has been turning grain for three generations. My grandfather laid these stones before the French came, and the river still turns the wheel as faithfully as it did on his first morning.", false);
+            DialogueNode mrsixAboutRice    = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutTheRice.asset",      "Mr. Six",   "I mill the sticky ones for Tết flour and the long-grain for everyday rice. Each one sings a different tune against the stones.", false);
+            DialogueNode mrsixAboutHarvest = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutHarvestSeason.asset", "Mr. Six",   "When the paddies turn gold, the whole village works from dawn to dusk. Even the children carry bundles. The mill runs day and night, and I sleep by the wheel — best music I know.", false);
+            DialogueNode mrsixFarmingTips  = CreateNodeAsset($"{NodesDir}/{MrSixName}_FarmingTips.asset",        "Mr. Six",   "If your seedlings yellow, it is the water. Open the sluice, let the field drink its fill, then close it before dusk. A patient farmer reads the paddy like a book.", false);
+            DialogueNode mrsixAboutMrsFour = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutMrsFour.asset",      "Mr. Six",   "Mrs. Four next door? Her bánh chưng at Tết could make a stone shed a tear. Don't tell her I said so — she would never let me hear the end of it.", false);
+            DialogueNode mrsixAboutFamily  = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutHisFamily.asset",    "Mr. Six",   "My boy works the river boats now. Comes home only at Tết. The mill is too quiet without him — but the wheel still turns, so I turn with it.", false);
+            DialogueNode mrsixAboutVillage = CreateNodeAsset($"{NodesDir}/{MrSixName}_AboutTheVillage.asset",   "Mr. Six",   "Three generations on the same stone — the village has grown around us, but the mill has not moved an inch. Some things are meant to stay where they were first set down.", false);
+            DialogueNode mrsixFarewell     = CreateNodeAsset($"{NodesDir}/{MrSixName}_Farewell.asset",         "Mr. Six",   "Safe travels — and if you bring me paddy, I will turn it to flour for you.", true);
 
-            // --- Now populate choices (nodes already exist as assets) ---
             mrsixGreeting.choices = new List<DialogueChoice>
             {
-                new DialogueChoice { choiceText = "Tell me about the mill", nextNode = mrsixAboutMill, animationTag = string.Empty },
-                new DialogueChoice { choiceText = "Goodbye",                nextNode = mrsixFarewell,  animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about the mill",     nextNode = mrsixAboutMill,    animationTag = string.Empty },
+                new DialogueChoice { choiceText = "How is the harvest?",       nextNode = mrsixAboutHarvest, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about your family", nextNode = mrsixAboutFamily,  animationTag = string.Empty },
             };
             EditorUtility.SetDirty(mrsixGreeting);
 
             mrsixAboutMill.choices = new List<DialogueChoice>
             {
-                new DialogueChoice { choiceText = "Farewell", nextNode = mrsixFarewell, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "What rice do you mill?", nextNode = mrsixAboutRice,  animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Farewell",               nextNode = mrsixFarewell,  animationTag = string.Empty },
             };
             EditorUtility.SetDirty(mrsixAboutMill);
 
+            mrsixAboutRice.choices = SingleFarewellChoice(mrsixFarewell, "Farewell");
+            EditorUtility.SetDirty(mrsixAboutRice);
+
+            mrsixAboutHarvest.choices = new List<DialogueChoice>
+            {
+                new DialogueChoice { choiceText = "Any tips for my plot?",  nextNode = mrsixFarmingTips,  animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about Mrs Four", nextNode = mrsixAboutMrsFour, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Farewell",               nextNode = mrsixFarewell,    animationTag = string.Empty },
+            };
+            EditorUtility.SetDirty(mrsixAboutHarvest);
+
+            mrsixFarmingTips.choices = SingleFarewellChoice(mrsixFarewell, "Farewell");
+            EditorUtility.SetDirty(mrsixFarmingTips);
+
+            mrsixAboutFamily.choices = new List<DialogueChoice>
+            {
+                new DialogueChoice { choiceText = "How long has your family been here?", nextNode = mrsixAboutVillage, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about Mrs Four",              nextNode = mrsixAboutMrsFour, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Farewell",                            nextNode = mrsixFarewell,    animationTag = string.Empty },
+            };
+            EditorUtility.SetDirty(mrsixAboutFamily);
+
+            mrsixAboutVillage.choices = SingleFarewellChoice(mrsixFarewell, "Farewell");
+            EditorUtility.SetDirty(mrsixAboutVillage);
+
+            mrsixAboutMrsFour.choices = SingleFarewellChoice(mrsixFarewell, "Farewell");
+            EditorUtility.SetDirty(mrsixAboutMrsFour);
+
+            // ═══════════════════════════════════════════════════════════════
+            // MRS. FOUR — the warm, welcoming neighbor. Same depth-3 shape;
+            // shared cross-references through VillageGossip.
+            // ═══════════════════════════════════════════════════════════════
+
+            DialogueNode mrsfourGreeting     = CreateNodeAsset($"{NodesDir}/{MrsFourName}_Greeting.asset",         "Mrs. Four", "Oh, a visitor! How lovely. Come in, come in — the kettle is always warm.", false);
+            DialogueNode mrsfourWeather      = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutTheWeather.asset", "Mrs. Four", "Clear skies over the paddies today. Good for drying the rice — though the old knee says rain is coming by the week's end. The knee is never wrong.", false);
+            DialogueNode mrsfourGarden       = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutTheGarden.asset",   "Mrs. Four", "The herbs in my garden chase away the mosquitoes and lift the spirit. Mint, lemongrass, holy basil — they are free for any neighbor who asks. Just pinch, do not pull.", false);
+            DialogueNode mrsfourGossip       = CreateNodeAsset($"{NodesDir}/{MrsFourName}_VillageGossip.asset",    "Mrs. Four", "Did you hear? Someone saw a kingfisher by the sluice this morning. The fish will be running well this week — and the buffalo boys will be smiling by sundown.", false);
+            DialogueNode mrsfourCooking      = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutCooking.asset",     "Mrs. Four", "Slow fire, a pinch of salt, and patience — that is the whole secret to a good pot of rice. My mother said: rush a meal and you will be hungry again by sundown.", false);
+            DialogueNode mrsfourAboutFamily  = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutHerFamily.asset",   "Mrs. Four", "My husband rests under the banyan by the river now. But his garden still grows. He would have liked you — he always liked the ones with dirt under their nails.", false);
+            DialogueNode mrsfourChildren     = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutTheChildren.asset", "Mrs. Four", "The helper boy next door knows every corner of this village. If you are lost, follow him — and if he tells you to plant the seed, plant it. He knows his rice.", false);
+            DialogueNode mrsfourAboutMrSix   = CreateNodeAsset($"{NodesDir}/{MrsFourName}_AboutMrSix.asset",       "Mrs. Four", "Mr. Six and his mill — that stone has been grinding since my mother was a girl. He will chat your ear off if you let him, but his flour is the best in the village.", false);
+            DialogueNode mrsfourFarewell     = CreateNodeAsset($"{NodesDir}/{MrsFourName}_Farewell.asset",         "Mrs. Four", "Come back anytime, neighbor. The door is never closed here.", true);
+
             mrsfourGreeting.choices = new List<DialogueChoice>
             {
-                new DialogueChoice { choiceText = "How is the weather today?", nextNode = mrsfourWeather,  animationTag = string.Empty },
-                new DialogueChoice { choiceText = "I should go",              nextNode = mrsfourFarewell, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "How is the weather today?",  nextNode = mrsfourWeather,  animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about your cooking", nextNode = mrsfourCooking,  animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Tell me about the children", nextNode = mrsfourChildren, animationTag = string.Empty },
             };
             EditorUtility.SetDirty(mrsfourGreeting);
 
             mrsfourWeather.choices = new List<DialogueChoice>
             {
-                new DialogueChoice { choiceText = "Take care", nextNode = mrsfourFarewell, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "What is growing in your garden?", nextNode = mrsfourGarden, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "What is happening around here?",  nextNode = mrsfourGossip, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Take care",                       nextNode = mrsfourFarewell, animationTag = string.Empty },
             };
             EditorUtility.SetDirty(mrsfourWeather);
 
-            // --- Build graphs ---
+            mrsfourGarden.choices = SingleFarewellChoice(mrsfourFarewell, "Take care");
+            EditorUtility.SetDirty(mrsfourGarden);
+
+            mrsfourCooking.choices = new List<DialogueChoice>
+            {
+                new DialogueChoice { choiceText = "Tell me about your family",      nextNode = mrsfourAboutFamily, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "What is happening around here?", nextNode = mrsfourGossip,      animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Take care",                      nextNode = mrsfourFarewell,    animationTag = string.Empty },
+            };
+            EditorUtility.SetDirty(mrsfourCooking);
+
+            mrsfourAboutFamily.choices = SingleFarewellChoice(mrsfourFarewell, "Take care");
+            EditorUtility.SetDirty(mrsfourAboutFamily);
+
+            mrsfourGossip.choices = SingleFarewellChoice(mrsfourFarewell, "Take care");
+            EditorUtility.SetDirty(mrsfourGossip);
+
+            mrsfourChildren.choices = new List<DialogueChoice>
+            {
+                new DialogueChoice { choiceText = "And Mr Six?", nextNode = mrsfourAboutMrSix, animationTag = string.Empty },
+                new DialogueChoice { choiceText = "Take care",   nextNode = mrsfourFarewell,    animationTag = string.Empty },
+            };
+            EditorUtility.SetDirty(mrsfourChildren);
+
+            mrsfourAboutMrSix.choices = SingleFarewellChoice(mrsfourFarewell, "Take care");
+            EditorUtility.SetDirty(mrsfourAboutMrSix);
+
             CreateGraphAsset(
                 $"{GraphsDir}/{MrSixName}.asset",
                 "Mr. Six",
                 mrsixGreeting,
-                new List<DialogueNode> { mrsixGreeting, mrsixAboutMill, mrsixFarewell });
+                new List<DialogueNode>
+                {
+                    mrsixGreeting,
+                    mrsixAboutMill,
+                    mrsixAboutRice,
+                    mrsixAboutHarvest,
+                    mrsixFarmingTips,
+                    mrsixAboutMrsFour,
+                    mrsixAboutFamily,
+                    mrsixAboutVillage,
+                    mrsixFarewell,
+                });
 
             CreateGraphAsset(
                 $"{GraphsDir}/{MrsFourName}.asset",
                 "Mrs. Four",
                 mrsfourGreeting,
-                new List<DialogueNode> { mrsfourGreeting, mrsfourWeather, mrsfourFarewell });
+                new List<DialogueNode>
+                {
+                    mrsfourGreeting,
+                    mrsfourWeather,
+                    mrsfourGarden,
+                    mrsfourGossip,
+                    mrsfourCooking,
+                    mrsfourAboutFamily,
+                    mrsfourChildren,
+                    mrsfourAboutMrSix,
+                    mrsfourFarewell,
+                });
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        /// <summary>
+        /// Returns a one-element choice list routing to <paramref name="farewellNode"/>.
+        /// Used for terminal sub-topics — they always close to a single farewell.
+        /// </summary>
+        private static List<DialogueChoice> SingleFarewellChoice(DialogueNode farewellNode, string choiceText)
+        {
+            return new List<DialogueChoice>
+            {
+                new DialogueChoice { choiceText = choiceText, nextNode = farewellNode, animationTag = string.Empty },
+            };
         }
 
         private static DialogueNode CreateNodeAsset(string path, string speaker, string text, bool isEnd)

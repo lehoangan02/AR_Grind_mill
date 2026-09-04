@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
-  m_Name: MrSix_Greeting
+  m_Name: MrSix_AboutHarvestSeason
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
   editorNotes: 
   line:
     speakerName: Mr. Six
-    text: Hello there, traveler. Welcome to my little mill. What would you like to
-      know?
+    text: "When the paddies turn gold, the whole village works from dawn to dusk.
+      Even the children carry bundles. The mill runs day and night, and I sleep by
+      the wheel \u2014 best music I know."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
-  - choiceText: Tell me about the mill
-    nextNode: {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
+  - choiceText: Any tips for my plot?
+    nextNode: {fileID: 11400000, guid: 4c02c0ff20b2dfa3387b88cdab1a1c21, type: 2}
     animationTag: 
-  - choiceText: How is the harvest?
-    nextNode: {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
+  - choiceText: Tell me about Mrs Four
+    nextNode: {fileID: 11400000, guid: e7e966b63476c946d87bf6e731cb091f, type: 2}
     animationTag: 
-  - choiceText: Tell me about your family
-    nextNode: {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+  - choiceText: Farewell
+    nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
     animationTag: 
   isEndNode: 0

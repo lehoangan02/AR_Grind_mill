@@ -15,7 +15,7 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Mrs. Four
-    text: Come back anytime.
+    text: Come back anytime, neighbor. The door is never closed here.
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0

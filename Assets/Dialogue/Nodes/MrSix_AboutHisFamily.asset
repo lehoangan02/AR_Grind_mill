@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
-  m_Name: MrSix_Greeting
+  m_Name: MrSix_AboutHisFamily
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
   editorNotes: 
   line:
     speakerName: Mr. Six
-    text: Hello there, traveler. Welcome to my little mill. What would you like to
-      know?
+    text: "My boy works the river boats now. Comes home only at T\u1EBFt. The mill
+      is too quiet without him \u2014 but the wheel still turns, so I turn with it."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
-  - choiceText: Tell me about the mill
-    nextNode: {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
+  - choiceText: How long has your family been here?
+    nextNode: {fileID: 11400000, guid: c30b49b1a64aa8a9e8c2773ece3bff39, type: 2}
     animationTag: 
-  - choiceText: How is the harvest?
-    nextNode: {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
+  - choiceText: Tell me about Mrs Four
+    nextNode: {fileID: 11400000, guid: e7e966b63476c946d87bf6e731cb091f, type: 2}
     animationTag: 
-  - choiceText: Tell me about your family
-    nextNode: {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+  - choiceText: Farewell
+    nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
     animationTag: 
   isEndNode: 0

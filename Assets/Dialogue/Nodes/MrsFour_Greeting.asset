@@ -15,7 +15,8 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Mrs. Four
-    text: Oh, a visitor! How lovely.
+    text: "Oh, a visitor! How lovely. Come in, come in \u2014 the kettle is always
+      warm."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
@@ -23,7 +24,10 @@ MonoBehaviour:
   - choiceText: How is the weather today?
     nextNode: {fileID: 11400000, guid: 0d7cf71589b608f6696ff702b20989e6, type: 2}
     animationTag: 
-  - choiceText: I should go
-    nextNode: {fileID: 11400000, guid: 330b61523f87b3e0f875cb851b9311d2, type: 2}
+  - choiceText: Tell me about your cooking
+    nextNode: {fileID: 11400000, guid: e3f39fb493e2579c6bbbae8d1c9521de, type: 2}
+    animationTag: 
+  - choiceText: Tell me about the children
+    nextNode: {fileID: 11400000, guid: 42902eb16faaa5f4a97b3870e0f762d6, type: 2}
     animationTag: 
   isEndNode: 0

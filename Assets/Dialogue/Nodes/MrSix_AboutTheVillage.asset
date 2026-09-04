@@ -10,24 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9fc3745daeb7563fc8d29762930101fa, type: 3}
-  m_Name: MrSix_Greeting
+  m_Name: MrSix_AboutTheVillage
   m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.Data.DialogueNode
   editorNotes: 
   line:
     speakerName: Mr. Six
-    text: Hello there, traveler. Welcome to my little mill. What would you like to
-      know?
+    text: "Three generations on the same stone \u2014 the village has grown around
+      us, but the mill has not moved an inch. Some things are meant to stay where
+      they were first set down."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
-  - choiceText: Tell me about the mill
-    nextNode: {fileID: 11400000, guid: 11ac7d5814f831aa9bcb01f0e156e6dd, type: 2}
-    animationTag: 
-  - choiceText: How is the harvest?
-    nextNode: {fileID: 11400000, guid: 37dba44a5c972ec71b402b5cc207d2f6, type: 2}
-    animationTag: 
-  - choiceText: Tell me about your family
-    nextNode: {fileID: 11400000, guid: b1084d6778ca62766808f86ec34d5d1f, type: 2}
+  - choiceText: Farewell
+    nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
     animationTag: 
   isEndNode: 0

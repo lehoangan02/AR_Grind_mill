@@ -15,7 +15,8 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Mr. Six
-    text: Safe travels!
+    text: "Safe travels \u2014 and if you bring me paddy, I will turn it to flour
+      for you."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0

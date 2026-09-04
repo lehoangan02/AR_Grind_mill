@@ -15,11 +15,16 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Mr. Six
-    text: This old stone mill has been turning grain for three generations.
+    text: This old stone mill has been turning grain for three generations. My grandfather
+      laid these stones before the French came, and the river still turns the wheel
+      as faithfully as it did on his first morning.
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 0
   choices:
+  - choiceText: What rice do you mill?
+    nextNode: {fileID: 11400000, guid: ba4263ffbd3162fa3a9442907724aa46, type: 2}
+    animationTag: 
   - choiceText: Farewell
     nextNode: {fileID: 11400000, guid: dc450b1b81385386786fc78c805ea367, type: 2}
     animationTag: 
