@@ -795,7 +795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8500687282606128208, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
       propertyPath: m_PresetInfoIsWorld
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -834,7 +834,9 @@ MonoBehaviour:
   resumeButton: {fileID: 6800833201306977195}
   settingsButton: {fileID: 6373949191534782694}
   quitButton: {fileID: 5813849192388847744}
-  mainMenuSceneName: 
+  mainMenuSceneName: MainMenu
+  pausedTimeScale: 0
+  resumedTimeScale: 1
 --- !u!225 &4746029585418507660 stripped
 CanvasGroup:
   m_CorrespondingSourceObject: {fileID: -7210097733524678343, guid: 82ff785d2d65142eea58d876d7238031, type: 3}
