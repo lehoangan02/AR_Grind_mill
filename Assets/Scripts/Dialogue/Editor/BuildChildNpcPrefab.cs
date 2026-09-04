@@ -3,17 +3,17 @@
 // Editor menu utility that builds the ChildNpc NPC prefab at
 // Assets/Prefabs/NPCs/ChildNpc.prefab by assembling the imported child
 // model (Assets/KidsCharacterFree/Fbx/Boy0_Humanoid.fbx)
-// with the full dialogue / movement / ground-stack:
+// with the dialogue / movement / tip-stack:
 //
-//   • Animator               (runtimeAnimatorController = ChildNpcAnimator)
-//   • HeadLookAtPlayer       (headBone via HumanBodyBones.Head w/ name-search fallback)
-//   • NPCProximityTrigger    (triggerRadius = 2.5f)
-//   • NPCDialogueController  (graph, proximityTrigger, headLook, startAction wired)
+//   • Animator                (runtimeAnimatorController = ChildNpcAnimator)
+//   • HeadLookAtPlayer        (headBone via HumanBodyBones.Head w/ name-search fallback)
+//   • NPCProximityTrigger     (triggerRadius = 2.5f)
+//   • NPCDialogueController   (graph, proximityTrigger, headLook, startAction wired)
 //   • WanderingGuideController (animator, headLook, groundProbe wired; player = null)
-//   • ChildNpcQuestHook      (dialogueController, wander, 7+10+1 DialogueNode refs)
-//   • GroundProbe            (defaults: raycastHeight 0.5, raycastDistance 5, groundMask ~0)
-//   • SphereCollider         (radius 0.4, isTrigger = true; reused if FBX already has one)
-//   • DialogueCanvas child   (prefab instantiated as child; anchor = head bone)
+//   • ChildNpcTipController   (dialogueController, wander, 10 DialogueNode refs)
+//   • GroundProbe             (defaults: raycastHeight 0.5, raycastDistance 5, groundMask ~0)
+//   • SphereCollider          (radius 0.4, isTrigger = true; reused if FBX already has one)
+//   • DialogueCanvas child    (prefab instantiated as child; anchor = head bone)
 //
 // All serialized references are written via SerializedObject so they
 // survive PrefabUtility.SaveAsPrefabAsset.
@@ -42,24 +42,19 @@ namespace AR_Grind_mill.Dialogue.EditorTools
     public static class BuildChildNpcPrefab
     {
         // ─── Asset paths (single source of truth) ─────────────────────────
-        private const string FbxPath          = "Assets/KidsCharacterFree/Fbx/Boy0_Humanoid.fbx";
-        private const string AnimatorPath     = "Assets/Prefabs/NPCs/ChildNpcAnimator.controller";
-        private const string GraphPath        = "Assets/Dialogue/Graphs/ChildNpc.asset";
+        private const string FbxPath           = "Assets/KidsCharacterFree/Fbx/Boy0_Humanoid.fbx";
+        private const string AnimatorPath      = "Assets/Prefabs/NPCs/ChildNpcAnimator.controller";
+        private const string GraphPath         = "Assets/Dialogue/Graphs/ChildNpc.asset";
         private const string DialogueCanvasPath = "Assets/Prefabs/UI/Dialogue/DialogueCanvas.prefab";
-        private const string StartActionPath  = "Assets/Dialogue/PlayerAttackActionRef.asset";
+        private const string StartActionPath   = "Assets/Dialogue/PlayerAttackActionRef.asset";
 
         private const string ChildNodesDir    = "Assets/Dialogue/Nodes/ChildNpc";
         private const string PrefabOutputDir  = "Assets/Prefabs/NPCs";
         private const string PrefabOutputPath = PrefabOutputDir + "/ChildNpc.prefab";
 
-        // 7 event-driven nodes (ordered by source).
-        private const string IntroNodeName    = "ChildNpc_Intro";
-        private const string PlowedNodeName   = "ChildNpc_PlowedFirst";
-        private const string PlantedNodeName  = "ChildNpc_PlantedFirst";
-        private const string HarvestedNodeName= "ChildNpc_HarvestReady";
-        private const string DriedNodeName    = "ChildNpc_DriedFirst";
-        private const string ThreshedNodeName = "ChildNpc_ThreshedFirst";
-        private const string FarewellNodeName = "ChildNpc_Farewell";
+        // Tip pool: intro + 10 single-line tip nodes.
+        private const int    TipCount         = 10;
+        private const string TipPrefix       = "ChildNpc_Tip_";
 
         // ─── Menu entry point ─────────────────────────────────────────────
         [MenuItem("AR_Grind_mill/ChildNpc/Build Prefab")]
@@ -127,43 +122,19 @@ namespace AR_Grind_mill.Dialogue.EditorTools
                 return result;
             }
 
-            // 3. Load all 17 dialogue nodes (7 single + 10 array).
-            var nodeBundle = new NodeBundle();
-            nodeBundle.Intro     = LoadNode(IntroNodeName);
-            nodeBundle.Plowed    = LoadNode(PlowedNodeName);
-            nodeBundle.Planted   = LoadNode(PlantedNodeName);
-            nodeBundle.Harvested = LoadNode(HarvestedNodeName);
-            nodeBundle.Dried     = LoadNode(DriedNodeName);
-            nodeBundle.Threshed  = LoadNode(ThreshedNodeName);
-            nodeBundle.Farewell  = LoadNode(FarewellNodeName);
-
-            if (nodeBundle.Intro == null || nodeBundle.Plowed == null || nodeBundle.Planted == null ||
-                nodeBundle.Harvested == null || nodeBundle.Dried == null || nodeBundle.Threshed == null ||
-                nodeBundle.Farewell == null)
+            // 3. Load the 10 tip nodes in order.
+            DialogueNode[] tipNodes = new DialogueNode[TipCount];
+            for (int i = 0; i < TipCount; i++)
             {
-                result.Error = "One or more single dialogue nodes failed to load — see preceding errors.";
-                return result;
-            }
-
-            // 10 cooking nodes: index 0..8 = Cooking_1..9, index 9 = Cooking_Completed.
-            nodeBundle.Cooking = new DialogueNode[10];
-            for (int i = 0; i < 9; i++)
-            {
-                DialogueNode n = LoadNode($"ChildNpc_Cooking_{i + 1}");
+                string assetName = $"{TipPrefix}{i + 1:D2}";
+                DialogueNode n = LoadNode(assetName);
                 if (n == null)
                 {
-                    result.Error = $"Missing cooking node ChildNpc_Cooking_{i + 1}";
+                    result.Error = $"Missing tip node {assetName} — run BuildChildNpcDialogueAssets first.";
                     return result;
                 }
-                nodeBundle.Cooking[i] = n;
+                tipNodes[i] = n;
             }
-            DialogueNode completed = LoadNode("ChildNpc_Cooking_Completed");
-            if (completed == null)
-            {
-                result.Error = "Missing cooking node ChildNpc_Cooking_Completed";
-                return result;
-            }
-            nodeBundle.Cooking[9] = completed;
 
             // 4. Instantiate the FBX as a prefab variant in the scene.
             //    PrefabUtility.InstantiatePrefab preserves the link to the FBX so
@@ -238,20 +209,12 @@ namespace AR_Grind_mill.Dialogue.EditorTools
                 // Defaults: raycastHeight=0.5, raycastDistance=5, groundMask=~0
                 // — GroundProbe already serializes these as field initializers.
 
-                // quest hook last so all dependencies exist.
-                ChildNpcQuestHook quest = root.AddComponent<ChildNpcQuestHook>();
-                SetSerializedField(quest, "dialogueController", dialogue);
-                SetSerializedField(quest, "wander", wander);
-                SetSerializedField(quest, "introNode", nodeBundle.Intro);
-                SetSerializedField(quest, "plowedNode", nodeBundle.Plowed);
-                SetSerializedField(quest, "plantedNode", nodeBundle.Planted);
-                SetSerializedField(quest, "harvestedNode", nodeBundle.Harvested);
-                SetSerializedField(quest, "driedNode", nodeBundle.Dried);
-                SetSerializedField(quest, "threshedNode", nodeBundle.Threshed);
-                SetSerializedField(quest, "farewellNode", nodeBundle.Farewell);
-
-                // SerializedObject can't assign a whole array reference — go element-by-element.
-                SetSerializedNodeArray(quest, "cookingStepNodes", nodeBundle.Cooking);
+                // Tip controller — replaces the previous ChildNpcQuestHook.
+                // Owns the periodic schedule and one-off delivery of tip nodes.
+                ChildNpcTipController tip = root.AddComponent<ChildNpcTipController>();
+                SetSerializedField(tip, "dialogueController", dialogue);
+                SetSerializedField(tip, "wander", wander);
+                SetSerializedNodeArray(tip, "tips", tipNodes);
 
                 // Wander references — must be done after the components are added.
                 SetSerializedField(wander, "animator", animator);
@@ -277,7 +240,7 @@ namespace AR_Grind_mill.Dialogue.EditorTools
                 EditorUtility.SetDirty(proximity);
                 EditorUtility.SetDirty(dialogue);
                 EditorUtility.SetDirty(wander);
-                EditorUtility.SetDirty(quest);
+                EditorUtility.SetDirty(tip);
                 EditorUtility.SetDirty(probe);
                 EditorUtility.SetDirty(sphere);
                 EditorUtility.SetDirty(canvasCtrl);
@@ -476,7 +439,7 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             DumpProximity(prefab, sb, result.References);
             DumpDialogueController(prefab, sb, result.References);
             DumpWander(prefab, sb, result.References);
-            DumpQuestHook(prefab, sb, result.References);
+            DumpTipController(prefab, sb, result.References);
             DumpGroundProbe(prefab, sb, result.References);
             DumpAnimator(prefab, sb, result.References);
 
@@ -635,49 +598,40 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             refs["WanderingGuideController.groundProbe"] = probe.objectReferenceValue != null;
         }
 
-        private static void DumpQuestHook(GameObject root, StringBuilder sb, Dictionary<string, bool> refs)
+        private static void DumpTipController(GameObject root, StringBuilder sb, Dictionary<string, bool> refs)
         {
-            ChildNpcQuestHook q = root.GetComponent<ChildNpcQuestHook>();
-            if (q == null) { sb.AppendLine("\n[ChildNpcQuestHook] MISSING"); return; }
-            SerializedObject so = new SerializedObject(q);
-            sb.AppendLine("\n[ChildNpcQuestHook]");
+            ChildNpcTipController t = root.GetComponent<ChildNpcTipController>();
+            if (t == null) { sb.AppendLine("\n[ChildNpcTipController] MISSING"); return; }
+            SerializedObject so = new SerializedObject(t);
+            sb.AppendLine("\n[ChildNpcTipController]");
 
-            string[] required = { "dialogueController", "wander", "introNode", "plowedNode",
-                                  "plantedNode", "harvestedNode", "driedNode", "threshedNode",
-                                  "farewellNode" };
+            // dialogueController + wander — required non-null refs.
+            string[] required = { "dialogueController", "wander" };
             foreach (string name in required)
             {
                 SerializedProperty p = so.FindProperty(name);
-                if (p == null)
-                {
-                    sb.AppendLine($"  {name} = <property not found>");
-                    refs[$"ChildNpcQuestHook.{name}"] = false;
-                    continue;
-                }
-                string v = p.objectReferenceValue != null ? p.objectReferenceValue.name : "<null>";
+                string v = (p != null && p.objectReferenceValue != null) ? p.objectReferenceValue.name : "<null>";
                 sb.AppendLine($"  {name} = {v}");
-                refs[$"ChildNpcQuestHook.{name}"] = p.objectReferenceValue != null;
+                refs[$"ChildNpcTipController.{name}"] = (p != null && p.objectReferenceValue != null);
             }
 
-            // cookingStepNodes — length 10, indexed by (int)CookingQuestStep.
-            SerializedProperty arr = so.FindProperty("cookingStepNodes");
-            sb.AppendLine($"  cookingStepNodes.Length = {(arr != null && arr.isArray ? arr.arraySize : -1)}");
-            if (arr != null && arr.isArray)
+            // tips — length must be 10 and every slot must be non-null.
+            SerializedProperty arr = so.FindProperty("tips");
+            int arrSize = (arr != null && arr.isArray) ? arr.arraySize : -1;
+            sb.AppendLine($"  tips.Length = {arrSize} (expected {TipCount})");
+            if (arrSize != TipCount)
             {
-                if (arr.arraySize != 10)
-                {
-                    sb.AppendLine($"    WARN: expected length 10, got {arr.arraySize}");
-                }
-                for (int i = 0; i < arr.arraySize; i++)
-                {
-                    SerializedProperty elem = arr.GetArrayElementAtIndex(i);
-                    string n = elem.objectReferenceValue != null ? elem.objectReferenceValue.name : "<null>";
-                    string expected = i < 9 ? $"ChildNpc_Cooking_{i + 1}" : "ChildNpc_Cooking_Completed";
-                    bool ok = elem.objectReferenceValue != null
-                              && elem.objectReferenceValue.name == expected;
-                    sb.AppendLine($"    [{i}] = {n}  (expected {expected})  -> {(ok ? "OK" : "MISMATCH")}");
-                    refs[$"ChildNpcQuestHook.cookingStepNodes[{i}]"] = elem.objectReferenceValue != null;
-                }
+                sb.AppendLine($"    WARN: expected length {TipCount}, got {arrSize}");
+            }
+            for (int i = 0; i < arrSize; i++)
+            {
+                SerializedProperty elem = arr.GetArrayElementAtIndex(i);
+                string n = elem.objectReferenceValue != null ? elem.objectReferenceValue.name : "<null>";
+                string expected = $"{TipPrefix}{i + 1:D2}";
+                bool ok = elem.objectReferenceValue != null
+                          && elem.objectReferenceValue.name == expected;
+                sb.AppendLine($"    [{i}] = {n}  (expected {expected})  -> {(ok ? "OK" : "MISMATCH")}");
+                refs[$"ChildNpcTipController.tips[{i}]"] = elem.objectReferenceValue != null;
             }
         }
 
@@ -706,20 +660,6 @@ namespace AR_Grind_mill.Dialogue.EditorTools
             public int ComponentCount;
             public Dictionary<string, bool> References = new Dictionary<string, bool>();
             public string VerificationReport;
-        }
-
-        // ─── Internal helpers ─────────────────────────────────────────────
-
-        private class NodeBundle
-        {
-            public DialogueNode Intro;
-            public DialogueNode Plowed;
-            public DialogueNode Planted;
-            public DialogueNode Harvested;
-            public DialogueNode Dried;
-            public DialogueNode Threshed;
-            public DialogueNode Farewell;
-            public DialogueNode[] Cooking; // length 10
         }
     }
 }

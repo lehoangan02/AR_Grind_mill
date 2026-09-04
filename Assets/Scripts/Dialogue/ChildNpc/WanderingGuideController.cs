@@ -12,9 +12,9 @@
 //
 //     public void ForceGoto(Vector3 worldPos);
 //
-// ChildNpcQuestHook.TryCallForceGoto calls this via reflection. Renaming or
-// removing it would break the quest hook (Todo 5), so the signature is
-// frozen even though the implementation now does far more than a no-op.
+// ChildNpcTipController.TryCallForceGoto calls this via reflection. Renaming
+// or removing it would break the tip controller, so the signature is frozen
+// even though the implementation now does far more than a no-op.
 //
 // Subsystem composition:
 //   - Animator        : from GetComponentInChildren (incl. inactive) at Awake
@@ -342,12 +342,12 @@ namespace AR_Grind_mill.Dialogue.ChildNpc
         /// <summary>
         /// Queue a forced waypoint. The child walks to <paramref name="worldPos"/>
         /// instead of its normal orbit waypoint. Cleared automatically on arrival.
-        /// Called by <c>ChildNpcQuestHook.TryCallForceGoto</c> via reflection.
+        /// Called by <c>ChildNpcTipController.TryCallForceGoto</c> via reflection.
         /// <para>
-        /// SIGNATURE FROZEN: <see cref="ChildNpcQuestHook"/> binds to this
+        /// SIGNATURE FROZEN: <see cref="ChildNpcTipController"/> binds to this
         /// method at runtime via <c>System.Reflection.MethodInfo.Invoke</c>;
         /// renaming the method, changing its accessibility, or changing the
-        /// parameter type would break the quest hook without compile errors
+        /// parameter type would break the tip controller without compile errors
         /// on its side. Keep this signature stable.
         /// </para>
         /// </summary>

@@ -15,7 +15,8 @@ MonoBehaviour:
   editorNotes: 
   line:
     speakerName: Helper Boy
-    text: Hi! I'm the helper boy. I'll show you how a grain of rice becomes dinner.
+    text: "Hi! I'm the helper boy. If you see me around, come say hi \u2014 I always
+      have a tip or two."
     animationTag: 
     voiceClip: {fileID: 0}
     autoAdvanceAfter: 6

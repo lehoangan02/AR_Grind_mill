@@ -83,7 +83,7 @@ PrefabInstance:
       addedObject: {fileID: 1254080575714624051}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 206923d91fb07420ba467fc88521b2fb, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2259254991329760289}
+      addedObject: {fileID: 5723083476869208772}
   m_SourcePrefab: {fileID: 100100000, guid: 206923d91fb07420ba467fc88521b2fb, type: 3}
 --- !u!4 &865291280032216694 stripped
 Transform:
@@ -217,7 +217,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   spawnCheckRadius: 0.5
---- !u!114 &2259254991329760289
+--- !u!114 &5723083476869208772
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -226,35 +226,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 1786094423245468566}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e327ec2f69e715177bf35377fd1739a0, type: 3}
+  m_Script: {fileID: 11500000, guid: f66ddc56b302ed63291a60aa2ea88111, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.ChildNpc.ChildNpcQuestHook
+  m_EditorClassIdentifier: Assembly-CSharp::AR_Grind_mill.Dialogue.ChildNpc.ChildNpcTipController
   dialogueController: {fileID: 6949279258507232938}
   wander: {fileID: 3400917662901265511}
-  introNode: {fileID: 11400000, guid: 23a32fdd07ed88b6881ce73395b2fe88, type: 2}
-  plowedNode: {fileID: 11400000, guid: 610d101c5a39f091d84cf1482606533d, type: 2}
-  plantedNode: {fileID: 11400000, guid: 93b7e085c12456aeabaa82f1171a0c31, type: 2}
-  harvestedNode: {fileID: 11400000, guid: 50dee219521608869a1677f66d412337, type: 2}
-  driedNode: {fileID: 11400000, guid: 8a1b3efa10b712998ae2ebf62fe9b4ea, type: 2}
-  threshedNode: {fileID: 11400000, guid: f15114a0be0cfd8c88dde7ec9709e778, type: 2}
-  farewellNode: {fileID: 11400000, guid: 1ec5ec029a8424c52a60353d51f1e2f0, type: 2}
-  cookingStepNodes:
-  - {fileID: 11400000, guid: 72ed6b7f4066a73248ee799920ae3c21, type: 2}
-  - {fileID: 11400000, guid: 09da42f1dfb37de7697344f76b0cd422, type: 2}
-  - {fileID: 11400000, guid: 80b20291854658b6ea7e5bb4f835c7f8, type: 2}
-  - {fileID: 11400000, guid: a5f0e21b01e0aaca59a4e4d124654146, type: 2}
-  - {fileID: 11400000, guid: 03801d9ee0068beec894d1a65e464cb0, type: 2}
-  - {fileID: 11400000, guid: 71a8e416d8189f0278196107752f2756, type: 2}
-  - {fileID: 11400000, guid: 6873a0b84289bd650bc67fe455a104ff, type: 2}
-  - {fileID: 11400000, guid: b039c2353828fcb8299807e161361333, type: 2}
-  - {fileID: 11400000, guid: 1f69c2247babf4802847e3392b944d1d, type: 2}
-  - {fileID: 11400000, guid: 0a3ad521f89033a4c82e6bc015d557c6, type: 2}
-  perLineCooldown: 6
-  crossLineCooldown: 3
+  tips:
+  - {fileID: 11400000, guid: 6eb467f43d73a87b3951ea421f978c09, type: 2}
+  - {fileID: 11400000, guid: 6587f3d8c3037a09f8a169895e4b6908, type: 2}
+  - {fileID: 11400000, guid: a44cad4a915319e02adabdb427cc98f6, type: 2}
+  - {fileID: 11400000, guid: 0f7a4b3a41fce18f285e0f14bef0a855, type: 2}
+  - {fileID: 11400000, guid: 20a9e2712ea5b762ea584801a83f3127, type: 2}
+  - {fileID: 11400000, guid: f02cad8e7f6f541e6b533bc1725afef6, type: 2}
+  - {fileID: 11400000, guid: e6e14637561628a96bdf21aa6eba1656, type: 2}
+  - {fileID: 11400000, guid: 7a7286fde0753e3708e2e086f1e05977, type: 2}
+  - {fileID: 11400000, guid: a64c4a36936ca12cdace319a61d8e75d, type: 2}
+  - {fileID: 11400000, guid: ba14c305c2a1c5b75943b8a3bff18138, type: 2}
+  minDelaySeconds: 45
+  maxDelaySeconds: 75
+  firstDelaySeconds: 15
   approachOffset: 1.5
-  deliverProximity: 2
-  pollInterval: 5
   approachAngleDeg: -45
+  deliverProximity: 2
+  deliveryTimeoutSeconds: 30
 --- !u!95 &4999707048503915350 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 206923d91fb07420ba467fc88521b2fb, type: 3}
