@@ -38,7 +38,9 @@ namespace Khoa.Farming.Boating.Editor
             Undo.RegisterCreatedObjectUndo(root, "Create Sampan Boating Setup");
 
             float waterPlaneY = 98.9f;
-            Vector3 dockPosition = new Vector3(-13.5f, waterPlaneY, -19.5f); // Bến nước gần khu câu cá và đường ra sông
+            // The actual canal gameplay corridor is marked by the catfish/snakehead fishing zones
+            // (around z=10..25), not by the stilt-house yard at z=-20.
+            Vector3 dockPosition = new Vector3(-14.5f, waterPlaneY, 12.5f);
 
             // 1. Tạo WaterSurfaceVolume phủ toàn bộ lòng sông
             GameObject waterVolGO = CreateWaterSurfaceVolume(root.transform, new Vector3(30f, waterPlaneY, 15f), new Vector3(120f, 6f, 80f));
@@ -46,7 +48,7 @@ namespace Khoa.Farming.Boating.Editor
             waterVolume.waterSurfaceY = waterPlaneY;
 
             // 2. Tạo Bến Gỗ (Wooden Pier/Dock)
-            GameObject dockGO = CreateWoodenDock(root.transform, dockPosition + new Vector3(1.6f, 0.4f, 0f));
+            GameObject dockGO = CreateWoodenDock(root.transform, dockPosition + new Vector3(1.8f, 0.4f, -1.5f));
 
             // 3. Tạo Xuồng Ba Lá VR
             GameObject sampanGO = CreateSampanInstance(root.transform, dockPosition, waterVolume);
@@ -54,7 +56,7 @@ namespace Khoa.Farming.Boating.Editor
             SampanSeat sampanSeat = sampanGO.GetComponentInChildren<SampanSeat>();
 
             // 4. Tạo Bảng Hướng Dẫn Chèo Xuồng 3D trên bến
-            Vector3 guidePos = dockGO.transform.position + new Vector3(0.5f, 1.4f, -1.2f);
+            Vector3 guidePos = dockGO.transform.position + new Vector3(1.2f, 1.15f, -1.2f);
             CreateBoatingQuestGuide(root.transform, guidePos, sampanSeat, sampanPhysics);
 
             EditorSceneManager.MarkSceneDirty(activeScene);
@@ -72,6 +74,7 @@ namespace Khoa.Farming.Boating.Editor
             BoxCollider box = go.AddComponent<BoxCollider>();
             box.isTrigger = true;
             box.size = size;
+            box.center = new Vector3(0f, -size.y * 0.5f, 0f);
 
             WaterSurfaceVolume vol = go.AddComponent<WaterSurfaceVolume>();
             vol.waterSurfaceY = center.y;
@@ -196,11 +199,17 @@ namespace Khoa.Farming.Boating.Editor
             seat.dismountInteractable = dismountInteractable;
 
             // 2 Cọc chèo (Oarlocks) & 2 Mái chèo (Oars)
-            CreateOar(sampanGO.transform, physics, audioVFX, OarSide.Left, new Vector3(-0.48f, 0.22f, 0.25f));
-            CreateOar(sampanGO.transform, physics, audioVFX, OarSide.Right, new Vector3(0.48f, 0.22f, 0.25f));
+            GameObject leftOar = CreateOar(sampanGO.transform, physics, audioVFX, OarSide.Left, new Vector3(-0.48f, 0.22f, 0.25f));
+            GameObject rightOar = CreateOar(sampanGO.transform, physics, audioVFX, OarSide.Right, new Vector3(0.48f, 0.22f, 0.25f));
+            seat.leftOar = leftOar.GetComponent<XRGrabInteractable>();
+            seat.rightOar = rightOar.GetComponent<XRGrabInteractable>();
 
             // Dev Input
-            sampanGO.AddComponent<SampanDevInput>();
+            SampanDevInput devInput = sampanGO.AddComponent<SampanDevInput>();
+            devInput.sampan = physics;
+            devInput.seat = seat;
+            devInput.leftOar = leftOar.GetComponent<SampanOar>();
+            devInput.rightOar = rightOar.GetComponent<SampanOar>();
 
             return sampanGO;
         }
@@ -303,7 +312,8 @@ namespace Khoa.Farming.Boating.Editor
             textGO.transform.localPosition = new Vector3(0f, 0f, 0f);
 
             TextMeshPro tmp = textGO.AddComponent<TextMeshPro>();
-            tmp.fontSize = 2.6f;
+            tmp.fontSize = 0.75f;
+            tmp.rectTransform.sizeDelta = new Vector2(1.65f, 1.05f);
             tmp.alignment = TextAlignmentOptions.Center;
             guide.guideText = tmp;
         }

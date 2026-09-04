@@ -37,33 +37,30 @@ namespace Khoa.Farming.Editor
             GameObject root = new GameObject(SetupRootName);
             Undo.RegisterCreatedObjectUndo(root, "Create Barn & Compost Setup");
 
-            Vector3 kitchenBasePos = new Vector3(-8f, 0f, 5f);
+            // Compact service yard beside the existing StiltHouse (-14,-22) and playable buffalo.
+            // Keeping the whole loop together makes the shovel route readable in VR.
             Terrain activeTerrain = Terrain.activeTerrain;
-            if (activeTerrain != null)
-            {
-                kitchenBasePos.y = activeTerrain.SampleHeight(kitchenBasePos) + activeTerrain.transform.position.y;
-            }
 
             // 1. Tạo Chuồng Trâu (Buffalo Barn)
-            Vector3 buffaloPos = kitchenBasePos + new Vector3(-14f, 0f, 7f);
+            Vector3 buffaloPos = new Vector3(-21.5f, 100f, -17f);
             buffaloPos.y = GetTerrainHeight(buffaloPos, activeTerrain);
             GameObject buffaloBarnGO = CreateBuffaloBarn(root.transform, buffaloPos);
             BarnManureSource buffaloSource = buffaloBarnGO.GetComponentInChildren<BarnManureSource>();
 
             // 2. Tạo Chuồng Bò (Cow Barn)
-            Vector3 cowPos = kitchenBasePos + new Vector3(-15f, 0f, -5f);
+            Vector3 cowPos = new Vector3(-20f, 100f, -24f);
             cowPos.y = GetTerrainHeight(cowPos, activeTerrain);
             GameObject cowBarnGO = CreateCowBarn(root.transform, cowPos);
             BarnManureSource cowSource = cowBarnGO.GetComponentInChildren<BarnManureSource>();
 
             // 3. Tạo Chuồng Heo (Pigsty)
-            Vector3 pigPos = kitchenBasePos + new Vector3(-7f, 0f, -10f);
+            Vector3 pigPos = new Vector3(-8.5f, 100f, -18f);
             pigPos.y = GetTerrainHeight(pigPos, activeTerrain);
             GameObject pigBarnGO = CreatePigBarn(root.transform, pigPos);
             BarnManureSource pigSource = pigBarnGO.GetComponentInChildren<BarnManureSource>();
 
             // 4. Tạo Đống Ủ Phân Sinh Học (Compost Pile)
-            Vector3 compostPos = kitchenBasePos + new Vector3(-10f, 0f, 1f);
+            Vector3 compostPos = new Vector3(-8.5f, 100f, -25f);
             compostPos.y = GetTerrainHeight(compostPos, activeTerrain);
             GameObject compostGO = CreateCompostStation(root.transform, compostPos);
             CompostPile compost = compostGO.GetComponent<CompostPile>();
@@ -74,7 +71,7 @@ namespace Khoa.Farming.Editor
             ManureShovel shovel = shovelGO.GetComponent<ManureShovel>();
 
             // 6. Tạo Bảng Hướng Dẫn Nhiệm Vụ 3D (BarnCompostQuestGuide)
-            Vector3 guidePos = compostPos + new Vector3(1.8f, 1.2f, -1.2f);
+            Vector3 guidePos = compostPos + new Vector3(1.8f, 1.15f, -1.2f);
             CreateQuestGuide(root.transform, guidePos, new BarnManureSource[] { buffaloSource, cowSource, pigSource }, shovel, compost);
 
             EditorSceneManager.MarkSceneDirty(activeScene);
@@ -286,7 +283,8 @@ namespace Khoa.Farming.Editor
             uiGO.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
 
             TextMeshPro tmp = uiGO.AddComponent<TextMeshPro>();
-            tmp.fontSize = 3.2f;
+            tmp.fontSize = 0.75f;
+            tmp.rectTransform.sizeDelta = new Vector2(1.5f, 0.9f);
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.text = "<color=yellow>ĐỐNG Ủ PHÂN</color>\nTrống (0/3)\n<i>Dùng xẻng xúc phân đổ vào</i>";
             compost.progressText = tmp;
@@ -385,7 +383,8 @@ namespace Khoa.Farming.Editor
             titleGO.transform.SetParent(guideGO.transform, false);
             titleGO.transform.localPosition = new Vector3(0f, 0.35f, 0f);
             TextMeshPro titleTMP = titleGO.AddComponent<TextMeshPro>();
-            titleTMP.fontSize = 3.6f;
+            titleTMP.fontSize = 0.62f;
+            titleTMP.rectTransform.sizeDelta = new Vector2(1.5f, 0.3f);
             titleTMP.alignment = TextAlignmentOptions.Center;
             titleTMP.text = "<color=yellow><b>HƯỚNG DẪN Ủ PHÂN BÓN LÓT</b></color>";
             guide.questTitleText = titleTMP;
@@ -395,7 +394,8 @@ namespace Khoa.Farming.Editor
             detailGO.transform.SetParent(guideGO.transform, false);
             detailGO.transform.localPosition = new Vector3(0f, -0.05f, 0f);
             TextMeshPro detailTMP = detailGO.AddComponent<TextMeshPro>();
-            detailTMP.fontSize = 2.4f;
+            detailTMP.fontSize = 0.48f;
+            detailTMP.rectTransform.sizeDelta = new Vector2(1.45f, 0.72f);
             detailTMP.alignment = TextAlignmentOptions.Center;
             guide.stepDetailText = detailTMP;
         }

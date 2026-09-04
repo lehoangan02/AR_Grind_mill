@@ -78,6 +78,16 @@ namespace Khoa.Farming.Boating
             }
         }
 
+        private void OnValidate()
+        {
+            maxDepth = Mathf.Max(0.05f, maxDepth);
+            buoyancyPerPoint = Mathf.Max(0f, buoyancyPerPoint);
+            maxForwardSpeed = Mathf.Max(0f, maxForwardSpeed);
+            maxReverseSpeed = Mathf.Max(0f, maxReverseSpeed);
+            maxYawSpeedDeg = Mathf.Max(0f, maxYawSpeedDeg);
+            maxAcceleration = Mathf.Max(0.05f, maxAcceleration);
+        }
+
         private void FixedUpdate()
         {
             ApplyBuoyancy();
@@ -99,6 +109,7 @@ namespace Khoa.Farming.Boating
                 if (floatPoints[i] == null) continue;
 
                 Vector3 pointPos = floatPoints[i].position;
+                if (waterVolume != null && !waterVolume.ContainsHorizontalPosition(pointPos)) continue;
                 float waterY = (waterVolume != null) ? waterVolume.GetWaterSurfaceY(pointPos) : defaultWaterY;
 
                 if (pointPos.y < waterY)

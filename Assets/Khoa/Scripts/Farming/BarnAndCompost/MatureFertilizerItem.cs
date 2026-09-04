@@ -12,6 +12,7 @@ namespace Khoa.Farming
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(XRGrabInteractable))]
     public class MatureFertilizerItem : MonoBehaviour
     {
         [Header("Trạng thái")]

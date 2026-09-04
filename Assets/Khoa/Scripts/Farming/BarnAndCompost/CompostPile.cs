@@ -29,6 +29,7 @@ namespace Khoa.Farming
         [SerializeField] private int currentPortions = 0;
         [SerializeField] private float compostTimer = 0f;
         [SerializeField] private bool hasSpawnedOutputs = false;
+        [SerializeField] private int lastDisplayedSecond = -1;
 
         public CompostState CurrentState => currentState;
         public int CurrentPortions => currentPortions;
@@ -68,12 +69,24 @@ namespace Khoa.Farming
             UpdateUI();
         }
 
+        private void OnValidate()
+        {
+            requiredPortions = Mathf.Max(1, requiredPortions);
+            compostDuration = Mathf.Max(0.1f, compostDuration);
+            outputSpawnRadius = Mathf.Max(0.1f, outputSpawnRadius);
+        }
+
         private void Update()
         {
             if (currentState == CompostState.Composting)
             {
                 compostTimer -= Time.deltaTime;
-                UpdateUI();
+                int displayedSecond = Mathf.CeilToInt(compostTimer);
+                if (displayedSecond != lastDisplayedSecond)
+                {
+                    lastDisplayedSecond = displayedSecond;
+                    UpdateUI();
+                }
 
                 if (compostTimer <= 0f)
                 {
@@ -129,6 +142,7 @@ namespace Khoa.Farming
         {
             currentState = CompostState.Composting;
             compostTimer = compostDuration;
+            lastDisplayedSecond = Mathf.CeilToInt(compostTimer);
             hasSpawnedOutputs = false;
 
             if (warmSteamFX != null && !warmSteamFX.isPlaying)
@@ -236,9 +250,10 @@ namespace Khoa.Farming
             Renderer r = go.GetComponent<Renderer>();
             if (r != null)
             {
-                Material mat = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
-                mat.color = new Color(0.18f, 0.12f, 0.06f);
-                r.sharedMaterial = mat;
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+                block.SetColor("_BaseColor", new Color(0.18f, 0.12f, 0.06f));
+                block.SetColor("_Color", new Color(0.18f, 0.12f, 0.06f));
+                r.SetPropertyBlock(block);
             }
 
             return go;
@@ -336,6 +351,7 @@ namespace Khoa.Farming
             currentState = CompostState.Empty;
             currentPortions = 0;
             compostTimer = 0f;
+            lastDisplayedSecond = -1;
             hasSpawnedOutputs = false;
             spawnedOutputs.Clear();
             UpdateVisuals();

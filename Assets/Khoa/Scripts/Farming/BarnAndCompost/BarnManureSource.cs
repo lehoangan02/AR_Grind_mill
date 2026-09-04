@@ -46,6 +46,13 @@ namespace Khoa.Farming
             }
         }
 
+        private void OnValidate()
+        {
+            respawnCooldown = Mathf.Max(1f, respawnCooldown);
+            maxUncollected = Mathf.Max(1, maxUncollected);
+            spawnRadius = Mathf.Max(0.1f, spawnRadius);
+        }
+
         private void Update()
         {
             CleanupNullPiles();
@@ -154,9 +161,10 @@ namespace Khoa.Farming
             Renderer r = go.GetComponent<Renderer>();
             if (r != null)
             {
-                Material mat = new Material(Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard"));
-                mat.color = new Color(0.35f, 0.22f, 0.12f);
-                r.sharedMaterial = mat;
+                MaterialPropertyBlock block = new MaterialPropertyBlock();
+                block.SetColor("_BaseColor", new Color(0.35f, 0.22f, 0.12f));
+                block.SetColor("_Color", new Color(0.35f, 0.22f, 0.12f));
+                r.SetPropertyBlock(block);
             }
 
             return go;

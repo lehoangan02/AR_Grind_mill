@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 using Unity.XR.CoreUtils;
+using Khoa.Farming.Mounting;
 
 namespace Khoa.Farming.Boating
 {
@@ -20,10 +22,16 @@ namespace Khoa.Farming.Boating
         public Transform seatAnchor;
         public Transform dismountPoint;
         public float dismountRaycastDistance = 3.5f;
+        [Min(0.5f)] public float maxMountDistance = 2.5f;
+        public LayerMask dismountSurfaceMask = ~0;
 
         [Header("Tương tác lên / xuống xuồng")]
         public XRSimpleInteractable mountInteractable;
         public XRSimpleInteractable dismountInteractable;
+
+        [Header("Tự động gắn hai tay vào mái chèo")]
+        public XRGrabInteractable leftOar;
+        public XRGrabInteractable rightOar;
 
         [Header("Trạng thái (Read-Only)")]
         [SerializeField] private bool isSeated = false;
@@ -33,8 +41,9 @@ namespace Khoa.Farming.Boating
 
         public event Action<bool> OnSeatedStateChanged;
 
-        private Transform originalPlayerParent;
-        private ContinuousMoveProvider cachedMoveProvider;
+        private XRPlayerMountState mountState;
+        private XRBaseInteractor attachedLeftHand;
+        private XRBaseInteractor attachedRightHand;
 
         private void Awake()
         {
@@ -43,11 +52,13 @@ namespace Khoa.Farming.Boating
             if (mountInteractable != null)
             {
                 mountInteractable.activated.AddListener(OnMountActivated);
+                mountInteractable.selectEntered.AddListener(OnMountSelected);
             }
 
             if (dismountInteractable != null)
             {
                 dismountInteractable.activated.AddListener(OnDismountActivated);
+                dismountInteractable.selectEntered.AddListener(OnDismountSelected);
             }
         }
 
@@ -56,11 +67,13 @@ namespace Khoa.Farming.Boating
             if (mountInteractable != null)
             {
                 mountInteractable.activated.RemoveListener(OnMountActivated);
+                mountInteractable.selectEntered.RemoveListener(OnMountSelected);
             }
 
             if (dismountInteractable != null)
             {
                 dismountInteractable.activated.RemoveListener(OnDismountActivated);
+                dismountInteractable.selectEntered.RemoveListener(OnDismountSelected);
             }
         }
 
@@ -80,6 +93,16 @@ namespace Khoa.Farming.Boating
             }
         }
 
+        private void OnMountSelected(SelectEnterEventArgs args)
+        {
+            if (!isSeated) Mount(XRMountCoordinator.ResolveRig(args.interactorObject != null ? args.interactorObject.transform : null));
+        }
+
+        private void OnDismountSelected(SelectEnterEventArgs args)
+        {
+            if (isSeated) Dismount();
+        }
+
         /// <summary>
         /// Cho người chơi lên xuồng và neo giữ vào ghế.
         /// </summary>
@@ -89,7 +112,7 @@ namespace Khoa.Farming.Boating
 
             if (player == null)
             {
-                player = FindPlayerRigInScene();
+                player = XRMountCoordinator.ResolveRig();
             }
 
             if (player == null)
@@ -98,23 +121,25 @@ namespace Khoa.Farming.Boating
                 return false;
             }
 
-            playerRig = player;
-            originalPlayerParent = playerRig.transform.parent;
-
-            // 1. Tắt ContinuousMoveProvider của người chơi
-            cachedMoveProvider = playerRig.GetComponentInChildren<ContinuousMoveProvider>();
-            if (cachedMoveProvider != null)
+            Camera head = player.GetComponentInChildren<Camera>(true);
+            Vector3 playerPosition = head != null ? head.transform.position : player.transform.position;
+            if (Vector3.Distance(playerPosition, seatAnchor.position) > maxMountDistance)
             {
-                cachedMoveProvider.enabled = false;
-                Debug.Log("[SampanSeat] Đã khóa ContinuousMoveProvider khi ngồi trên xuồng.");
+                Debug.LogWarning("[SampanSeat] Người chơi đang ở quá xa xuồng để lên.");
+                return false;
+            }
+            if (!XRMountCoordinator.TryAcquire(player, this))
+            {
+                Debug.LogWarning("[SampanSeat] Người chơi đang điều khiển phương tiện khác.");
+                return false;
             }
 
-            // 2. Neo người chơi vào seatAnchor
-            playerRig.transform.SetParent(seatAnchor);
-            playerRig.transform.localPosition = Vector3.zero;
-            playerRig.transform.localRotation = Quaternion.identity;
+            playerRig = player;
+            mountState = new XRPlayerMountState(playerRig);
+            mountState.Attach(seatAnchor);
 
             isSeated = true;
+            StartCoroutine(AttachHandsAtEndOfFrame());
             OnSeatedStateChanged?.Invoke(true);
             Debug.Log("<b>[SampanSeat]</b> Người chơi đã lên ngồi trên xuồng ba lá an toàn.");
             return true;
@@ -127,22 +152,14 @@ namespace Khoa.Farming.Boating
         {
             if (!isSeated || playerRig == null) return false;
 
-            // 1. Gỡ parent khỏi xuồng
-            playerRig.transform.SetParent(originalPlayerParent);
-
-            // 2. Tìm điểm tiếp đất an toàn trên bờ
             Vector3 safeLandingPos = CalculateSafeDismountPosition();
-            playerRig.transform.position = safeLandingPos;
-
-            // 3. Phục hồi di chuyển
-            if (cachedMoveProvider != null)
-            {
-                cachedMoveProvider.enabled = true;
-                Debug.Log("[SampanSeat] Đã phục hồi ContinuousMoveProvider sau khi rời xuồng.");
-            }
+            ReleaseAttachedOars();
+            mountState?.Detach(safeLandingPos, transform.rotation);
+            XRMountCoordinator.Release(playerRig, this);
 
             isSeated = false;
             playerRig = null;
+            mountState = null;
             OnSeatedStateChanged?.Invoke(false);
             Debug.Log("<b>[SampanSeat]</b> Người chơi đã rời xuồng ba lá lên bờ.");
             return true;
@@ -161,13 +178,10 @@ namespace Khoa.Farming.Boating
             foreach (Vector3 dir in checkDirs)
             {
                 Vector3 rayOrigin = transform.position + Vector3.up * 1.5f + dir * 1.5f;
-                if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, dismountRaycastDistance))
+                if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, dismountRaycastDistance, dismountSurfaceMask, QueryTriggerInteraction.Ignore))
                 {
-                    // Tránh tiếp đất xuống nước
-                    if (hit.point.y > 99.2f)
-                    {
+                    if (waterVolume == null || !waterVolume.IsPointSubmerged(hit.point + Vector3.up * 0.15f, out _))
                         return hit.point + Vector3.up * 0.1f;
-                    }
                 }
             }
 
@@ -188,16 +202,86 @@ namespace Khoa.Farming.Boating
 
         private GameObject FindPlayerRigInScene()
         {
-            XROrigin origin = UnityEngine.Object.FindFirstObjectByType<XROrigin>();
-            if (origin != null) return origin.gameObject;
+            return XRMountCoordinator.ResolveRig();
+        }
 
-            Camera mainCam = Camera.main;
-            if (mainCam != null && mainCam.transform.parent != null)
+        private IEnumerator AttachHandsAtEndOfFrame()
+        {
+            yield return null;
+            if (!isSeated || playerRig == null) yield break;
+
+            if (leftOar == null || rightOar == null)
             {
-                return mainCam.transform.parent.gameObject;
+                SampanPhysics boat = GetComponentInParent<SampanPhysics>();
+                if (boat == null) yield break;
+                foreach (SampanOar oar in boat.GetComponentsInChildren<SampanOar>(true))
+                {
+                    XRGrabInteractable grab = oar.GetComponent<XRGrabInteractable>();
+                    if (oar.side == OarSide.Left) leftOar = grab;
+                    else rightOar = grab;
+                }
             }
 
-            return null;
+            XRBaseInteractor leftHand = FindPreferredHand(InteractorHandedness.Left);
+            XRBaseInteractor rightHand = FindPreferredHand(InteractorHandedness.Right);
+            attachedLeftHand = TryAttachHand(leftHand, leftOar) ? leftHand : null;
+            attachedRightHand = TryAttachHand(rightHand, rightOar) ? rightHand : null;
+        }
+
+        private XRBaseInteractor FindPreferredHand(InteractorHandedness handedness)
+        {
+            XRBaseInteractor fallback = null;
+            foreach (XRBaseInteractor interactor in playerRig.GetComponentsInChildren<XRBaseInteractor>(true))
+            {
+                if (!interactor.isActiveAndEnabled || interactor.handedness != handedness) continue;
+                if (interactor is XRDirectInteractor) return interactor;
+                if (fallback == null) fallback = interactor;
+            }
+            return fallback;
+        }
+
+        private bool TryAttachHand(XRBaseInteractor hand, XRGrabInteractable oar)
+        {
+            if (hand == null || oar == null || hand.interactionManager == null) return false;
+            // Only release this seat's own selection; never discard an unrelated held tool.
+            for (int i = hand.interactablesSelected.Count - 1; i >= 0; i--)
+            {
+                IXRSelectInteractable selected = hand.interactablesSelected[i];
+                if (selected == (IXRSelectInteractable)mountInteractable)
+                    hand.interactionManager.SelectExit((IXRSelectInteractor)hand, selected);
+                else
+                    return false;
+            }
+            hand.interactionManager.SelectEnterUnconditionally((IXRSelectInteractor)hand, (IXRSelectInteractable)oar);
+            return oar.isSelected;
+        }
+
+        private void ReleaseAttachedOars()
+        {
+            ReleaseOar(attachedLeftHand, leftOar);
+            ReleaseOar(attachedRightHand, rightOar);
+            attachedLeftHand = null;
+            attachedRightHand = null;
+        }
+
+        private static void ReleaseOar(XRBaseInteractor hand, XRGrabInteractable oar)
+        {
+            if (hand == null || oar == null || hand.interactionManager == null) return;
+            foreach (IXRSelectInteractor selector in oar.interactorsSelecting)
+            {
+                if (selector == (IXRSelectInteractor)hand)
+                {
+                    hand.interactionManager.SelectExit((IXRSelectInteractor)hand, (IXRSelectInteractable)oar);
+                    break;
+                }
+            }
+        }
+
+        private WaterSurfaceVolume waterVolume => GetComponentInParent<SampanPhysics>()?.waterVolume;
+
+        private void OnDisable()
+        {
+            if (isSeated) Dismount();
         }
     }
 }

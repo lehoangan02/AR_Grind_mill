@@ -1,267 +1,211 @@
+using Khoa.Farming.Mounting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
+[DisallowMultipleComponent]
 [RequireComponent(typeof(XRSimpleInteractable))]
 public class BuffaloRider : MonoBehaviour
 {
     [Header("Riding Settings")]
-    [Tooltip("Movement speed of the buffalo.")]
-    public float moveSpeed = 3f;
-    [Tooltip("Turning speed of the buffalo.")]
-    public float turnSpeed = 60f;
-    [Tooltip("Optional: Assign an empty GameObject located on the plough or behind the buffalo.")]
-    public Transform ridePoint; 
-    
+    [Min(0f)] public float moveSpeed = 3f;
+    [Min(0f)] public float turnSpeed = 60f;
+    [Tooltip("Head position while riding. A safe default is created when omitted.")]
+    public Transform ridePoint;
+    public Transform dismountPoint;
+    [Min(0.5f)] public float maxMountDistance = 2.5f;
+
     [Header("Input References")]
-    [Tooltip("Input Action for the Left Controller Trigger (e.g., XRI LeftHand/Select)")]
-    public InputActionReference leftTriggerAction;
-    [Tooltip("Input Action for the Right Controller Trigger (e.g., XRI RightHand/Select)")]
+    [Tooltip("Right trigger used by the project's pointer interaction path.")]
     public InputActionReference rightTriggerAction;
-    [Tooltip("Input Action for movement (e.g., XRI LeftHand/Move)")]
+    [Tooltip("Left locomotion Move action. It controls the buffalo while mounted.")]
     public InputActionReference moveAction;
 
+    [Header("State (Read-Only)")]
+    [SerializeField] private bool isRiding;
+    [SerializeField] private GameObject playerRig;
+
+    public bool IsRiding => isRiding;
+
     private XRSimpleInteractable interactable;
-    private InteractableObject io;
-    private bool isRiding = false;
-    private GameObject playerRig;
-    private Transform originalPlayerParent;
+    private InteractableObject description;
+    private XRPlayerMountState mountState;
+    private Khoa.Farming.BuffaloPlowAttachment[] plowAttachments;
+    private bool previousRightTriggerState;
 
-    private InputAction fallbackMoveAction;
-    private InputAction internalRightTriggerAction;
-    private bool prevRightTriggerState = false;
-
-    void Awake()
+    private void Awake()
     {
-        // 1. Auto-configure InteractableObject so the user doesn't have to manually set it up
-        io = GetComponent<InteractableObject>();
-        if (io == null)
-        {
-            io = gameObject.AddComponent<InteractableObject>();
-        }
-        io.ItemName = "Water Buffalo";
+        description = GetComponent<InteractableObject>();
+        if (description == null) description = gameObject.AddComponent<InteractableObject>();
+        description.ItemName = "Trâu cày - bấm Select/Trigger để cưỡi hoặc xuống";
 
-        // 2. Ensure there is a trigger sphere collider with a large radius (matching Basket/GrindMill)
-        // so InteractableObject detects player in range when pointing at the buffalo from a distance
-        Collider[] colliders = GetComponents<Collider>();
-        SphereCollider triggerSphere = null;
-        foreach (var col in colliders)
-        {
-            if (col.isTrigger)
-            {
-                if (col is SphereCollider sphere)
-                {
-                    triggerSphere = sphere;
-                }
-                else
-                {
-                    Destroy(col);
-                }
-            }
-        }
-
-        if (triggerSphere == null)
-        {
-            triggerSphere = gameObject.AddComponent<SphereCollider>();
-            triggerSphere.isTrigger = true;
-        }
-        triggerSphere.radius = 15f;
-        triggerSphere.center = Vector3.zero;
-
-        // 3. Fallback input actions for right trigger click and left thumbstick/keyboard movement
-        internalRightTriggerAction = new InputAction(type: InputActionType.Button, binding: "<XRController>{RightHand}/trigger");
-        internalRightTriggerAction.AddBinding("<Mouse>/leftButton");
-        internalRightTriggerAction.Enable();
-
-        fallbackMoveAction = new InputAction(type: InputActionType.Value);
-        fallbackMoveAction.AddCompositeBinding("2DVector")
-            .With("Up", "<Keyboard>/w")
-            .With("Down", "<Keyboard>/s")
-            .With("Left", "<Keyboard>/a")
-            .With("Right", "<Keyboard>/d")
-            .With("Up", "<Keyboard>/upArrow")
-            .With("Down", "<Keyboard>/downArrow")
-            .With("Left", "<Keyboard>/leftArrow")
-            .With("Right", "<Keyboard>/rightArrow");
-        fallbackMoveAction.AddBinding("<XRController>{LeftHand}/primary2DAxis");
-        fallbackMoveAction.Enable();
-    }
-
-    void OnDestroy()
-    {
-        if (internalRightTriggerAction != null)
-        {
-            internalRightTriggerAction.Disable();
-            internalRightTriggerAction.Dispose();
-        }
-        if (fallbackMoveAction != null)
-        {
-            fallbackMoveAction.Disable();
-            fallbackMoveAction.Dispose();
-        }
-    }
-
-    void Start()
-    {
         interactable = GetComponent<XRSimpleInteractable>();
-
-        // Try to find the XR Origin (Player)
-        var origin = FindObjectOfType<Unity.XR.CoreUtils.XROrigin>();
-        if (origin != null)
-        {
-            playerRig = origin.gameObject;
-        }
-        else
-        {
-            Camera mainCam = Camera.main;
-            if (mainCam != null && mainCam.transform.parent != null)
-            {
-                playerRig = mainCam.transform.parent.gameObject;
-            }
-            else if (mainCam != null)
-            {
-                playerRig = mainCam.gameObject;
-            }
-        }
+        EnsureInteractionCollider();
+        EnsureMountPoints();
+        plowAttachments = GetComponentsInChildren<Khoa.Farming.BuffaloPlowAttachment>(true);
+        SetPlowing(false);
     }
 
-    void Update()
+    private void OnEnable()
     {
-        bool rightTriggerClicked = IsRightTriggerJustPressed();
+        if (interactable == null) interactable = GetComponent<XRSimpleInteractable>();
+        interactable.selectEntered.AddListener(OnSelected);
+    }
 
+    private void OnDisable()
+    {
+        if (interactable != null) interactable.selectEntered.RemoveListener(OnSelected);
+        if (isRiding) Dismount();
+    }
+
+    private void Update()
+    {
+        if (Application.isEditor && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (isRiding) Dismount();
+            else Mount(XRMountCoordinator.ResolveRig());
+        }
+
+        if (WasRightTriggerPressedThisFrame())
+        {
+            if (isRiding) Dismount();
+            else if (IsPointerAimingAtBuffalo()) Mount(XRMountCoordinator.ResolveRig());
+        }
+
+        if (isRiding) HandleRidingMovement();
+    }
+
+    private void OnSelected(SelectEnterEventArgs args)
+    {
         if (isRiding)
         {
-            HandleRidingMovement();
-            
-            // Clicking Right Trigger again dismounts
-            if (rightTriggerClicked)
-            {
-                Dismount();
-            }
+            Dismount();
+            return;
         }
-        else
-        {
-            // Point at buffalo with right controller raycast and click right trigger to ride
-            bool isPointedAtBuffalo = false;
-
-            if (SelectionController.instance != null && SelectionController.instance.IsPlayerPointedAtObject())
-            {
-                InteractableObject currentObj = SelectionController.instance.GetCurrentPointedInteractableObject();
-                if (currentObj != null && (currentObj == io || currentObj.gameObject == gameObject))
-                {
-                    isPointedAtBuffalo = true;
-                }
-            }
-
-            if (interactable != null && interactable.isHovered)
-            {
-                isPointedAtBuffalo = true;
-            }
-
-            if (isPointedAtBuffalo && rightTriggerClicked)
-            {
-                Mount();
-            }
-        }
+        GameObject rig = XRMountCoordinator.ResolveRig(args.interactorObject != null ? args.interactorObject.transform : null);
+        Mount(rig);
     }
 
-    private bool IsRightTriggerJustPressed()
+    public bool Mount(GameObject rig)
     {
-        bool isPressedNow = false;
+        if (isRiding || rig == null) return false;
+        Camera head = rig.GetComponentInChildren<Camera>(true);
+        Vector3 playerPosition = head != null ? head.transform.position : rig.transform.position;
+        if (DistanceFromBuffalo(playerPosition) > maxMountDistance) return false;
+        if (!XRMountCoordinator.TryAcquire(rig, this)) return false;
 
-        if (VRController.instance != null)
-        {
-            isPressedNow = isPressedNow || VRController.instance.IsRightTriggerPressed();
-        }
-
-        if (rightTriggerAction != null && rightTriggerAction.action != null)
-        {
-            isPressedNow = isPressedNow || rightTriggerAction.action.IsPressed();
-        }
-
-        if (internalRightTriggerAction != null)
-        {
-            isPressedNow = isPressedNow || internalRightTriggerAction.IsPressed();
-        }
-
-        bool justPressed = isPressedNow && !prevRightTriggerState;
-        prevRightTriggerState = isPressedNow;
-
-        return justPressed;
-    }
-
-    private void Mount()
-    {
-        if (playerRig == null) return;
-        
+        playerRig = rig;
+        mountState = new XRPlayerMountState(rig);
+        mountState.Attach(ridePoint);
         isRiding = true;
-        originalPlayerParent = playerRig.transform.parent;
-        
-        // Find ride point or plough transform
-        Transform targetRideTransform = ridePoint;
-        if (targetRideTransform == null)
-        {
-            Transform ploughChild = transform.Find("plough");
-            if (ploughChild == null) ploughChild = transform.Find("Plough");
-            if (ploughChild == null) ploughChild = transform.Find("ridePoint");
-            if (ploughChild == null) ploughChild = transform.Find("RidePoint");
-
-            if (ploughChild != null)
-            {
-                targetRideTransform = ploughChild;
-            }
-        }
-
-        if (targetRideTransform != null)
-        {
-            playerRig.transform.SetParent(targetRideTransform);
-            // Position slightly behind the plough handles facing forward
-            playerRig.transform.localPosition = new Vector3(0f, 0.1f, -0.3f);
-            playerRig.transform.localRotation = Quaternion.identity;
-        }
-        else
-        {
-            // Default ploughing position: Standing behind the buffalo at plough position (-2.0m on Z)
-            playerRig.transform.SetParent(transform);
-            playerRig.transform.localPosition = new Vector3(0f, 0.2f, -2.0f);
-            playerRig.transform.localRotation = Quaternion.identity;
-        }
+        SetPlowing(true);
+        return true;
     }
 
-    private void Dismount()
+    public bool Dismount()
     {
+        if (!isRiding || playerRig == null) return false;
+        Vector3 landing = dismountPoint != null
+            ? dismountPoint.position
+            : transform.position + transform.right * 1.6f + Vector3.up * 0.1f;
+        mountState?.Detach(landing, transform.rotation);
+        XRMountCoordinator.Release(playerRig, this);
+        mountState = null;
+        playerRig = null;
         isRiding = false;
-        if (playerRig != null)
-        {
-            playerRig.transform.SetParent(originalPlayerParent);
-            playerRig.transform.position = transform.position + transform.right * 2f; 
-        }
+        SetPlowing(false);
+        return true;
     }
 
     private void HandleRidingMovement()
     {
-        Vector2 moveInput = Vector2.zero;
-
-        if (moveAction != null && moveAction.action != null)
+        Vector2 input = moveAction != null && moveAction.action != null
+            ? moveAction.action.ReadValue<Vector2>()
+            : Vector2.zero;
+        if (Application.isEditor && Keyboard.current != null)
         {
-            moveInput = moveAction.action.ReadValue<Vector2>();
+            float x = (Keyboard.current.dKey.isPressed ? 1f : 0f) - (Keyboard.current.aKey.isPressed ? 1f : 0f);
+            float y = (Keyboard.current.wKey.isPressed ? 1f : 0f) - (Keyboard.current.sKey.isPressed ? 1f : 0f);
+            Vector2 keyboardInput = new Vector2(x, y);
+            if (keyboardInput.sqrMagnitude > input.sqrMagnitude) input = keyboardInput;
         }
+        input = Vector2.ClampMagnitude(input, 1f);
+        transform.Rotate(0f, input.x * turnSpeed * Time.deltaTime, 0f, Space.World);
+        transform.position += transform.forward * (input.y * moveSpeed * Time.deltaTime);
+    }
 
-        if (moveInput == Vector2.zero && fallbackMoveAction != null)
-        {
-            moveInput = fallbackMoveAction.ReadValue<Vector2>();
-        }
+    private bool WasRightTriggerPressedThisFrame()
+    {
+        bool pressed = VRController.instance != null && VRController.instance.IsRightTriggerPressed();
+        if (rightTriggerAction != null && rightTriggerAction.action != null)
+            pressed |= rightTriggerAction.action.IsPressed();
+        bool down = pressed && !previousRightTriggerState;
+        previousRightTriggerState = pressed;
+        return down;
+    }
 
-        if (moveInput != Vector2.zero)
+    private bool IsPointerAimingAtBuffalo()
+    {
+        if (interactable != null && interactable.isHovered) return true;
+        if (SelectionController.instance == null || !SelectionController.instance.IsPlayerPointedAtObject()) return false;
+        InteractableObject pointed = SelectionController.instance.GetCurrentPointedInteractableObject();
+        return pointed != null && (pointed == description || pointed.gameObject == gameObject);
+    }
+
+    private float DistanceFromBuffalo(Vector3 position)
+    {
+        float closest = Vector3.Distance(position, transform.position);
+        foreach (Collider collider in GetComponentsInChildren<Collider>(true))
         {
-            // Move forward/back
-            transform.Translate(Vector3.forward * moveInput.y * moveSpeed * Time.deltaTime);
-            
-            // Turn left/right
-            transform.Rotate(Vector3.up * moveInput.x * turnSpeed * Time.deltaTime);
+            if (collider == null || collider.isTrigger) continue;
+            closest = Mathf.Min(closest, Vector3.Distance(position, collider.ClosestPoint(position)));
         }
+        return closest;
+    }
+
+    private void EnsureMountPoints()
+    {
+        if (ridePoint == null)
+        {
+            Transform existing = transform.Find("Khoa_RidePoint");
+            if (existing == null)
+            {
+                existing = new GameObject("Khoa_RidePoint").transform;
+                existing.SetParent(transform, false);
+                existing.localPosition = new Vector3(0f, 1.55f, -0.1f);
+            }
+            ridePoint = existing;
+        }
+        if (dismountPoint == null)
+        {
+            Transform existing = transform.Find("Khoa_DismountPoint");
+            if (existing == null)
+            {
+                existing = new GameObject("Khoa_DismountPoint").transform;
+                existing.SetParent(transform, false);
+                existing.localPosition = new Vector3(1.6f, 0.1f, 0f);
+            }
+            dismountPoint = existing;
+        }
+    }
+
+    private void EnsureInteractionCollider()
+    {
+        foreach (Collider collider in GetComponentsInChildren<Collider>(true))
+            if (collider != null && !collider.isTrigger) return;
+
+        CapsuleCollider capsule = gameObject.AddComponent<CapsuleCollider>();
+        capsule.isTrigger = false;
+        capsule.center = new Vector3(0f, 0.9f, 0f);
+        capsule.radius = 0.55f;
+        capsule.height = 1.8f;
+    }
+
+    private void SetPlowing(bool active)
+    {
+        if (plowAttachments == null) return;
+        foreach (Khoa.Farming.BuffaloPlowAttachment plow in plowAttachments)
+            if (plow != null) plow.isPlowingActive = active;
     }
 }

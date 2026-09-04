@@ -44,13 +44,13 @@ namespace Khoa.Farming.Boating
             {
                 if (seat != null)
                 {
-                    if (!seat.IsSeated) seat.Mount(null);
+                    if (!seat.IsSeated) seat.Mount(null); // Mount itself enforces proximity.
                     else seat.Dismount();
                 }
             }
 
-            // Chỉ xử lý chèo phím khi đang ngồi trên xuồng hoặc đang test
-            bool canRow = (seat == null || seat.IsSeated || Keyboard.current.leftShiftKey.isPressed);
+            // Dev controls are contextual too: never move an unattended boat from across the map.
+            bool canRow = seat != null && seat.IsSeated;
             if (!canRow) return;
 
             // W: Chèo tiến đối xứng (cả 2 mái chèo quét về sau)

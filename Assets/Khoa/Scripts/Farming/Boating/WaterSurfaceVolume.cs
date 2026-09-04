@@ -23,11 +23,6 @@ namespace Khoa.Farming.Boating
             if (volumeCollider != null)
             {
                 volumeCollider.isTrigger = true;
-                // Nếu collider là Box, có thể cập nhật waterSurfaceY theo đỉnh trên của box
-                if (volumeCollider is BoxCollider box)
-                {
-                    waterSurfaceY = transform.position.y + box.center.y + (box.size.y * 0.5f);
-                }
             }
         }
 
@@ -44,6 +39,12 @@ namespace Khoa.Farming.Boating
         /// </summary>
         public bool IsPointSubmerged(Vector3 point, out float depth)
         {
+            if (!ContainsHorizontalPosition(point))
+            {
+                depth = 0f;
+                return false;
+            }
+
             float surfaceY = GetWaterSurfaceY(point);
             if (point.y < surfaceY)
             {
@@ -55,8 +56,23 @@ namespace Khoa.Farming.Boating
             return false;
         }
 
+        public bool ContainsHorizontalPosition(Vector3 point)
+        {
+            if (volumeCollider == null) volumeCollider = GetComponent<Collider>();
+            if (volumeCollider == null) return true;
+            Bounds bounds = volumeCollider.bounds;
+            return point.x >= bounds.min.x && point.x <= bounds.max.x &&
+                   point.z >= bounds.min.z && point.z <= bounds.max.z;
+        }
+
+        private void OnValidate()
+        {
+            waterDensity = Mathf.Max(1f, waterDensity);
+        }
+
         private void OnDrawGizmosSelected()
         {
+            if (volumeCollider == null) volumeCollider = GetComponent<Collider>();
             Gizmos.color = new Color(0f, 0.6f, 1f, 0.35f);
             Vector3 center = transform.position;
             Vector3 size = new Vector3(30f, 0.1f, 50f);
