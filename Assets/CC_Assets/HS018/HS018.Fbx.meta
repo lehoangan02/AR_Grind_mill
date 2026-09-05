@@ -920,7 +920,7 @@ ModelImporter:
     - name: CC_Base_Tongue01
       parentName: 
       position: {x: -0.030140791, y: 0.008911745, z: 0.00000203385}
-      rotation: {x: 0.00015033942, y: 0.0027268343, z: -0.0041621365, w: 0.9999876}
+      rotation: {x: 0.00015033942, y: 0.0027268345, z: -0.0041621365, w: 0.99998766}
       scale: {x: 0.99999994, y: 1.0000001, z: 1}
     - name: CC_Base_Tongue02
       parentName: 
@@ -1005,7 +1005,7 @@ ModelImporter:
     - name: CC_Base_L_Pinky3
       parentName: 
       position: {x: 0.00000005722047, y: 0.014357224, z: -0.000000019073488}
-      rotation: {x: 0.002009652, y: -0.00056538463, z: -0.059597034, w: 0.9982204}
+      rotation: {x: 0.002009652, y: -0.0005653846, z: -0.059597034, w: 0.9982203}
       scale: {x: 1.0000001, y: 1, z: 1.0000002}
     - name: CC_Base_L_Ring1
       parentName: 
@@ -1025,7 +1025,7 @@ ModelImporter:
     - name: CC_Base_L_Mid1
       parentName: 
       position: {x: 0.0037661514, y: 0.082115956, z: 0.014466137}
-      rotation: {x: 0.0004989878, y: 0.0026868149, z: -0.02181402, w: 0.99975836}
+      rotation: {x: 0.0004989878, y: 0.0026868146, z: -0.02181402, w: 0.9997583}
       scale: {x: 1.0000001, y: 1, z: 1.0000002}
     - name: CC_Base_L_Mid2
       parentName: 
@@ -1115,7 +1115,7 @@ ModelImporter:
     - name: CC_Base_R_ElbowShareBone
       parentName: 
       position: {x: -0.00000017791987, y: -0.00000007629395, z: 0.000000009536744}
-      rotation: {x: -0.0006672003, y: 0.0004496343, z: -0.00055049313, w: 0.9999995}
+      rotation: {x: -0.0006672003, y: 0.00044963433, z: -0.00055049313, w: 0.9999996}
       scale: {x: 0.99999994, y: 0.9999999, z: 1}
     - name: CC_Base_R_ForearmTwist01
       parentName: 
@@ -1200,7 +1200,7 @@ ModelImporter:
     - name: CC_Base_R_Pinky2
       parentName: 
       position: {x: 0.0000032985206, y: 0.026649395, z: 0.00000080108634}
-      rotation: {x: -0.01927414, y: -0.003611433, z: -0.028769694, w: 0.99939376}
+      rotation: {x: -0.01927414, y: -0.0036114329, z: -0.028769694, w: 0.9993937}
       scale: {x: 0.9999997, y: 0.9999998, z: 0.9999998}
     - name: CC_Base_R_Pinky3
       parentName: 

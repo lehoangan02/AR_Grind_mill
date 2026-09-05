@@ -225,33 +225,34 @@ namespace Khoa.Farming.PlayModeTests
         }
 
         [UnityTest]
-        public IEnumerator Fishing_AfterCasting_ReachesWaitingForFishThenBite()
+        public IEnumerator Fishing_BoardCasts_ThenRodClickAfterBiteShowsFish()
         {
             VRFishingController rod = CreateFishingRodRuntime();
-            rod.transform.position = Vector3.zero;
-            CreateWaterFishingZoneRuntime(new Vector3(0f, -1.5f, 0f), 4f);
+            rod.simpleDropDuration = 0.01f;
+            rod.simpleBiteDelay = 0.01f;
+            GameObject boardGO = new GameObject("RuntimeFishingBoard");
+            boardGO.AddComponent<BoxCollider>();
+            FishingStationBoard board = boardGO.AddComponent<FishingStationBoard>();
+            board.fishingRod = rod;
 
-            rod.EquipRod();
-            rod.hookMesh.position = new Vector3(0f, -1f, 0f);
-            Physics.SyncTransforms();
-            yield return new WaitForFixedUpdate();
+            board.ToggleFishingRod();
             yield return null;
 
-            // Đợi qua giai đoạn "thả dây" 1s -> vào chờ cá cắn
-            yield return new WaitForSeconds(1.2f);
-            Assert.AreEqual(VRFishingController.FishingState.WaitingForFish, rod.currentState,
-                "Sau khi thả xong dây, cần phải ở trạng thái chờ cá cắn (WaitingForFish).");
+            Assert.IsTrue(rod.isEquipped, "Click bảng phải kích hoạt cần tại điểm cố định.");
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState);
 
-            // Cá cắn mồi tại t≈3.0s (1s thả dây + 2s chờ), và cá xổng tại t≈5.5s (2.5s escape).
-            // Poll có timeout ở giữa cửa sổ đó để tránh lệch do jitter của game loop.
-            float deadline = Time.time + 3.0f;
-            while (Time.time < deadline && rod.currentState != VRFishingController.FishingState.FishBiting)
-            {
-                yield return null;
-            }
+            yield return new WaitForSeconds(0.1f);
             Assert.AreEqual(VRFishingController.FishingState.FishBiting, rod.currentState,
-                "Sau khi hết thời gian chờ, cá phải cắn mồi (FishBiting).");
+                "Phải hiện trạng thái cá cắn trước khi cho phép kéo cá.");
 
+            rod.HandlePrimaryClick(); // mô phỏng bấm trực tiếp vào cần câu
+            yield return null;
+
+            Assert.AreEqual(VRFishingController.FishingState.FishCaught, rod.currentState,
+                "Bấm cần sau khi cá cắn phải kéo cá lên, không cần vung tay.");
+            Assert.IsNotNull(rod.currentFishInstance, "Cá phải xuất hiện trên cần.");
+
+            Object.Destroy(boardGO);
             Object.Destroy(rod.gameObject);
         }
     }

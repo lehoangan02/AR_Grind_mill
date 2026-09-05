@@ -65,6 +65,21 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
+        public void Test_VRFishingController_EquipRod_UsesFixedPointInsteadOfRightHand()
+        {
+            GameObject rightHand = new GameObject("TestRightHand");
+            rightHand.transform.SetParent(testRoot.transform);
+            rod.holdRotation = Vector3.zero; // Exercise the scene fallback value.
+
+            rod.EquipRod(rightHand.transform);
+
+            Assert.AreNotEqual(rightHand.transform, rod.transform.parent,
+                "Cần câu không được gắn vào tay/controller");
+            Assert.Less(Quaternion.Angle(Quaternion.Euler(180f, 210f, 0f), rod.transform.rotation), 0.1f,
+                "Rotation cố định của cần câu phải tương đương X=180, Y=210, Z=0");
+        }
+
+        [Test]
         public void Test_FishingHookTrigger_DetectsWaterCollider()
         {
             GameObject triggerGO = new GameObject("HookTriggerGO");
@@ -166,7 +181,7 @@ namespace Khoa.Farming.Tests
         }
 
         [Test]
-        public void Test_FishingStationBoard_ToggleEquipAndUnequip()
+        public void Test_FishingStationBoard_ClickFixesRodAndCasts()
         {
             GameObject boardGO = new GameObject("TestBoard");
             boardGO.transform.SetParent(testRoot.transform);
@@ -176,13 +191,101 @@ namespace Khoa.Farming.Tests
 
             Assert.IsFalse(rod.isEquipped);
 
-            // Click 1: Lấy cần câu
+            // Click 1: cố định cần và thả câu ngay
             board.ToggleFishingRod();
-            Assert.IsTrue(rod.isEquipped, "Bấm bảng lần 1 phải gắn cần câu vào tay người chơi");
+            Assert.IsTrue(rod.isEquipped, "Bấm bảng phải kích hoạt cần câu cố định");
 
-            // Click 2: Cất cần câu
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState,
+                "Bấm bảng phải thả câu ngay");
+        }
+
+        [Test]
+        public void Test_FishingStationBoard_ClickDuringBite_CatchesFish()
+        {
+            GameObject boardGO = new GameObject("TestBoard");
+            boardGO.transform.SetParent(testRoot.transform);
+            boardGO.AddComponent<BoxCollider>();
+            FishingStationBoard board = boardGO.AddComponent<FishingStationBoard>();
+            board.fishingRod = rod;
+
+            // Click 1: cố định cần và thả câu (-> DroppingLine).
             board.ToggleFishingRod();
-            Assert.IsFalse(rod.isEquipped, "Bấm bảng lần 2 phải cất cần câu khỏi tay người chơi");
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState);
+
+            // Đưa cần sang trạng thái cá cắn câu.
+            rod.SignalFishBite();
+            Assert.AreEqual(VRFishingController.FishingState.FishBiting, rod.currentState);
+
+            // Click 2 lên BẢNG (thay vì cần câu) phải bắt được cá ngay.
+            board.ToggleFishingRod();
+            Assert.AreEqual(VRFishingController.FishingState.FishCaught, rod.currentState,
+                "Bấm bảng khi cá đang cắn phải chuyển sang FishCaught");
+            Assert.IsNotNull(rod.currentFishInstance, "Cá phải xuất hiện sau khi bấm bảng");
+        }
+
+        [Test]
+        public void Test_FishingStationBoard_ClickBeforeBite_IsSafelyIgnored()
+        {
+            GameObject boardGO = new GameObject("TestBoard");
+            boardGO.transform.SetParent(testRoot.transform);
+            boardGO.AddComponent<BoxCollider>();
+            FishingStationBoard board = boardGO.AddComponent<FishingStationBoard>();
+            board.fishingRod = rod;
+
+            board.ToggleFishingRod(); // equip + cast -> DroppingLine
+
+            // Click 2 khi chưa có cá cắn: không được bắt cá, vẫn nguyên trạng thái.
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState);
+            board.ToggleFishingRod();
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState,
+                "Bấm bảng khi chưa có cá cắn phải được bỏ qua, không đổi trạng thái");
+            Assert.IsNull(rod.currentFishInstance);
+        }
+
+        [Test]
+        public void Test_SimpleClickMode_OnlyCatchesAfterBiteMessage()
+        {
+            rod.simpleClickMode = true;
+            rod.EquipRod();
+
+            rod.HandlePrimaryClick();
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState,
+                "Click đầu tiên phải thả câu ngay, không cần phao chạm nước");
+
+            rod.HandlePrimaryClick();
+            Assert.AreEqual(VRFishingController.FishingState.DroppingLine, rod.currentState,
+                "Click khi chưa có cá cắn phải bị bỏ qua");
+            Assert.IsNull(rod.currentFishInstance);
+
+            rod.SignalFishBite();
+            Assert.AreEqual(VRFishingController.FishingState.FishBiting, rod.currentState);
+
+            rod.HandlePrimaryClick();
+            Assert.AreEqual(VRFishingController.FishingState.FishCaught, rod.currentState,
+                "Chỉ click sau thông báo cá cắn mới được bắt cá");
+            Assert.IsNotNull(rod.currentFishInstance, "Cá phải xuất hiện sau khi bấm cần");
+            Assert.AreEqual(rod.topAnchor != null ? rod.topAnchor : rod.transform,
+                rod.currentFishInstance.transform.parent,
+                "Cá phải được giữ trên cần để người chơi nhìn thấy");
+        }
+
+        [Test]
+        public void Test_SimpleClickMode_CaughtFish_AppearsBesideRod()
+        {
+            rod.simpleClickMode = true;
+            rod.fishSpawnOffset = new Vector3(0.6f, 0.3f, 0.25f);
+            rod.EquipRod();
+
+            rod.HandlePrimaryClick(); // -> DroppingLine (cast).
+            rod.SignalFishBite();      // -> FishBiting.
+            rod.HandlePrimaryClick();  // -> FishCaught.
+
+            Assert.IsNotNull(rod.currentFishInstance, "Cá phải xuất hiện sau khi bấm cần");
+
+            // Cá phải xuất hiện BÊN CẠNH cần câu theo offset, không treo trên lưỡi câu (hookMesh).
+            Vector3 expectedWorldPos = rod.transform.position + rod.transform.rotation * rod.fishSpawnOffset;
+            Assert.Less(Vector3.Distance(expectedWorldPos, rod.currentFishInstance.transform.position), 0.001f,
+                "Cá phải xuất hiện ở vị trí bên cạnh cần câu theo fishSpawnOffset");
         }
 
         [Test]

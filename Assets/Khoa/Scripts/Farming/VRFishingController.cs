@@ -8,6 +8,14 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 [RequireComponent(typeof(XRGrabInteractable))]
 public class VRFishingController : MonoBehaviour
 {
+    [Header("Simple click fishing")]
+    [Tooltip("The rod stays at a fixed point. Cast once, wait for the bite message, then click the rod to catch.")]
+    public bool simpleClickMode = true;
+    public Transform fixedFishingPoint;
+    public Vector3 fixedFishingRotation = new Vector3(180f, 210f, 0f);
+    public float simpleDropDuration = 0.6f;
+    public float simpleBiteDelay = 1.5f;
+
     [Header("VR Controller / Hand Mapping")]
     public GameObject rightHandController;
 
@@ -18,7 +26,7 @@ public class VRFishingController : MonoBehaviour
     [Header("Cấu hình Cầm nắm (XR Grab)")]
     public float pickupDistance = 2.0f;
     public Vector3 holdPosition = new Vector3(0f, -0.05f, 0.25f);
-    public Vector3 holdRotation = new Vector3(10f, 0f, 0f);
+    public Vector3 holdRotation = new Vector3(180f, 210f, 0f);
     public bool isEquipped = false;
 
     [Header("Anchor Ngọn Cần & Dây Câu")]
@@ -26,6 +34,8 @@ public class VRFishingController : MonoBehaviour
     public Transform hookWithLine;     // Gốc dây câu
     public Transform hookMesh;         // Phao / Lưỡi câu
     public GameObject fishPrefab;      // Prefab con cá mặc định
+    [Tooltip("Vị trí xuất hiện của cá khi câu được, tính theo trục (local) của cần câu: X = lệch sang bên trái/khéo, Y = lên/xuống, Z = trước/sau. Mặc định đặt cá ngay BÊN CẠNH cần.")]
+    public Vector3 fishSpawnOffset = new Vector3(0.6f, 0.9f, 0f);
 
     // Alias tương thích ngược
     public Transform rodTipPoint { get => topAnchor; set => topAnchor = value; }
@@ -50,14 +60,17 @@ public class VRFishingController : MonoBehaviour
     public FishingZone currentZone { get; private set; }
 
     private float targetScaleY;
-    private Vector3 lastPosition;
-    private float upwardSpeed;
+    private Vector3 fixedWorldPosition;
 
     // Biến lưu lại Scale gốc để chống méo
     private Vector3 rodOriginalScale;
     private Vector3 hookOriginalScale;
 
     private XRGrabInteractable grabInteractable;
+    private XRSimpleInteractable clickInteractable;
+    private Rigidbody rodRigidbody;
+    private bool originalUseGravity;
+    private bool originalIsKinematic;
 
     // Delegate & Events
     public delegate void StateChangedHandler(FishingState newState);
@@ -70,10 +83,27 @@ public class VRFishingController : MonoBehaviour
 
     private void Awake()
     {
+        fixedWorldPosition = transform.position;
+
         grabInteractable = GetComponent<XRGrabInteractable>();
         if (grabInteractable == null)
         {
             grabInteractable = gameObject.AddComponent<XRGrabInteractable>();
+        }
+        // The rod is a fixed click target, never a grabbable object.
+        grabInteractable.enabled = false;
+
+        clickInteractable = GetComponent<XRSimpleInteractable>();
+        if (clickInteractable == null)
+        {
+            clickInteractable = gameObject.AddComponent<XRSimpleInteractable>();
+        }
+
+        rodRigidbody = GetComponent<Rigidbody>();
+        if (rodRigidbody != null)
+        {
+            originalUseGravity = rodRigidbody.useGravity;
+            originalIsKinematic = rodRigidbody.isKinematic;
         }
     }
 
@@ -82,11 +112,9 @@ public class VRFishingController : MonoBehaviour
         if (grabAction.action != null) grabAction.action.Enable();
         if (reelAction.action != null) reelAction.action.Enable();
 
-        if (grabInteractable != null)
+        if (clickInteractable != null)
         {
-            grabInteractable.selectEntered.AddListener(OnXRISelectEntered);
-            grabInteractable.selectExited.AddListener(OnXRISelectExited);
-            grabInteractable.activated.AddListener(OnXRIActivated);
+            clickInteractable.selectEntered.AddListener(OnRodClicked);
         }
     }
 
@@ -95,11 +123,9 @@ public class VRFishingController : MonoBehaviour
         if (grabAction.action != null) grabAction.action.Disable();
         if (reelAction.action != null) reelAction.action.Disable();
 
-        if (grabInteractable != null)
+        if (clickInteractable != null)
         {
-            grabInteractable.selectEntered.RemoveListener(OnXRISelectEntered);
-            grabInteractable.selectExited.RemoveListener(OnXRISelectExited);
-            grabInteractable.activated.RemoveListener(OnXRIActivated);
+            clickInteractable.selectEntered.RemoveListener(OnRodClicked);
         }
     }
 
@@ -115,10 +141,7 @@ public class VRFishingController : MonoBehaviour
             rodOriginalScale = Vector3.one;
         }
 
-        // 2. Tự động tìm rightHandController nếu chưa gán
-        EnsureRightHandControllerReference();
-
-        // 3. Tự động tìm topAnchor nếu chưa gán trong Inspector
+        // 2. Tự động tìm topAnchor nếu chưa gán trong Inspector
         if (topAnchor == null)
         {
             Transform foundAnchor = transform.Find("TopAnchor") ?? transform.Find("Anchor") ?? transform.Find("Top") ?? transform.Find("RodTipPoint");
@@ -207,6 +230,13 @@ public class VRFishingController : MonoBehaviour
 
     private void Update()
     {
+        // Keep the station pose locked during dropping, waiting, bite, and catch.
+        if (isEquipped)
+        {
+            transform.position = fixedFishingPoint != null ? fixedFishingPoint.position : fixedWorldPosition;
+            transform.rotation = Quaternion.Euler(fixedFishingRotation);
+        }
+
         // Định vị dây câu luôn bám sát điểm cao nhất TopAnchor của ngọn cần
         if (hookWithLine != null)
         {
@@ -223,27 +253,11 @@ public class VRFishingController : MonoBehaviour
         // Kiểm tra nút cuộn/thu dây (Reel In) qua InputAction
         if (isEquipped && CheckReelInputPressed())
         {
-            ReelIn();
+            HandlePrimaryClick();
             return;
         }
 
-        // Nếu chưa được trang bị qua XRI, kiểm tra proximity fallback khi nhấn Grab
-        if (!isEquipped)
-        {
-            if (rightHandController != null)
-            {
-                float dist = Vector3.Distance(transform.position, rightHandController.transform.position);
-                if (CheckGrabInputPressed() && dist <= pickupDistance)
-                {
-                    EquipRod();
-                }
-            }
-            return;
-        }
-
-        // TÍNH TỐC ĐỘ VUNG CONTROLLER (Upward Speed)
-        upwardSpeed = (transform.position.y - lastPosition.y) / Time.deltaTime;
-        lastPosition = transform.position;
+        if (!isEquipped) return;
 
         // Cập nhật độ dài dây câu mượt mà theo trục Y
         if (hookWithLine != null)
@@ -253,23 +267,6 @@ public class VRFishingController : MonoBehaviour
             hookWithLine.localScale = new Vector3(hookOriginalScale.x, newY, hookOriginalScale.z);
         }
 
-        // Khi cá cắn mồi: kiểm tra lực giật vung tay
-        if (currentState == FishingState.FishBiting)
-        {
-            TriggerHaptic(0.4f, Time.deltaTime);
-
-            float activePullThreshold = pullThreshold;
-            if (currentZone != null)
-            {
-                activePullThreshold *= currentZone.pullThresholdMultiplier;
-            }
-
-            if (upwardSpeed > activePullThreshold)
-            {
-                Debug.Log($"<b>[VR CÂU CÁ]</b> Vung tay/Controller với tốc độ {upwardSpeed:F2} > {activePullThreshold:F2} -> BẮT ĐƯỢC CÁ!");
-                CatchFish();
-            }
-        }
     }
 
     public void EnsureRightHandControllerReference(Transform interactorTransform = null)
@@ -396,90 +393,93 @@ public class VRFishingController : MonoBehaviour
         return false;
     }
 
-    private void OnXRISelectEntered(SelectEnterEventArgs args)
-    {
-        Transform handTarget = args != null && args.interactorObject != null ? args.interactorObject.transform : null;
-        EquipRod(handTarget);
-        Debug.Log("<b>[XRI CÂU CÁ]</b> Cầm cần câu qua XRI Grab!");
-    }
-
-    private void OnXRISelectExited(SelectExitEventArgs args)
-    {
-        isEquipped = false;
-        ResetToIdle();
-        Debug.Log("<b>[XRI CÂU CÁ]</b> Đã thả cần câu.");
-    }
-
-    private void OnXRIActivated(ActivateEventArgs args)
+    private void OnRodClicked(SelectEnterEventArgs args)
     {
         if (isEquipped)
         {
-            Debug.Log("<b>[XRI CÂU CÁ]</b> Nút Action/Trigger được kích hoạt!");
-            ReelIn();
+            Debug.Log("<b>[SIMPLE FISHING]</b> Fishing rod clicked.");
+            HandlePrimaryClick();
+        }
+    }
+
+    /// <summary>
+    /// Fixed-rod fishing flow. Cast first, wait until FishBiting, then click the
+    /// rod once to catch. Clicks during the waiting states are intentionally ignored.
+    /// </summary>
+    public void HandlePrimaryClick(FishingZone zone = null)
+    {
+        if (!isEquipped)
+        {
+            Debug.LogWarning("<b>[SIMPLE FISHING]</b> Equip the fishing rod before casting.");
+            return;
+        }
+
+        switch (currentState)
+        {
+            case FishingState.Idle:
+                StartFishingInWater(zone);
+                break;
+
+            case FishingState.DroppingLine:
+            case FishingState.WaitingForFish:
+                Debug.Log("<b>[SIMPLE FISHING]</b> Chưa có cá cắn câu. Hãy chờ thông báo trên bảng.");
+                break;
+
+            case FishingState.FishBiting:
+                CatchFish();
+                break;
+
+            case FishingState.FishCaught:
+                Debug.Log("<b>[SIMPLE FISHING]</b> Fish is already visible. Collect it before casting again.");
+                break;
         }
     }
 
     public void EquipRod(Transform handTarget = null)
     {
         isEquipped = true;
-        EnsureRightHandControllerReference(handTarget);
 
-        if (rodOriginalScale == Vector3.zero)
+        // handTarget is deliberately ignored. The rod never follows a hand/controller.
+        if (fixedFishingPoint != null)
         {
-            rodOriginalScale = Vector3.one;
-        }
-
-        // Helper: giữ nguyên KÍCH THƯỚC world của cần câu khi gắn vào node có scale nhỏ hơn 1,
-        // tránh việc cần câu bị co về ~0 (gây "biến mất").
-        Vector3 PreserveWorldScale(Transform parent)
-        {
-            if (parent == null) return rodOriginalScale;
-            Vector3 ps = parent.lossyScale;
-            return new Vector3(
-                (ps.x != 0f) ? Mathf.Abs(rodOriginalScale.x / ps.x) : rodOriginalScale.x,
-                (ps.y != 0f) ? Mathf.Abs(rodOriginalScale.y / ps.y) : rodOriginalScale.y,
-                (ps.z != 0f) ? Mathf.Abs(rodOriginalScale.z / ps.z) : rodOriginalScale.z);
-        }
-
-        // Nếu tay/controller tìm thấy có scale gần 0 thì không dùng — chuyển sang góc camera
-        if (rightHandController != null && rightHandController.transform.lossyScale.sqrMagnitude < 0.0001f)
-        {
-            Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Controller có scale gần 0, dùng góc camera thay thế.");
-            rightHandController = null;
-        }
-
-        if (rightHandController != null)
-        {
-            transform.SetParent(rightHandController.transform, false);
-            transform.localPosition = (holdPosition != Vector3.zero) ? holdPosition : new Vector3(0f, -0.05f, 0.25f);
-            transform.localEulerAngles = (holdRotation != Vector3.zero) ? holdRotation : new Vector3(10f, 0f, 0f);
-            transform.localScale = PreserveWorldScale(rightHandController.transform);
-            Debug.Log($"<b>[VR NHẶT ĐỒ] THÀNH CÔNG:</b> Đã dính cần câu vào tay [{rightHandController.name}]!");
+            transform.SetParent(fixedFishingPoint, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.Euler(fixedFishingRotation);
         }
         else
         {
-            Camera mainCam = Camera.main;
-            if (mainCam != null)
-            {
-                Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có tay/controller hợp lệ, gắn phía trước Main Camera.");
-                transform.SetParent(mainCam.transform, false);
-                transform.localPosition = new Vector3(0.2f, -0.2f, 0.5f);
-                transform.localEulerAngles = new Vector3(10f, -15f, 0f);
-                transform.localScale = PreserveWorldScale(mainCam.transform);
-            }
-            else
-            {
-                Debug.LogWarning("<b>[VR NHẶT ĐỒ] CẢNH BÁO:</b> Không có Controller lẫn Camera.main! Giữ cần câu tại vị trí hiện tại.");
-            }
+            transform.SetParent(null, true);
+            transform.position = fixedWorldPosition;
+            transform.rotation = Quaternion.Euler(fixedFishingRotation);
         }
 
-        lastPosition = transform.position;
+        // Lock physics so casting and clicking cannot change the fixed pose.
+        if (rodRigidbody == null) rodRigidbody = GetComponent<Rigidbody>();
+        if (rodRigidbody != null)
+        {
+            rodRigidbody.useGravity = false;
+            rodRigidbody.isKinematic = true;
+        }
+
+        foreach (Renderer rodRenderer in GetComponentsInChildren<Renderer>(true))
+        {
+            rodRenderer.enabled = true;
+        }
+
+        Debug.Log($"<b>[SIMPLE FISHING]</b> Cần câu đã cố định tại điểm câu, rotation = {fixedFishingRotation}.");
     }
 
     public void UnequipRod(Vector3 rackPosition = default, Quaternion rackRotation = default)
     {
         isEquipped = false;
         transform.SetParent(null);
+
+        if (rodRigidbody == null) rodRigidbody = GetComponent<Rigidbody>();
+        if (rodRigidbody != null)
+        {
+            rodRigidbody.isKinematic = originalIsKinematic;
+            rodRigidbody.useGravity = originalUseGravity;
+        }
 
         if (rackPosition != default)
         {
@@ -504,8 +504,64 @@ public class VRFishingController : MonoBehaviour
             }
 
             OnLineCast?.Invoke(zone);
-            StartCoroutine(FishingRoutine());
+
+            if (simpleClickMode)
+            {
+                StopAllCoroutines();
+                StartCoroutine(SimpleFishingRoutine());
+            }
+            else
+            {
+                StartCoroutine(FishingRoutine());
+            }
         }
+    }
+
+    private IEnumerator SimpleFishingRoutine()
+    {
+        // The rod remains fixed for the whole sequence.
+        transform.rotation = Quaternion.Euler(fixedFishingRotation);
+        SetState(FishingState.DroppingLine);
+        targetScaleY = waterScaleY;
+        SetLineLengthImmediately(waterScaleY);
+        Debug.Log("<b>[SIMPLE FISHING]</b> Đã thả câu. Đang chờ cá...");
+
+        yield return new WaitForSeconds(Mathf.Max(0f, simpleDropDuration));
+        if (currentState != FishingState.DroppingLine) yield break;
+
+        SetState(FishingState.WaitingForFish);
+        yield return new WaitForSeconds(Mathf.Max(0f, simpleBiteDelay));
+        if (currentState != FishingState.WaitingForFish) yield break;
+
+        SignalFishBite();
+    }
+
+    /// <summary>Marks the bite and waits indefinitely for the player to click the fixed rod.</summary>
+    public void SignalFishBite()
+    {
+        if (currentState != FishingState.DroppingLine && currentState != FishingState.WaitingForFish) return;
+
+        SetState(FishingState.FishBiting);
+        Debug.Log("<b>[SIMPLE FISHING] CÁ CẮN CÂU! Bấm vào cần câu để kéo cá lên.</b>");
+        TriggerHaptic(1.0f, 0.3f);
+
+        if (audioSource != null && biteSound != null) audioSource.PlayOneShot(biteSound);
+        if (biteParticleFX != null) biteParticleFX.Play();
+        OnFishBiting?.Invoke();
+    }
+
+    private void SetLineLengthImmediately(float scaleY)
+    {
+        if (hookWithLine == null) return;
+
+        if (hookOriginalScale == Vector3.zero)
+        {
+            hookOriginalScale = hookWithLine.localScale;
+            if (hookOriginalScale == Vector3.zero) hookOriginalScale = Vector3.one;
+        }
+
+        hookWithLine.localScale = new Vector3(hookOriginalScale.x, scaleY, hookOriginalScale.z);
+        PlaceBobberAtLineEnd();
     }
 
     private IEnumerator FishingRoutine()
@@ -563,6 +619,7 @@ public class VRFishingController : MonoBehaviour
         TriggerHaptic(0.8f, 0.4f);
         
         targetScaleY = idleScaleY;
+        SetLineLengthImmediately(idleScaleY);
 
         if (audioSource != null && catchSound != null)
         {
@@ -575,10 +632,21 @@ public class VRFishingController : MonoBehaviour
             prefabToSpawn = currentZone.customFishPrefab;
         }
 
-        Transform targetParent = hookMesh != null ? hookMesh : transform;
+        Transform fishAttachPoint = hookMesh != null ? hookMesh : (topAnchor != null ? topAnchor : transform);
         if (prefabToSpawn != null)
         {
-            currentFishInstance = Instantiate(prefabToSpawn, targetParent.position, targetParent.rotation, targetParent);
+            // Spawn the fish BESIDE the rod (configurable offset in the rod's local space)
+            // instead of hanging it on the hook/bobber, so the player can easily see & grab it.
+            // We still parent to the rod while keeping worldPositionStays=true so the fish
+            // keeps its world position & scale and is NOT flattened by the scaled line/bobber.
+            Vector3 fishWorldPos = transform.position + transform.rotation * fishSpawnOffset;
+            currentFishInstance = Instantiate(prefabToSpawn, fishWorldPos, fishAttachPoint.rotation);
+            currentFishInstance.transform.SetParent(topAnchor != null ? topAnchor : transform, true);
+
+            // FishSimulation lives outside this assembly in the imported fish pack.
+            // Resolve it by name so this gameplay assembly stays independent.
+            Behaviour swimming = currentFishInstance.GetComponent("FishSimulation") as Behaviour;
+            if (swimming != null) swimming.enabled = false;
             
             CaughtFishItem fishItem = currentFishInstance.GetComponent<CaughtFishItem>();
             if (fishItem == null)
@@ -593,8 +661,25 @@ public class VRFishingController : MonoBehaviour
                 fishItem.fishName = currentZone.zoneName;
             }
 
+            Rigidbody fishBody = currentFishInstance.GetComponent<Rigidbody>();
+            if (fishBody != null)
+            {
+                fishBody.useGravity = false;
+                fishBody.isKinematic = true;
+            }
+
             OnFishCaughtEvent?.Invoke(fishItem);
         }
+        else
+        {
+            Debug.LogError("<b>[SIMPLE FISHING]</b> No fish prefab is assigned, so a caught fish cannot be displayed.");
+        }
+    }
+
+    /// <summary>Desktop/editor fallback: click the equipped rod itself.</summary>
+    private void OnMouseDown()
+    {
+        if (isEquipped) HandlePrimaryClick();
     }
 
     public void OnFishCollected(CaughtFishItem fishItem)

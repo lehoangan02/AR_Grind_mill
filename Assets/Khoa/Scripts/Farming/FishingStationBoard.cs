@@ -12,7 +12,11 @@ public class FishingStationBoard : MonoBehaviour
     [Header("UI & Hiển thị Text")]
     public TMP_Text statusText;
     public string getRodMessage = "Bấm vào đây để LẤY Cần Câu";
-    public string returnRodMessage = "Bấm vào đây để CẤT Cần Câu";
+    public string castMessage = "Bấm để THẢ CÂU";
+    public string droppingMessage = "ĐANG THẢ CÂU...";
+    public string waitingMessage = "ĐANG CHỜ CÁ CẮN...";
+    public string catchMessage = "CÁ CẮN CÂU! BẤM VÀO CẦN CÂU";
+    public string caughtMessage = "ĐÃ BẮT ĐƯỢC CÁ!";
 
     [Header("Vị trí cất cần (Rack Position)")]
     public Transform rackStandPoint;
@@ -24,6 +28,7 @@ public class FishingStationBoard : MonoBehaviour
     public AudioClip toggleSound;
 
     private XRSimpleInteractable simpleInteractable;
+    private int lastInteractionFrame = -1;
 
     private void Awake()
     {
@@ -48,7 +53,6 @@ public class FishingStationBoard : MonoBehaviour
         if (simpleInteractable != null)
         {
             simpleInteractable.selectEntered.AddListener(OnBoardClicked);
-            simpleInteractable.activated.AddListener(OnBoardActivated);
         }
     }
 
@@ -57,7 +61,6 @@ public class FishingStationBoard : MonoBehaviour
         if (simpleInteractable != null)
         {
             simpleInteractable.selectEntered.RemoveListener(OnBoardClicked);
-            simpleInteractable.activated.RemoveListener(OnBoardActivated);
         }
     }
 
@@ -107,6 +110,10 @@ public class FishingStationBoard : MonoBehaviour
 
     public void ToggleFishingRod()
     {
+        // Some desktop/XR setups can report two callbacks for one physical press.
+        if (lastInteractionFrame == Time.frameCount) return;
+        lastInteractionFrame = Time.frameCount;
+
         if (fishingRod == null)
         {
             fishingRod = Object.FindAnyObjectByType<VRFishingController>();
@@ -124,15 +131,19 @@ public class FishingStationBoard : MonoBehaviour
 
         if (!fishingRod.isEquipped)
         {
-            // Người chơi chưa cầm -> LẤY cần câu dính vào tay
-            Debug.Log("<b>[BẢNG CÂU CÁ]</b> Người chơi bấm bảng: LẤY CẦN CÂU dính vào tay!");
+            // One board click fixes the rod at the station and casts immediately.
+            Debug.Log("<b>[BẢNG CÂU CÁ]</b> Cố định cần tại điểm câu và thả câu.");
             fishingRod.EquipRod();
+            fishingRod.HandlePrimaryClick();
         }
         else
         {
-            // Người chơi đang cầm -> CẤT cần câu về giá/bảng
-            Debug.Log("<b>[BẢNG CÂU CÁ]</b> Người chơi bấm bảng: CẤT CẦN CÂU về giá!");
-            fishingRod.UnequipRod(defaultRackPosition, defaultRackRotation);
+            // Rod is already equipped: forward the click to the controller so the board
+            // (the big, easy-to-aim target) can ALSO catch the fish.
+            //   - During FishBiting  -> CatchFish() (fish appears).
+            //   - During Dropping/Waiting -> safely ignored by the controller.
+            //   - During FishCaught -> safely ignored ("fish already visible").
+            fishingRod.HandlePrimaryClick();
         }
 
         UpdateBoardUI();
@@ -151,11 +162,28 @@ public class FishingStationBoard : MonoBehaviour
         {
             if (fishingRod != null && fishingRod.isEquipped)
             {
-                statusText.text = $"<color=yellow>{returnRodMessage}</color>";
+                switch (fishingRod.currentState)
+                {
+                    case VRFishingController.FishingState.Idle:
+                        statusText.text = $"<color=cyan>{castMessage}</color>";
+                        break;
+                    case VRFishingController.FishingState.DroppingLine:
+                        statusText.text = $"<color=cyan>{droppingMessage}</color>";
+                        break;
+                    case VRFishingController.FishingState.WaitingForFish:
+                        statusText.text = $"<color=yellow>{waitingMessage}</color>";
+                        break;
+                    case VRFishingController.FishingState.FishBiting:
+                        statusText.text = $"<color=red>{catchMessage}</color>";
+                        break;
+                    case VRFishingController.FishingState.FishCaught:
+                        statusText.text = $"<color=green>{caughtMessage}</color>";
+                        break;
+                }
             }
             else
             {
-                statusText.text = $"<color=green>{getRodMessage}</color>";
+                statusText.text = $"<color=green>{castMessage}</color>";
             }
         }
     }
