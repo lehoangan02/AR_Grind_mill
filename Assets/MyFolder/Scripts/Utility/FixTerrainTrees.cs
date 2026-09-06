@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -50,3 +51,4 @@ public class FixTerrainTrees : EditorWindow
         }
     }
 }
+#endif
